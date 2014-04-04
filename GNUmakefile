@@ -20,8 +20,13 @@ EXE06=pru2-test
 SRC06=pru2-test.c NXCTRL.c
 EXE06-BIN=pru2-test.bin
 SRC06-PRU=pru2-test.p
+EXE07=ram-test
+SRC07=ram-test.c NXCTRL.c
+EXE07-BIN=ram-test.bin
+SRC07-PRU=ram-test.p
 
-ARTIFACTS=$(EXE01) $(EXE02) $(EXE03) $(EXE04) $(EXE04-BIN) $(EXE05) $(EXE06) $(EXE06-BIN)
+ARTIFACTS=$(EXE01) $(EXE02) $(EXE03) $(EXE04) $(EXE04-BIN) $(EXE05) $(EXE06) $(EXE06-BIN) \
+	$(EXE07) $(EXE07-BIN)
 
 all: $(ARTIFACTS)
 
@@ -47,6 +52,12 @@ $(EXE06): $(SRC06)
 	$(CC) $(CFLAGS) -o $@ $^ $(LDFLAGS) $(LIBS) $(PRU_LIBS)
 
 $(EXE06-BIN): $(SRC06-PRU)
+	pasm -b $^
+
+$(EXE07): $(SRC07)
+	$(CC) $(CFLAGS) -o $@ $^ $(LDFLAGS) $(LIBS) $(PRU_LIBS)
+
+$(EXE07-BIN): $(SRC07-PRU)
 	pasm -b $^
 
 clean:
