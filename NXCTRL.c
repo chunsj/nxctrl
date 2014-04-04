@@ -663,6 +663,8 @@ __NXCTRLComputeTBCLK (NXCTRL_UINT32 nTBCLK,
   *pnHSPCLKDIV = nHSPCLKDiv;
 }
 
+#define PWM_RESOLUTION (1024)
+
 NXCTRL_VOID
 NXCTRLAnalogWrite (NXCTRL_BANK nBank, NXCTRL_PIN nPin,
                    NXCTRL_UINT32 nValue) {
@@ -670,7 +672,7 @@ NXCTRLAnalogWrite (NXCTRL_BANK nBank, NXCTRL_PIN nPin,
   int nChannel = (nPWMInfo & BIT5 & ~(BIT0|BIT2|BIT3|BIT4)) >> 5;
   int nSS = (nPWMInfo & (BIT3|BIT4) & ~(BIT0|BIT1|BIT2|BIT5)) >> 3;
   NXCTRL_UINT32 nCLKDIV, nHSPCLKDIV, nPRDCNT = PWM_TBCLK/FREQ_HZ;
-  NXCTRL_UINT32 nDCNT = (nValue * nPRDCNT) / 0xFF;
+  NXCTRL_UINT32 nDCNT = (nValue * nPRDCNT) / PWM_RESOLUTION;
 
   if (nPWMInfo < 0) {
     fprintf(stderr, "NXCTRLAnalogWrite: invalid pwm pin\n");
