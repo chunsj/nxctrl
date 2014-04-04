@@ -37,7 +37,9 @@
 #define PRU_NUM    PRU0 // use PRU_0
 #define PRU_PATH   "./ram-test.bin"
 
-#define DDR_BASEADDR     0x80000000
+//#define DDR_BASEADDR     0x80000000
+#define DDR_BASEADDR     0x9E940000
+#define DDR_SIZE         0x40000
 #define OFFSET_DDR       0x00001000
 #define OFFSET_SHAREDRAM 2048
 
@@ -45,26 +47,13 @@
 #define ADDEND2          0x43214321u
 #define ADDEND3          0x98765432u
 
-static int nFDMem;
 static unsigned int *pMEMDDR;
 
 static int
 __init_registers (void) {
   unsigned int *pDDR1, *pDDR2, *pDDR3;
 
-  nFDMem = open ("/dev/mem", O_RDWR);
-  if (nFDMem < 0) {
-    fprintf(stderr, "cannot open /dev/mem (%s)\n", strerror(errno));
-    return -1;
-  }
-
-  pMEMDDR = mmap(0, 0x0FFFFFFF, PROT_WRITE | PROT_READ, MAP_SHARED, nFDMem, DDR_BASEADDR);
-  if (pMEMDDR == NULL) {
-    fprintf(stderr, "cannot map the device (%s)\n", strerror(errno));
-    close(nFDMem);
-    return -1;
-  }
-
+  prussdrv_map_extmem((void **)(&pMEMDDR));
 
   pDDR1 = (void *)pMEMDDR + OFFSET_DDR;
   pDDR2 = (void *)pMEMDDR + OFFSET_DDR + 0x00000004;
