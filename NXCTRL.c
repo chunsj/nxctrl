@@ -629,7 +629,7 @@ NXCTRLAnalogRead (NXCTRL_AIN nAIN) {
 
 #define PWM_MODULE_FREQ      (100000000)
 #define PWM_TBCLK            (10000000)
-#define HALF_FREQ_HZ         (500)
+#define HALF_FREQ_HZ         (1000)
 #define FREQ_HZ              (2*HALF_FREQ_HZ)
 
 static inline NXCTRL_VOID
