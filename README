@@ -1,0 +1,17 @@
+NXCTRL - BeagleBone Black Control Library
+==========
+
+I created this library because I do want to learn how to use
+mmap and /dev/mem for controlling BBB pins and subsystems. So
+there might be tons of bugs and non-recommented way of modifying
+system. Use with caution.
+
+NOTE that if you're using linux kernel 3.13.x like me you have
+to unload or block default tscadc driver, otherwise, this code
+will surely create stack trace of kernel.
+
+For kernel 3.13.x (which is I'm using now), you might need to
+modify default am335x-boneblack.dts file as included one. Main
+differences from default one is that I have removed pwm_test
+related pin configuration for this library supposed to do it
+without help of device tree (by directly modifying registers).
