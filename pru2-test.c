@@ -32,14 +32,13 @@
 #define PRU_NUM    PRU0 // use PRU_0
 #define PRU_PATH   "./pru2-test.bin"
 
-#define LED_PIN    NXCTRL_PIN12
-
 NXCTRL_VOID
 NXCTRLSetup (NXCTRL_VOID) {
   int nRet;
   tpruss_intc_initdata intc = PRUSS_INTC_INITDATA;
-  
-  NXCTRLPinMode(NXCTRL_P8, LED_PIN, NXCTRL_OUTPUT);
+
+  // pr1_pru0_pru_r30_14
+  NXCTRLPinMux(NXCTRL_P8, NXCTRL_PIN12, NXCTRL_MODE6, NXCTRL_PULLDN, NXCTRL_LOW);
 
   // initialize PRU
   if ((nRet = prussdrv_init())) {
