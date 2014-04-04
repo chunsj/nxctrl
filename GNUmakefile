@@ -16,8 +16,12 @@ EXE04-BIN=pru-test.bin
 SRC04-PRU=pru-test.p
 EXE05=spi-test
 SRC05=spi-test.c NXCTRL.c
+EXE06=pru2-test
+SRC06=pru2-test.c NXCTRL.c
+EXE06-BIN=pru2-test.bin
+SRC06-PRU=pru2-test.p
 
-ARTIFACTS=$(EXE01) $(EXE02) $(EXE03) $(EXE04) $(EXE04-BIN) $(EXE05)
+ARTIFACTS=$(EXE01) $(EXE02) $(EXE03) $(EXE04) $(EXE04-BIN) $(EXE05) $(EXE06) $(EXE06-BIN)
 
 all: $(ARTIFACTS)
 
@@ -38,6 +42,12 @@ $(EXE04-BIN): $(SRC04-PRU)
 
 $(EXE05): $(SRC05)
 	$(CC) $(CFLAGS) -o $@ $^ $(LDFLAGS) $(LIBS)
+
+$(EXE06): $(SRC06)
+	$(CC) $(CFLAGS) -o $@ $^ $(LDFLAGS) $(LIBS) $(PRU_LIBS)
+
+$(EXE06-BIN): $(SRC06-PRU)
+	pasm -b $^
 
 clean:
 	rm -rf $(ARTIFACTS)
