@@ -672,6 +672,44 @@ __NXCTRLComputeTBCLK (NXCTRL_UINT32 nTBCLK,
 #define PWMCHA         (0)
 #define PWMCHB         (1)
 
+#define SETUP_PWMSS(n) \
+  SET_EPWMSS## n ## _TBCTL_CLKDIV(nCLKDIV);             \
+  SET_EPWMSS## n ## _TBCTL_HSPCLKDIV(nHSPCLKDIV);       \
+  SET_EPWMSS## n ## _TBCTL_CTRMODE(0x0);                \
+  SET_EPWMSS## n ## _TBPRD(nPRDCNT);                    \
+  ENABLE_EPWMSS## n ## _CMPCTL_SHDWAMODE(NXCTRL_OFF);   \
+  SET_EPWMSS## n ## _CMPCTRL_LOADAMODE(0x3);            \
+  SET_EPWMSS## n ## _CMPA(nDCNT);                       \
+  ENABLE_EPWMSS## n ## _CMPCTL_SHDWBMODE(NXCTRL_OFF);   \
+  SET_EPWMSS## n ## _CMPCTRL_LOADBMODE(0x3);            \
+  SET_EPWMSS## n ## _CMPB(nDCNT)
+
+#define SETUP_AQA(n)                                                    \
+  if (nValue == 0) {                                                    \
+    SET_EPWMSS## n ## _AQCTLA(0x1,0x1,0x1,0x1,0x1,0x1);                 \
+    SET_EPWMSS## n ## _AQSFRC_ACTSFA(0x1);                              \
+  } else if (nValue == PWM_RESOLUTION) {                                \
+    SET_EPWMSS## n ## _AQCTLA(0x2,0x2,0x2,0x2,0x2,0x2);                 \
+    SET_EPWMSS## n ## _AQSFRC_ACTSFA(0x2);                              \
+  } else {                                                              \
+    SET_EPWMSS## n ## _AQCTLA(0x2,0x0,0x1,0x0,0x0,0x0);                 \
+    SET_EPWMSS## n ## _AQSFRC_ACTSFA(0x0);                              \
+  }                                                                     \
+  break
+
+#define SETUP_AQB(n)                                                    \
+  if (nValue == 0) {                                                    \
+    SET_EPWMSS## n ## _AQCTLB(0x1,0x1,0x1,0x1,0x1,0x1);                 \
+    SET_EPWMSS## n ## _AQSFRC_ACTSFB(0x1);                              \
+  } else if (nValue == PWM_RESOLUTION) {                                \
+    SET_EPWMSS## n ## _AQCTLB(0x2,0x2,0x2,0x2,0x2,0x2);                 \
+    SET_EPWMSS## n ## _AQSFRC_ACTSFB(0x2);                              \
+  } else {                                                              \
+    SET_EPWMSS## n ## _AQCTLB(0x2,0x0,0x1,0x0,0x0,0x0);                 \
+    SET_EPWMSS## n ## _AQSFRC_ACTSFB(0x0);                              \
+  }                                                                     \
+  break
+
 NXCTRL_VOID
 __NXCTRLSetUpPWMSS (int nPWMSS, int nChannel,
                     NXCTRL_UINT32 nCLKDIV,
@@ -681,117 +719,30 @@ __NXCTRLSetUpPWMSS (int nPWMSS, int nChannel,
                     NXCTRL_UINT32 nValue) {
   switch (nPWMSS) {
   case PWMSS0:
-    SET_EPWMSS0_TBCTL_CLKDIV(nCLKDIV);
-    SET_EPWMSS0_TBCTL_HSPCLKDIV(nHSPCLKDIV);
-    SET_EPWMSS0_TBCTL_CTRMODE(0x0);
-    SET_EPWMSS0_TBPRD(nPRDCNT);
-    ENABLE_EPWMSS0_CMPCTL_SHDWAMODE(NXCTRL_OFF);
-    SET_EPWMSS0_CMPCTRL_LOADAMODE(0x3);
-    SET_EPWMSS0_CMPA(nDCNT);
-    ENABLE_EPWMSS0_CMPCTL_SHDWBMODE(NXCTRL_OFF);
-    SET_EPWMSS0_CMPCTRL_LOADBMODE(0x3);
-    SET_EPWMSS0_CMPB(nDCNT);
+    SETUP_PWMSS(0);
     switch (nChannel) {
     case PWMCHA:
-      if (nValue == 0) {
-        SET_EPWMSS0_AQCTLA(0x1,0x1,0x1,0x1,0x1,0x1);
-        SET_EPWMSS0_AQSFRC_ACTSFA(0x1);
-      } else if (nValue == PWM_RESOLUTION) {
-        SET_EPWMSS0_AQCTLA(0x2,0x2,0x2,0x2,0x2,0x2);
-        SET_EPWMSS0_AQSFRC_ACTSFA(0x2);
-      } else {
-        SET_EPWMSS0_AQCTLA(0x2,0x0,0x1,0x0,0x0,0x0);
-        SET_EPWMSS0_AQSFRC_ACTSFA(0x0);
-      }
-      break;
+      SETUP_AQA(0);
     case PWMCHB:
-      if (nValue == 0) {
-        SET_EPWMSS0_AQCTLB(0x1,0x1,0x1,0x1,0x1,0x1);
-        SET_EPWMSS0_AQSFRC_ACTSFB(0x1);
-      } else if (nValue == PWM_RESOLUTION) {
-        SET_EPWMSS0_AQCTLB(0x2,0x2,0x2,0x2,0x2,0x2);
-        SET_EPWMSS0_AQSFRC_ACTSFB(0x2);
-      } else {
-        SET_EPWMSS0_AQCTLB(0x2,0x0,0x1,0x0,0x0,0x0);
-        SET_EPWMSS0_AQSFRC_ACTSFB(0x0);
-      }
-      break;
+      SETUP_AQB(0);
     }
     break;
   case PWMSS1:
-    SET_EPWMSS1_TBCTL_CLKDIV(nCLKDIV);
-    SET_EPWMSS1_TBCTL_HSPCLKDIV(nHSPCLKDIV);
-    SET_EPWMSS1_TBCTL_CTRMODE(0x0);
-    SET_EPWMSS1_TBPRD(nPRDCNT);
-    ENABLE_EPWMSS1_CMPCTL_SHDWAMODE(NXCTRL_OFF);
-    SET_EPWMSS1_CMPCTRL_LOADAMODE(0x3);
-    SET_EPWMSS1_CMPA(nDCNT);
-    ENABLE_EPWMSS1_CMPCTL_SHDWBMODE(NXCTRL_OFF);
-    SET_EPWMSS1_CMPCTRL_LOADBMODE(0x3);
-    SET_EPWMSS1_CMPB(nDCNT);
+    SETUP_PWMSS(1);
     switch (nChannel) {
     case PWMCHA:
-      if (nValue == 0) {
-        SET_EPWMSS1_AQCTLA(0x1,0x1,0x1,0x1,0x1,0x1);
-        SET_EPWMSS1_AQSFRC_ACTSFA(0x1);
-      } else if (nValue == PWM_RESOLUTION) {
-        SET_EPWMSS1_AQCTLA(0x2,0x2,0x2,0x2,0x2,0x2);
-        SET_EPWMSS1_AQSFRC_ACTSFA(0x2);
-      } else {
-        SET_EPWMSS1_AQCTLA(0x2,0x0,0x1,0x0,0x0,0x0);
-        SET_EPWMSS1_AQSFRC_ACTSFA(0x0);
-      }
-      break;
+      SETUP_AQA(1);
     case PWMCHB:
-      if (nValue == 0) {
-        SET_EPWMSS1_AQCTLB(0x1,0x1,0x1,0x1,0x1,0x1);
-        SET_EPWMSS1_AQSFRC_ACTSFB(0x1);
-      } else if (nValue == PWM_RESOLUTION) {
-        SET_EPWMSS1_AQCTLB(0x2,0x2,0x2,0x2,0x2,0x2);
-        SET_EPWMSS1_AQSFRC_ACTSFB(0x2);
-      } else {
-        SET_EPWMSS1_AQCTLB(0x2,0x0,0x1,0x0,0x0,0x0);
-        SET_EPWMSS1_AQSFRC_ACTSFB(0x0);
-      }
-      break;
+      SETUP_AQB(1);
     }
     break;
   case PWMSS2:
-    SET_EPWMSS2_TBCTL_CLKDIV(nCLKDIV);
-    SET_EPWMSS2_TBCTL_HSPCLKDIV(nHSPCLKDIV);
-    SET_EPWMSS2_TBCTL_CTRMODE(0x0);
-    SET_EPWMSS2_TBPRD(nPRDCNT);
-    ENABLE_EPWMSS2_CMPCTL_SHDWAMODE(NXCTRL_OFF);
-    SET_EPWMSS2_CMPCTRL_LOADAMODE(0x3);
-    SET_EPWMSS2_CMPA(nDCNT);
-    ENABLE_EPWMSS2_CMPCTL_SHDWBMODE(NXCTRL_OFF);
-    SET_EPWMSS2_CMPCTRL_LOADBMODE(0x3);
-    SET_EPWMSS2_CMPB(nDCNT);
+    SETUP_PWMSS(2);
     switch (nChannel) {
     case PWMCHA:
-      if (nValue == 0) {
-        SET_EPWMSS2_AQCTLA(0x1,0x1,0x1,0x1,0x1,0x1);
-        SET_EPWMSS2_AQSFRC_ACTSFA(0x1);
-      } else if (nValue == PWM_RESOLUTION) {
-        SET_EPWMSS2_AQCTLA(0x2,0x2,0x2,0x2,0x2,0x2);
-        SET_EPWMSS2_AQSFRC_ACTSFA(0x2);
-      } else {
-        SET_EPWMSS2_AQCTLA(0x2,0x0,0x1,0x0,0x0,0x0);
-        SET_EPWMSS2_AQSFRC_ACTSFA(0x0);
-      }
-      break;
+      SETUP_AQA(2);
     case PWMCHB:
-      if (nValue == 0) {
-        SET_EPWMSS2_AQCTLB(0x1,0x1,0x1,0x1,0x1,0x1);
-        SET_EPWMSS2_AQSFRC_ACTSFB(0x1);
-      } else if (nValue == PWM_RESOLUTION) {
-        SET_EPWMSS2_AQCTLB(0x2,0x2,0x2,0x2,0x2,0x2);
-        SET_EPWMSS2_AQSFRC_ACTSFB(0x2);
-      } else {
-        SET_EPWMSS2_AQCTLB(0x2,0x0,0x1,0x0,0x0,0x0);
-        SET_EPWMSS2_AQSFRC_ACTSFB(0x0);
-      }
-      break;
+      SETUP_AQB(2);
     }
     break;
   }
