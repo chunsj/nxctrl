@@ -748,22 +748,38 @@ __NXCTRLSetUpPWMSS (int nPWMSS, int nChannel,
   }
 }
 
+#define GET_CHANNEL(n) (((n) & BIT5 & ~(BIT0|BIT2|BIT3|BIT4)) >> 5)
+#define GET_PWMSS(n)   (((n) & (BIT3|BIT4) & ~(BIT0|BIT1|BIT2|BIT5)) >> 3)
+
 NXCTRL_VOID
-NXCTRLAnalogWrite (NXCTRL_BANK nBank, NXCTRL_PIN nPin,
-                   NXCTRL_UINT32 nValue) {
+NXCTRLAnalogWriteEx (NXCTRL_BANK nBank, NXCTRL_PIN nPin,
+                     NXCTRL_UINT32 nValue,
+                     NXCTRL_UINT32 nFREQHZ, NXCTRL_UINT32 nRESOLUTION,
+                     NXCTRL_BOOL bLog) {
   int nPWMInfo = GET_PWM(nBank, nPin);
-  int nChannel = (nPWMInfo & BIT5 & ~(BIT0|BIT2|BIT3|BIT4)) >> 5;
-  int nSS = (nPWMInfo & (BIT3|BIT4) & ~(BIT0|BIT1|BIT2|BIT5)) >> 3;
-  NXCTRL_UINT32 nCLKDIV, nHSPCLKDIV, nPRDCNT = PWM_TBCLK/FREQ_HZ;
-  NXCTRL_UINT32 nDCNT = (nValue * nPRDCNT) / PWM_RESOLUTION;
+  int nChannel = GET_CHANNEL(nPWMInfo);
+  int nSS = GET_PWMSS(nPWMInfo);
+  NXCTRL_UINT32 nCLKDIV, nHSPCLKDIV, nPRDCNT = PWM_TBCLK/nFREQHZ;
+  NXCTRL_UINT32 nDCNT = (nValue * nPRDCNT) / nRESOLUTION;
 
   if (nPWMInfo < 0) {
-    fprintf(stderr, "NXCTRLAnalogWrite: invalid pwm pin\n");
+    fprintf(stderr, "NXCTRLAnalogWriteEx: invalid pwm pin\n");
     return;
   }
+
+  if (bLog)
+    printf("FREQ/RES: %d/%d, PRDCNT: %d, DCND: %d\n",
+           nFREQHZ, nRESOLUTION, nPRDCNT, nDCNT);
 
   __NXCTRLComputeTBCLK(PWM_TBCLK, &nCLKDIV, &nHSPCLKDIV);
   __NXCTRLSetUpPWMSS (nSS, nChannel, nCLKDIV, nHSPCLKDIV,
                       nPRDCNT, nDCNT, nValue);
 }
 
+NXCTRL_VOID
+NXCTRLAnalogWrite (NXCTRL_BANK nBank, NXCTRL_PIN nPin,
+                   NXCTRL_UINT32 nValue) {
+  NXCTRLAnalogWriteEx(nBank, nPin, nValue,
+                      FREQ_HZ, PWM_RESOLUTION,
+                      NXCTRL_FALSE);
+}

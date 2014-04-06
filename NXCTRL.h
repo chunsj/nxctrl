@@ -68,4 +68,9 @@ NXCTRL_VOID          NXCTRLTSCADCClose (NXCTRL_VOID);
 NXCTRL_BOOL          NXCTRLPWMSSOpen (NXCTRL_VOID);
 NXCTRL_VOID          NXCTRLPWMSSClose (NXCTRL_VOID);
 
+NXCTRL_VOID          NXCTRLAnalogWriteEx (NXCTRL_BANK nBank, NXCTRL_PIN nPin,
+                                          NXCTRL_UINT32 nValue,
+                                          NXCTRL_UINT32 nFREQHZ, NXCTRL_UINT32 nRESOLUTION,
+                                          NXCTRL_BOOL nLog);
+
 #endif /* __NXCTRL_HEADER__ */
