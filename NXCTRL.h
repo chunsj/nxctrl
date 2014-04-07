@@ -56,6 +56,9 @@ NXCTRL_UINT32        NXCTRLAnalogRead (NXCTRL_AIN nAIN);
 NXCTRL_VOID          NXCTRLAnalogWrite (NXCTRL_BANK nBank, NXCTRL_PIN nPin,
                                         NXCTRL_UINT32 nValue);
 
+NXCTRL_VOID          NXCTRLServoWrite (NXCTRL_BANK nBank, NXCTRL_PIN nPin,
+                                       NXCTRL_UINT32 nDegree);
+
 //
 // Library Functions
 //
@@ -70,6 +73,7 @@ NXCTRL_VOID          NXCTRLPWMSSClose (NXCTRL_VOID);
 
 NXCTRL_VOID          NXCTRLAnalogWriteEx (NXCTRL_BANK nBank, NXCTRL_PIN nPin,
                                           NXCTRL_UINT32 nValue,
+                                          NXCTRL_UINT32 nPWMDiv,
                                           NXCTRL_UINT32 nFREQHZ, NXCTRL_UINT32 nRESOLUTION,
                                           NXCTRL_BOOL nLog);
 

@@ -31,24 +31,26 @@
 
 void
 NXCTRLSetup (void) {
-  //int i;
+  int i;
   NXCTRLPinMux(SERVO_BANK, SERVO_PIN, SERVO_PMX, NXCTRL_PULLDN, NXCTRL_LOW);
-#if 0
-  for (i = 3; i < 15; i++) {
-    NXCTRLAnalogWrite(SERVO_BANK, SERVO_PIN, i*10);
-    NXCTRLSleep(200, 0);
+  
+  for (i = 0; i <= 180; i += 5) {
+    NXCTRLServoWrite(SERVO_BANK, SERVO_PIN, i);
+    NXCTRLSleep(500, 0);
   }
-#endif
-  NXCTRLAnalogWriteEx(SERVO_BANK, SERVO_PIN,
-                      15,
-                      50, 1000, NXCTRL_ON);
-  NXCTRLSleep(1000, 0);
-  //NXCTRLAnalogWrite(SERVO_BANK, SERVO_PIN, 0);
-  //NXCTRLSleep(100, 0);
+
+  NXCTRLServoWrite(SERVO_BANK, SERVO_PIN, 0);
+  NXCTRLSleep(500, 0);
+  NXCTRLServoWrite(SERVO_BANK, SERVO_PIN, 180);
+  NXCTRLSleep(500, 0);
+  NXCTRLServoWrite(SERVO_BANK, SERVO_PIN, 90);
+  NXCTRLSleep(500, 0);
 }
 
 void
 NXCTRLLoop (void) {
+  NXCTRLAnalogWrite(SERVO_BANK, SERVO_PIN, 0);
+  NXCTRLSleep(100, 0);
   NXCTRLExitLoop();
 }
 

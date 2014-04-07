@@ -628,7 +628,6 @@ NXCTRLAnalogRead (NXCTRL_AIN nAIN) {
 #define GET_PWM(nBank, nPin) __rpnPWMs[(nBank)][((nPin) - 1)]
 
 #define PWM_MODULE_FREQ      (100000000)
-#define PWM_TBCLK            (10000000)
 #define HALF_FREQ_HZ         (1000)
 #define FREQ_HZ              (2*HALF_FREQ_HZ)
 
@@ -754,12 +753,14 @@ __NXCTRLSetUpPWMSS (int nPWMSS, int nChannel,
 NXCTRL_VOID
 NXCTRLAnalogWriteEx (NXCTRL_BANK nBank, NXCTRL_PIN nPin,
                      NXCTRL_UINT32 nValue,
+                     NXCTRL_UINT32 nPWMDiv,
                      NXCTRL_UINT32 nFREQHZ, NXCTRL_UINT32 nRESOLUTION,
                      NXCTRL_BOOL bLog) {
   int nPWMInfo = GET_PWM(nBank, nPin);
   int nChannel = GET_CHANNEL(nPWMInfo);
   int nSS = GET_PWMSS(nPWMInfo);
-  NXCTRL_UINT32 nCLKDIV, nHSPCLKDIV, nPRDCNT = PWM_TBCLK/nFREQHZ;
+  NXCTRL_UINT32 nPWM_TBCLK = PWM_MODULE_FREQ/nPWMDiv;
+  NXCTRL_UINT32 nCLKDIV, nHSPCLKDIV, nPRDCNT = nPWM_TBCLK/nFREQHZ;
   NXCTRL_UINT32 nDCNT = (nValue * nPRDCNT) / nRESOLUTION;
 
   if (nPWMInfo < 0) {
@@ -771,7 +772,7 @@ NXCTRLAnalogWriteEx (NXCTRL_BANK nBank, NXCTRL_PIN nPin,
     printf("FREQ/RES: %d/%d, PRDCNT: %d, DCND: %d\n",
            nFREQHZ, nRESOLUTION, nPRDCNT, nDCNT);
 
-  __NXCTRLComputeTBCLK(PWM_TBCLK, &nCLKDIV, &nHSPCLKDIV);
+  __NXCTRLComputeTBCLK(nPWM_TBCLK, &nCLKDIV, &nHSPCLKDIV);
   __NXCTRLSetUpPWMSS (nSS, nChannel, nCLKDIV, nHSPCLKDIV,
                       nPRDCNT, nDCNT, nValue);
 }
@@ -780,6 +781,25 @@ NXCTRL_VOID
 NXCTRLAnalogWrite (NXCTRL_BANK nBank, NXCTRL_PIN nPin,
                    NXCTRL_UINT32 nValue) {
   NXCTRLAnalogWriteEx(nBank, nPin, nValue,
+                      10,
                       FREQ_HZ, PWM_RESOLUTION,
                       NXCTRL_FALSE);
+}
+
+#define SERVO_FREQ    (50)
+#define SERVO_PWMDIV  (448)
+#define SERVO_RES     (2000)
+
+// XXX is this right?
+#define SERVO_MINV    (50)
+#define SERVO_MAXV    (230)
+
+NXCTRL_VOID
+NXCTRLServoWrite (NXCTRL_BANK nBank, NXCTRL_PIN nPin,
+                  NXCTRL_UINT32 nDegree) {
+  NXCTRL_UINT32 nValue = nDegree + 50;
+  NXCTRLAnalogWriteEx(nBank, nPin,
+                      nValue,
+                      SERVO_PWMDIV,
+                      SERVO_FREQ, SERVO_RES, NXCTRL_OFF);
 }
