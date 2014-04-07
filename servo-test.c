@@ -34,17 +34,20 @@ NXCTRLSetup (void) {
   int i;
   NXCTRLPinMux(SERVO_BANK, SERVO_PIN, SERVO_PMX, NXCTRL_PULLDN, NXCTRL_LOW);
   
+  NXCTRLServoWrite(SERVO_BANK, SERVO_PIN, 0);
+  NXCTRLSleep(500, 0);
+
   for (i = 0; i <= 180; i += 5) {
     NXCTRLServoWrite(SERVO_BANK, SERVO_PIN, i);
-    NXCTRLSleep(500, 0);
+    NXCTRLSleep(100, 0);
   }
 
   NXCTRLServoWrite(SERVO_BANK, SERVO_PIN, 0);
-  NXCTRLSleep(500, 0);
+  NXCTRLSleep(800, 0);
   NXCTRLServoWrite(SERVO_BANK, SERVO_PIN, 180);
-  NXCTRLSleep(500, 0);
-  NXCTRLServoWrite(SERVO_BANK, SERVO_PIN, 90);
-  NXCTRLSleep(500, 0);
+  NXCTRLSleep(800, 0);
+  NXCTRLServoWrite(SERVO_BANK, SERVO_PIN, 82);
+  NXCTRLSleep(800, 0);
 }
 
 void
