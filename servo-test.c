@@ -37,9 +37,9 @@ NXCTRLSetup (void) {
   NXCTRLServoWrite(SERVO_BANK, SERVO_PIN, 0);
   NXCTRLSleep(500, 0);
 
-  for (i = 0; i <= 180; i += 5) {
+  for (i = 0; i <= 180; i += 2) {
     NXCTRLServoWrite(SERVO_BANK, SERVO_PIN, i);
-    NXCTRLSleep(100, 0);
+    NXCTRLSleep(20, 0);
   }
 
   NXCTRLServoWrite(SERVO_BANK, SERVO_PIN, 0);
@@ -53,7 +53,7 @@ NXCTRLSetup (void) {
 void
 NXCTRLLoop (void) {
   NXCTRLAnalogWrite(SERVO_BANK, SERVO_PIN, 0);
-  NXCTRLSleep(100, 0);
+  NXCTRLSleep(500, 0);
   NXCTRLExitLoop();
 }
 
