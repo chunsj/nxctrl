@@ -26,15 +26,31 @@
 #include <NXCTRL.h>
 
 #define PWM_BANK NXCTRL_P9
-#define PWM_PIN  NXCTRL_PIN14
+#define PWM_PIN  NXCTRL_PIN14 // connect to LED for pulsing
 #define PWM_PMX  NXCTRL_MODE6
+
+#define PWM_RES   (1000)
+#define PULSE_CNT (10)
+#define PULSE_RES (10)
+#define PULSE_TM  (80)
 
 void
 NXCTRLSetup (void) {
+  int i, j;
+  int nDelta = PWM_RES / PULSE_RES;
   NXCTRLPinMux(PWM_BANK, PWM_PIN, PWM_PMX, NXCTRL_PULLDN, NXCTRL_LOW);
+
   // 200 means 20% as 1000 is total
-  NXCTRLAnalogWrite(PWM_BANK, PWM_PIN, 200);
-  NXCTRLSleep(5000, 0);
+  for (j = 0; j < PULSE_CNT; j++) {
+    for (i = 0; i < PULSE_RES; i++) {
+      NXCTRLAnalogWrite(PWM_BANK, PWM_PIN, nDelta*(i+1));
+      NXCTRLSleep(PULSE_TM, 0);
+    }
+    for (i = 0; i < PULSE_RES; i++) {
+      NXCTRLAnalogWrite(PWM_BANK, PWM_PIN, PWM_RES - nDelta*(i+1));
+      NXCTRLSleep(PULSE_TM, 0);
+    }
+  }
   NXCTRLAnalogWrite(PWM_BANK, PWM_PIN, 0);
   NXCTRLSleep(100, 0);
 }
