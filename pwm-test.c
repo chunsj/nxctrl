@@ -32,6 +32,7 @@
 void
 NXCTRLSetup (void) {
   NXCTRLPinMux(PWM_BANK, PWM_PIN, PWM_PMX, NXCTRL_PULLDN, NXCTRL_LOW);
+  // 200 means 20% as 1000 is total
   NXCTRLAnalogWrite(PWM_BANK, PWM_PIN, 200);
   NXCTRLSleep(5000, 0);
   NXCTRLAnalogWrite(PWM_BANK, PWM_PIN, 0);
