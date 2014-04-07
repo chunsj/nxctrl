@@ -1,4 +1,5 @@
 CC=gcc
+#CFLAGS=-Wall -O3 -march=armv7-a -mtune=cortex-a8 -mfloat-abi=hard -mfpu=neon -ffast-math -fgnu89-inline -std=c99 -I.
 CFLAGS=-Wall -Os -fgnu89-inline -std=c99 -I.
 LDFLAGS=
 LIBS=
