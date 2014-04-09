@@ -31,9 +31,13 @@ EXE08-BIN=sl0-test.bin
 SRC08-PRU=sl0-test.p
 EXE09=servo-test
 SRC09=servo-test.c NXCTRL.c
+EXE10=adcpru-test
+SRC10=adcpru-test.c NXCTRL.c
+EXE10-BIN=adcpru-test.bin
+SRC10-PRU=adcpru-test.p
 
 ARTIFACTS=$(EXE01) $(EXE02) $(EXE03) $(EXE04) $(EXE04-BIN) $(EXE05) $(EXE06) $(EXE06-BIN) \
-	$(EXE07) $(EXE07-BIN) $(EXE08) $(EXE08-BIN) $(EXE09)
+	$(EXE07) $(EXE07-BIN) $(EXE08) $(EXE08-BIN) $(EXE09) $(EXE10) $(EXE10-BIN)
 
 all: $(ARTIFACTS)
 
@@ -75,6 +79,12 @@ $(EXE08-BIN): $(SRC08-PRU)
 
 $(EXE09): $(SRC09)
 	$(CC) $(CFLAGS) -o $@ $^ $(LDFLAGS) $(LIBS)
+
+$(EXE10): $(SRC10)
+	$(CC) $(CFLAGS) -o $@ $^ $(LDFLAGS) $(LIBS) $(PRU_LIBS)
+
+$(EXE10-BIN): $(SRC10-PRU)
+	pasm -b $^
 
 clean:
 	rm -rf $(ARTIFACTS)
