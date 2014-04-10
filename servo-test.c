@@ -1,7 +1,7 @@
 /*
  * NXCTRL BeagleBone Black Control Library
  *
- * Servo Control Test Program - not working yet
+ * Servo Control Test Program
  *
  * Copyright (C) 2014 Sungjin Chun <chunsj@gmail.com>
  *
