@@ -1,1 +1,0 @@
-cmd_/home/chunsj/workspace/nxctrl/nxpmx/nxpmx.ko := ld -EL -r  -T /usr/lib/modules/3.14.0-2-ARCH/build/scripts/module-common.lds --build-id  -o /home/chunsj/workspace/nxctrl/nxpmx/nxpmx.ko /home/chunsj/workspace/nxctrl/nxpmx/nxpmx.o /home/chunsj/workspace/nxctrl/nxpmx/nxpmx.mod.o
