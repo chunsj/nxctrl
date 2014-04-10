@@ -10,8 +10,11 @@ NOTE that if you're using linux kernel 3.13.x like me you have
 to unload or block default tscadc driver, otherwise, this code
 will surely create stack trace of kernel.
 
-For kernel 3.13.x (which is I'm using now), you might need to
-modify default am335x-boneblack.dts file as included one. Main
-differences from default one is that I have removed pwm_test
+For kernel 3.13.x and 3.14.x (which is I'm using now), you might 
+need to modify default am335x-boneblack.dts file as included one. 
+Main differences from default one is that I have removed pwm_test
 related pin configuration for this library supposed to do it
 without help of device tree (by directly modifying registers).
+
+For 3.14.x kernel(currently 3.14.0 in arch linux), pruss cannot
+be access by prussdrv.
