@@ -18,3 +18,37 @@ without help of device tree (by directly modifying registers).
 
 For 3.14.x kernel(currently 3.14.0 in arch linux), pruss cannot
 be access by prussdrv.
+
+HOW TO USE (ArchLinuxARM and 3.8.13 kernel)
+==========
+
+1. Install basic development tools (base-devel)
+   pacman -S base-devel git
+
+2. Fetch nxctrl source code from git
+   git clone https://github.com/chunsj/nxctrl.git
+
+3. Back up original am335x-boneblack.dtb
+   cp /boot/dtbs/am335x-boneblack.dtb $HOME/am335x-boneblack.dtb.original
+
+4. Build new (pruss enabled) am335x-boneblack.dtb. You may need to install dtc.
+   pacman -S dtc-overlay # if you do not have dtc installed
+   dtc -I dts -O dtb am335x-boneblack-3.8.13.dts -o am335x-boneblack.dtb
+   cp am335x-boneblack.dtb /boot/dtbs/
+
+5. Build gpio pinmux utility kernel module
+   cd nxpmx && make
+   cp nxpmx.ko /lib/modules/extramodules-3.8--am33x-legacy
+   depmod -a
+
+6. Reboot
+
+7. Load required modules: uio_pruss and nxpmx
+   modprobe uio_pruss
+   modprobe nxpmx
+
+8. cd to nxctrl source directory and build it
+   cd nxctrl
+   make
+
+9. Run example codes and find bugs and fix them :-)
