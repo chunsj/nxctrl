@@ -38,6 +38,8 @@
 #define PRU_NUM    PRU0 // use PRU_0
 #define PRU_PATH   "./adcpru-test.bin"
 
+#define DDR_BASEADDR           0x80000000
+#define OFFSET_DDR             0x00001000
 #define OFFSET_SHAREDRAM       2048
 
 NXCTRL_VOID
@@ -45,6 +47,9 @@ NXCTRLSetup (NXCTRL_VOID) {
   int nRet;
   void *pSharedMem;
   unsigned int *pnSharedMem;
+  void *pDDRMem;
+  unsigned int *pnDDRMem;
+  int nMem;
   tpruss_intc_initdata intc = PRUSS_INTC_INITDATA;
   
   // initialize PRU
@@ -65,13 +70,22 @@ NXCTRLSetup (NXCTRL_VOID) {
     exit(nRet);
   }
 
-  // locate PRU shared RAM
-  if ((nRet = prussdrv_map_prumem(PRUSS0_SHARED_DATARAM, &pSharedMem))) {
-    fprintf(stderr, "prussdrv_map_prumem() failed\n");
-    exit(nRet);
+  // initialize DDR memory
+  nMem = open("/dev/mem", O_RDWR);
+  if (nMem < 0) {
+    fprintf(stderr, "failed to open /dev/mem: %s\n", strerror(errno));
+    return;
   }
 
-  pnSharedMem = (unsigned int *)pSharedMem;
+  pDDRMem = mmap(0, 0x0FFFFFFF, PROT_WRITE|PROT_READ, MAP_SHARED, nMem, DDR_BASEADDR);
+  if (!pDDRMem) {
+    fprintf(stderr, "failed to map the device: %s\n", strerror(errno));
+    close(nMem);
+    return;
+  }
+
+  pnDDRMem = pDDRMem + OFFSET_DDR;
+  *(unsigned int *)pnDDRMem = 0x1234;
 
   // load and run the PRU program
   if ((nRet = prussdrv_exec_program(PRU_NUM, PRU_PATH))) {
@@ -84,11 +98,19 @@ NXCTRLSetup (NXCTRL_VOID) {
   nRet = prussdrv_pru_wait_event(PRU_EVTOUT_0);
   printf("PRU program completed with: %d\n", nRet);
 
-  printINT32(pnSharedMem[0]);
-
   // clear the event
   if (prussdrv_pru_clear_event(PRU_EVTOUT_0, PRU0_ARM_INTERRUPT))
     fprintf(stderr, "prussdrv_pru_clear_event() failed\n");
+
+  // locate PRU shared RAM
+  if ((nRet = prussdrv_map_prumem(PRUSS0_SHARED_DATARAM, &pSharedMem))) {
+    fprintf(stderr, "prussdrv_map_prumem() failed\n");
+    exit(nRet);
+  }
+
+  pnSharedMem = (unsigned int *)pSharedMem + OFFSET_SHAREDRAM;
+  printf("0x%08x ", pnSharedMem[0]);
+  printINT32(pnSharedMem[0]);
 
   // halt and disable the PRU
   if (prussdrv_pru_disable(PRU_NUM))

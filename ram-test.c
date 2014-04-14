@@ -37,9 +37,7 @@
 #define PRU_NUM    PRU0 // use PRU_0
 #define PRU_PATH   "./ram-test.bin"
 
-//#define DDR_BASEADDR     0x80000000
-#define DDR_BASEADDR     0x9E940000
-#define DDR_SIZE         0x40000
+#define DDR_BASEADDR     0x80000000
 #define OFFSET_DDR       0x00001000
 #define OFFSET_SHAREDRAM 2048
 
@@ -47,17 +45,29 @@
 #define ADDEND2          0x43214321u
 #define ADDEND3          0x98765432u
 
-static unsigned int *pMEMDDR;
+static int           nMEM;
+static void         *pMEMDDR;
 
 static int
 __init_registers (void) {
-  unsigned int *pDDR1, *pDDR2, *pDDR3;
+  void *pDDR1, *pDDR2, *pDDR3;
 
-  prussdrv_map_extmem((void **)(&pMEMDDR));
+  nMEM = open("/dev/mem", O_RDWR);
+  if (nMEM < 0) {
+    fprintf(stderr, "failed to open /dev/mem: %s\n", strerror(errno));
+    return -1;
+  }
 
-  pDDR1 = (void *)pMEMDDR + OFFSET_DDR;
-  pDDR2 = (void *)pMEMDDR + OFFSET_DDR + 0x00000004;
-  pDDR3 = (void *)pMEMDDR + OFFSET_DDR + 0x00000008;
+  pMEMDDR = mmap(0, 0x0FFFFFFF, PROT_WRITE|PROT_READ, MAP_SHARED, nMEM, DDR_BASEADDR);
+  if (!pMEMDDR) {
+    fprintf(stderr, "failed to map the device: %s\n", strerror(errno));
+    close(nMEM);
+    return -1;
+  }
+
+  pDDR1 = pMEMDDR + OFFSET_DDR;
+  pDDR2 = pMEMDDR + OFFSET_DDR + 0x00000004;
+  pDDR3 = pMEMDDR + OFFSET_DDR + 0x00000008;
 
   *(unsigned int *)pDDR1 = ADDEND1;
   *(unsigned int *)pDDR2 = ADDEND2;
@@ -127,9 +137,9 @@ NXCTRLSetup (NXCTRL_VOID) {
     fprintf(stderr, "prussdrv_pru_clear_event() failed\n");
 
   // check results
-  if ((nRet = __check_results())) {
+  if (!__check_results()) {
     fprintf(stderr, "__check_results() failed\n");
-    exit(nRet);
+    exit(1);
   }
 
   // halt and disable the PRU

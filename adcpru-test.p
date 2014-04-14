@@ -52,6 +52,13 @@ START:
         MOV     R1, CTPPR_0
         SBBO    R0, R1, 0, 1
 
+        // configure the programmable pointer register for PRU0 
+        // by setting c31_pointer[15:0] field to 0x0010. this will
+        // make C31 point to 0x80001000 (DDR memory).
+        MOV     R0, 0x00100000
+        MOV     R1, CTPPR_1
+        SBBO    R0, R1, 0, 1
+
         // disable ADC(for configuration) & make STEPCONFIG writable
         // store step id tag
         MOV     R0, TSC_ADC_SS_CTRL
@@ -84,11 +91,20 @@ START:
         MOV     R1, 0x00000002
         SBBO    R1, R0, 0, 4
 
+        MOV     R2, 100000000
+
 CHKIRQ:
         // check irq status for reading
         MOV     R0, TSC_ADC_SS_IRQSTATUS
         AND     R1, R0, 0x00000002
-        //QBNE    CHKIRQ, R1, 0x00000002
+        SUB     R2, R2, 1
+        QBEQ    EXIT, R2, 0
+        QBNE    CHKIRQ, R1, 0x00000002
+
+EXIT:
+        MOV     R0, TSC_ADC_SS_IRQSTATUS
+        LBBO    R0, R0, 0, 4
+        SBCO    R1, CONST_PRUSHAREDRAM, 0, 4
 
         // finish
         MOV     R31.B0, PRU0_ARM_INTERRUPT+16
