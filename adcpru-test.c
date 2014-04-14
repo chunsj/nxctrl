@@ -38,8 +38,6 @@
 #define PRU_NUM    PRU0 // use PRU_0
 #define PRU_PATH   "./adcpru-test.bin"
 
-#define DDR_BASEADDR           0x80000000
-#define OFFSET_DDR             0x00001000
 #define OFFSET_SHAREDRAM       2048
 
 NXCTRL_VOID
@@ -47,9 +45,6 @@ NXCTRLSetup (NXCTRL_VOID) {
   int nRet;
   void *pSharedMem;
   unsigned int *pnSharedMem;
-  void *pDDRMem;
-  unsigned int *pnDDRMem;
-  int nMem;
   tpruss_intc_initdata intc = PRUSS_INTC_INITDATA;
   
   // initialize PRU
@@ -69,23 +64,6 @@ NXCTRLSetup (NXCTRL_VOID) {
     fprintf(stderr, "prussdrv_pruintc_init() failed\n");
     exit(nRet);
   }
-
-  // initialize DDR memory
-  nMem = open("/dev/mem", O_RDWR);
-  if (nMem < 0) {
-    fprintf(stderr, "failed to open /dev/mem: %s\n", strerror(errno));
-    return;
-  }
-
-  pDDRMem = mmap(0, 0x0FFFFFFF, PROT_WRITE|PROT_READ, MAP_SHARED, nMem, DDR_BASEADDR);
-  if (!pDDRMem) {
-    fprintf(stderr, "failed to map the device: %s\n", strerror(errno));
-    close(nMem);
-    return;
-  }
-
-  pnDDRMem = pDDRMem + OFFSET_DDR;
-  *(unsigned int *)pnDDRMem = 0x1234;
 
   // load and run the PRU program
   if ((nRet = prussdrv_exec_program(PRU_NUM, PRU_PATH))) {
@@ -109,8 +87,9 @@ NXCTRLSetup (NXCTRL_VOID) {
   }
 
   pnSharedMem = (unsigned int *)pSharedMem + OFFSET_SHAREDRAM;
-  printf("0x%08x ", pnSharedMem[0]);
-  printINT32(pnSharedMem[0]);
+  printf("AIN0 VL: %04d\n", pnSharedMem[0] & 0xFFF);
+  printf("IRQSTAT: "); printINT32(pnSharedMem[1]);
+  printf("EXITCNT: %02d\n", pnSharedMem[2]);
 
   // halt and disable the PRU
   if (prussdrv_pru_disable(PRU_NUM))

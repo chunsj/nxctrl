@@ -91,22 +91,36 @@ START:
         MOV     R1, 0x00000002
         SBBO    R1, R0, 0, 4
 
-        MOV     R2, 100000000
+        // enable ADC
+        MOV     R0, TSC_ADC_SS_CTRL
+        MOV     R1, 0x00000007
+        SBBO    R1, R0, 0, 4
+
+        MOV     R2, 50 // takes almost 46 for ADC reading
 
 CHKIRQ:
         // check irq status for reading
         MOV     R0, TSC_ADC_SS_IRQSTATUS
-        AND     R1, R0, 0x00000002
+        LBBO    R1, R0, 0, 4
+        AND     R1, R1, 0x00000002
         SUB     R2, R2, 1
         QBEQ    EXIT, R2, 0
         QBNE    CHKIRQ, R1, 0x00000002
 
 EXIT:
         MOV     R0, TSC_ADC_SS_IRQSTATUS
-        LBBO    R0, R0, 0, 4
+        LBBO    R1, R0, 0, 4
+        SBBO    R1, R0, 0, 4
+
+        // store irq status
+        SBCO    R1, CONST_PRUSHAREDRAM, 4, 4
+        // store exit count
+        SBCO    R2, CONST_PRUSHAREDRAM, 8, 4
+
+        MOV     R0, TSC_ADC_SS_FIFO0DATA
+        LBBO    R1, R0, 0, 4
         SBCO    R1, CONST_PRUSHAREDRAM, 0, 4
 
         // finish
         MOV     R31.B0, PRU0_ARM_INTERRUPT+16
         HALT
-
