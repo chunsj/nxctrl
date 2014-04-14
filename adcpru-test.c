@@ -39,16 +39,10 @@
 #define PRU_PATH   "./adcpru-test.bin"
 
 #define OFFSET_SHAREDRAM       2048
-#define SAMPLING_PERIOD_SEC    4
-#define SAMPLING_RATE          16000 // 16kHz
-#define BUFF_LENGTH            SAMPLING_RATE
-#define PRU_SHARED_BUFF_SIZE   500
-#define CNT_ONE_SEC            SAMPLING_RATE / PRU_SHARED_BUFF_SIZE
 
 NXCTRL_VOID
 NXCTRLSetup (NXCTRL_VOID) {
-  int nRet, nTargetBuf = 1;
-  int i, nCnt = 0, nTotalCnt = 0;
+  int nRet;
   void *pSharedMem;
   unsigned int *pnSharedMem;
   tpruss_intc_initdata intc = PRUSS_INTC_INITDATA;
@@ -85,40 +79,12 @@ NXCTRLSetup (NXCTRL_VOID) {
     exit(nRet);
   }
 
-#if 1
-  // process reading ADC
-  while (1) {
-    while (1) {
-      if (pnSharedMem[OFFSET_SHAREDRAM] == 1 && nTargetBuf == 1) { // 1st buffer ready
-        for (i = 0; i < PRU_SHARED_BUFF_SIZE; i++)
-          printf("%d\n", pnSharedMem[OFFSET_SHAREDRAM + i + 1] & 0xFFF);
-        nTargetBuf = 2;
-        break;
-      } else if (pnSharedMem[OFFSET_SHAREDRAM] == 2 && nTargetBuf == 2) { // 2nd buffer ready
-        for (i = 0; i < PRU_SHARED_BUFF_SIZE; i++) 
-          printf("%d\n", pnSharedMem[OFFSET_SHAREDRAM + PRU_SHARED_BUFF_SIZE + i + 1] & 0xFFF);
-        nTargetBuf = 1;
-        break;
-      }
-    }
-
-    if (nCnt++ == CNT_ONE_SEC) {
-      printf(".");
-      nTotalCnt += nCnt;
-      nCnt = 0;
-    }
-
-    if (nTotalCnt == CNT_ONE_SEC * SAMPLING_PERIOD_SEC) {
-      printf("Sampling Completed\n");
-      break;
-    }
-  }
-#endif
-
   // wait for PRU to generate interrupt for completion indication
   printf("waiting for interrupt from PRU0...\n");
   nRet = prussdrv_pru_wait_event(PRU_EVTOUT_0);
   printf("PRU program completed with: %d\n", nRet);
+
+  printINT32(pnSharedMem[0]);
 
   // clear the event
   if (prussdrv_pru_clear_event(PRU_EVTOUT_0, PRU0_ARM_INTERRUPT))
