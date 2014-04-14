@@ -4,7 +4,6 @@
  * TSCADC from PRU Test Program - modified from Youngtae Jo's code
  *
  * Copyright (C) 2014 Sungjin Chun <chunsj@gmail.com>
- *           (C) 2014 Youngtae Jo <youngtaejo@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
