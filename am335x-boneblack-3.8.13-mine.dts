@@ -602,9 +602,27 @@
 			ti,hwmods = "spi0";
 			dmas = <0x8 0x10 0x8 0x11 0x8 0x12 0x8 0x13>;
 			dma-names = "tx0", "rx0", "tx1", "rx1";
-			status = "disabled";
+			status = "okay";
 			linux,phandle = <0x36>;
 			phandle = <0x36>;
+                        pinctrl-names = "default";
+                        pinctrl-0 = <>;
+                        spi0channel@0 {
+                          #address-cells = <1>;
+                          #size-cells = <0>;
+                          compatible = "spidev";
+                          reg = <0>;
+                          spi-max-frequency = <16000000>;
+                          spi-cpha;
+                        };
+                        spi0channel@1 {
+                          #address-cells = <1>;
+                          #size-cells = <0>;
+                          compatible = "spidev";
+                          reg = <1>;
+                          spi-max-frequency = <16000000>;
+                          spi-cpha;
+                        };
 		};
 
 		spi@481a0000 {
@@ -617,9 +635,27 @@
 			ti,hwmods = "spi1";
 			dmas = <0x8 0x2a 0x8 0x2b 0x8 0x2c 0x8 0x2d>;
 			dma-names = "tx0", "rx0", "tx1", "rx1";
-			status = "disabled";
+			status = "okay";
 			linux,phandle = <0x37>;
 			phandle = <0x37>;
+                        pinctrl-names = "default";
+                        pinctrl-0 = <>;
+                        spi1channel@0 {
+                          #address-cells = <1>;
+                          #size-cells = <0>;
+                          compatible = "spidev";
+                          reg = <0>;
+                          spi-max-frequency = <16000000>;
+                          spi-cpha;
+                        };
+                        spi1channel@1 {
+                          #address-cells = <1>;
+                          #size-cells = <0>;
+                          compatible = "spidev";
+                          reg = <1>;
+                          spi-max-frequency = <16000000>;
+                          spi-cpha;
+                        };
 		};
 
 		gpmc@50000000 {
