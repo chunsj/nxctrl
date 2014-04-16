@@ -1,7 +1,7 @@
 /*
  * NXCTRL BeagleBone Black Control Library
  *
- * TSCADC from PRU Test Program - modified from Youngtae Jo's code
+ * TSCADC from PRU Test Program
  *
  * Copyright (C) 2014 Sungjin Chun <chunsj@gmail.com>
  *
