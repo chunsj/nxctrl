@@ -799,7 +799,7 @@ NXCTRLServoWrite (NXCTRL_BANK nBank, NXCTRL_PIN nPin,
                   NXCTRL_UINT32 nDegree) {
   if (nDegree < 0) nDegree = 0;
   if (nDegree > 180) nDegree = 180;
-  NXCTRL_UINT32 nValue = 190 * nDegree / 180 + 50;
+  NXCTRL_UINT32 nValue = (SERVO_MAXV - SERVO_MINV) * nDegree / 180 + SERVO_MINV;
   NXCTRLAnalogWriteEx(nBank, nPin,
                       nValue,
                       SERVO_PWMDIV,
