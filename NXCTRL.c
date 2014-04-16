@@ -792,12 +792,14 @@ NXCTRLAnalogWrite (NXCTRL_BANK nBank, NXCTRL_PIN nPin,
 
 // XXX is this right?
 #define SERVO_MINV    (50)
-#define SERVO_MAXV    (230)
+#define SERVO_MAXV    (240)
 
 NXCTRL_VOID
 NXCTRLServoWrite (NXCTRL_BANK nBank, NXCTRL_PIN nPin,
                   NXCTRL_UINT32 nDegree) {
-  NXCTRL_UINT32 nValue = nDegree + 50;
+  if (nDegree < 0) nDegree = 0;
+  if (nDegree > 180) nDegree = 180;
+  NXCTRL_UINT32 nValue = 190 * nDegree / 180 + 50;
   NXCTRLAnalogWriteEx(nBank, nPin,
                       nValue,
                       SERVO_PWMDIV,
