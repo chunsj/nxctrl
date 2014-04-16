@@ -51,4 +51,4 @@ HOW TO USE (ArchLinuxARM and 3.8.13 kernel)
    cd nxctrl
    make
 
-9. Run example codes and find bugs and fix them :-)
+9. Read, run example codes and find bugs and fix them :-)
