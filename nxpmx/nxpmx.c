@@ -235,5 +235,5 @@ module_init(nxpmx_init);
 module_exit(nxpmx_exit);
 
 MODULE_LICENSE("GPL");
-MODULE_AUTHOR("Sungjin");
+MODULE_AUTHOR("Sungjin Chun    <chunsj@gmail.com>");
 MODULE_DESCRIPTION("BBB PinMux Helper Module");
