@@ -54,46 +54,39 @@ TRIGGER_DELAY_LOOP:
         MOV     R3, GPIO2 | GPIO_CLEARDATAOUT
         SBBO    R2, R3, 0, 4
 
-        // wait for echo pin to low
+        // wait for echo pin to high
         MOV     R3, GPIO2 | GPIO_DATAIN
-ECHO_LOW_WAIT_LOOP:
+ECHO_HIGH_WAIT_LOOP:
         // read GPIO2 data
         LBBO    R2, R3, 0, 4
-        
         // select echo pin
         AND     R2, R2, ECHO_PIN
-
-        // check echo pin is low
-        QBNE    ECHO_LOW_WAIT_LOOP, R2, 0
+        // check echo pin is high
+        QBNE    ECHO_HIGH_WAIT_LOOP, R2, 1
 
         // okay, now prepare for measure count
         MOV     R4, 0
 START_MEASURE:
         // read GPIO2 data
         LBBO    R2, R3, 0, 4
-        
         // select echo pin
         AND     R2, R2, ECHO_PIN
-
         // check measure completion
-        QBNE    COMPLETE_MEASURE, R2, 0
+        QBNE    COMPLETE_MEASURE, R2, 1
 
-        // delay 1us
+        // delay 1us XXX should be corrected w.r.t reading GPIO2
         MOV     R0, 100
 ECHO_WAIT_LOOP:
         SUB     R0, R0, 1
         QBNE    ECHO_WAIT_LOOP, R0, 0
-
         // add measure count
         ADD     R4, R4, 1
-
         // continue sample
         JMP     START_MEASURE
 
 COMPLETE_MEASURE:
         // store result
         SBCO    R4, CONST_PRUDRAM, 0, 4
-
         // interrupt
         MOV     R31.B0, PRU0_ARM_INTERRUPT+16
 
