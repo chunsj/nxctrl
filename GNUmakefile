@@ -35,9 +35,14 @@ EXE10=adcpru-test
 SRC10=adcpru-test.c NXCTRL.c
 EXE10-BIN=adcpru-test.bin
 SRC10-PRU=adcpru-test.p
+EXE11=hc-sr04-test
+SRC11=hc-sr04-test.c NXCTRL.c
+EXE11-BIN=hc-sr04-test.bin
+SRC11-PRU=hc-sr04-test.p
 
 ARTIFACTS=$(EXE01) $(EXE02) $(EXE03) $(EXE04) $(EXE04-BIN) $(EXE05) $(EXE06) $(EXE06-BIN) \
-	$(EXE07) $(EXE07-BIN) $(EXE08) $(EXE08-BIN) $(EXE09) $(EXE10) $(EXE10-BIN)
+	$(EXE07) $(EXE07-BIN) $(EXE08) $(EXE08-BIN) $(EXE09) $(EXE10) $(EXE10-BIN) \
+	$(EXE11) $(EXE11-BIN)
 
 all: $(ARTIFACTS)
 
@@ -84,6 +89,12 @@ $(EXE10): $(SRC10)
 	$(CC) $(CFLAGS) -o $@ $^ $(LDFLAGS) $(LIBS) $(PRU_LIBS)
 
 $(EXE10-BIN): $(SRC10-PRU)
+	pasm -b $^
+
+$(EXE11): $(SRC11)
+	$(CC) $(CFLAGS) -o $@ $^ $(LDFLAGS) $(LIBS) $(PRU_LIBS)
+
+$(EXE11-BIN): $(SRC11-PRU)
 	pasm -b $^
 
 clean:
