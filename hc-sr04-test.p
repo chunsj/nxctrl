@@ -79,7 +79,7 @@ START_MEASURE:
         QBNE    COMPLETE_MEASURE, R2, 0
 
         // delay 1us
-        MOV     R0, 79
+        MOV     R0, 100
 ECHO_WAIT_LOOP:
         SUB     R0, R0, 1
         QBNE    ECHO_WAIT_LOOP, R0, 0
