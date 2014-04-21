@@ -183,38 +183,6 @@ NXCTRLClose (NXCTRL_VOID) {
   close(__hMem);
 }
 
-static inline NXCTRL_VOID
-__NXCTRLTSCADCEnableCLKHack (NXCTRL_VOID) {
-  int nFD;
-  char rch[2];
-
-  nFD = open("/sys/kernel/nxpmx/adcsw", O_RDWR);
-  if (nFD < 0) {
-    fprintf(stderr, "__TSCADC_enableCLK: cannot open adcsw file %s\n",
-            "/sys/kernel/nxpmx/adcsw");
-    return;
-  }
-  sprintf(rch, "%d", 1);
-  write(nFD, rch, 1);
-  close(nFD);
-}
-
-static inline NXCTRL_VOID
-__NXCTRLTSCADCDisableCLKHack (NXCTRL_VOID) {
-  int nFD;
-  char rch[2];
-
-  nFD = open("/sys/kernel/nxpmx/adcsw", O_RDWR);
-  if (nFD < 0) {
-    fprintf(stderr, "__TSCADC_enableCLK: cannot open adcsw file %s\n",
-            "/sys/kernel/nxpmx/adcsw");
-    return;
-  }
-  sprintf(rch, "%d", 0);
-  write(nFD, rch, 1);
-  close(nFD);
-}
-
 NXCTRL_BOOL
 NXCTRLTSCADCOpen (NXCTRL_VOID) {
   int nFD;
@@ -227,10 +195,7 @@ NXCTRLTSCADCOpen (NXCTRL_VOID) {
   };
   const char *pszFN = "/sys/kernel/nxpmx/mux";
 
-  // XXX this does not work
   ENABLE_ADC_TSC_CLK(NXCTRL_ON);
-  // XXX so hack this
-  __NXCTRLTSCADCEnableCLKHack();
 
   // XXX start of pinmux hack
   for (i = 0; i < nOffset; i++) {
@@ -252,44 +217,7 @@ NXCTRLTSCADCOpen (NXCTRL_VOID) {
 
 NXCTRL_VOID
 NXCTRLTSCADCClose (NXCTRL_VOID) {
-  // XXX this does not work
   ENABLE_ADC_TSC_CLK(NXCTRL_OFF);
-  // XXX so hack this
-  __NXCTRLTSCADCDisableCLKHack();
-}
-
-static inline NXCTRL_VOID
-__NXCTRLPWMSSEnableCLKHack (NXCTRL_VOID) {
-  int nFD;
-  char rch[2];
-  const char *pszFN = "/sys/kernel/nxpmx/epwmsw";
-
-  nFD = open(pszFN, O_RDWR);
-  if (nFD < 0) {
-    fprintf(stderr, "__NXCTRLPWMSSEnableCLKHack: cannot open epwmsw file %s\n",
-            pszFN);
-    return;
-  }
-  sprintf(rch, "%d", 1);
-  write(nFD, rch, 1);
-  close(nFD);
-}
-
-static inline NXCTRL_VOID
-__NXCTRLPWMSSDisableCLKHack (NXCTRL_VOID) {
-  int nFD;
-  char rch[2];
-  const char *pszFN = "/sys/kernel/nxpmx/epwmsw";
-
-  nFD = open(pszFN, O_RDWR);
-  if (nFD < 0) {
-    fprintf(stderr, "__NXCTRLPWMSSDisableCLKHack: cannot open epwmsw file %s\n",
-            pszFN);
-    return;
-  }
-  sprintf(rch, "%d", 0);
-  write(nFD, rch, 1);
-  close(nFD);
 }
 
 NXCTRL_BOOL
@@ -310,13 +238,9 @@ NXCTRLPWMSSOpen (NXCTRL_VOID) {
   
   close(nFD);
 
-  // XXX this does not work
   ENABLE_EPWMSS0_CLK(NXCTRL_ON);
   ENABLE_EPWMSS1_CLK(NXCTRL_ON);
   ENABLE_EPWMSS2_CLK(NXCTRL_ON);
-
-  // XXX hack this
-  __NXCTRLPWMSSEnableCLKHack();
 
   ENABLE_PWMSS0_CLK(NXCTRL_ON);
   ENABLE_PWMSS1_CLK(NXCTRL_ON);
@@ -334,13 +258,13 @@ NXCTRLPWMSSClose (NXCTRL_VOID) {
   SET_EPWMSS2_AQCTLA(PWM_AQ_LOW, PWM_AQ_LOW, PWM_AQ_LOW, PWM_AQ_LOW, PWM_AQ_LOW, PWM_AQ_LOW);
   SET_EPWMSS2_AQCTLB(PWM_AQ_LOW, PWM_AQ_LOW, PWM_AQ_LOW, PWM_AQ_LOW, PWM_AQ_LOW, PWM_AQ_LOW);
 
-  // XXX this does not work
   ENABLE_PWMSS0_CLK(NXCTRL_OFF);
   ENABLE_PWMSS1_CLK(NXCTRL_OFF);
   ENABLE_PWMSS2_CLK(NXCTRL_OFF);
 
-  // XXX hack this
-  __NXCTRLPWMSSDisableCLKHack();
+  ENABLE_EPWMSS0_CLK(NXCTRL_OFF);
+  ENABLE_EPWMSS1_CLK(NXCTRL_OFF);
+  ENABLE_EPWMSS2_CLK(NXCTRL_OFF);
 }
 
 #define GET_GPIO(nBank,nPin) __rpnBank[(nBank)][((nPin) - 1)]

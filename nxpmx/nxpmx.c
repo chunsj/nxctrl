@@ -30,18 +30,7 @@
 #define CONTROL_MODULE_ADDR  0x44E10000
 #define CONTROL_MODULE_LEN   0x2000
 
-#define CM_PER_ADDR          0x44E00000
-#define CM_WKUP_OFFSET       0x00000400
-
-#define CM_WKUP_ADC_TSC_CLKCTRL 0xBC
-
-#define CM_PER_EPWMSS0_CLKCTRL  0xD4
-#define CM_PER_EPWMSS1_CLKCTRL  0xCC
-#define CM_PER_EPWMSS2_CLKCTRL  0xD8
-
 static int mux;
-static int adcsw;
-static int epwmsw;
 
 static ssize_t mux_show (struct kobject *kobj,
                            struct kobj_attribute *attr,
@@ -85,120 +74,11 @@ static ssize_t mux_store (struct kobject *kobj,
   return count;
 }
 
-static ssize_t adcsw_show (struct kobject *kobj,
-                           struct kobj_attribute *attr,
-                           char *buf) {
-  return sprintf(buf, "%d\n", adcsw);
-}
-
-static ssize_t adcsw_store (struct kobject *kobj,
-                            struct kobj_attribute *attr,
-                            const char *buf, size_t count) {
-  void *control_module;
-  int value, n;
-
-  n = sscanf(buf, "%d", &value);
-  adcsw = n == 1 ? 0 : 1;
-
-  if (mux) {
-    printk(KERN_INFO "NXPMX: invalid input\n");
-    return count;
-  }
-
-  if (value != 0 && value != 1) {
-    printk(KERN_INFO "NXPMX: invalid value\n");
-    return count;
-  }
-
-  if (!(control_module = ioremap(CM_PER_ADDR,
-                                 0x4000))) {
-    printk(KERN_INFO "NXPMX: unable to map clock module\n");
-    return count;
-  }
-
-  n = ioread32(control_module + CM_WKUP_OFFSET + CM_WKUP_ADC_TSC_CLKCTRL);
-  if (value == 1)
-    n |= 0x2;
-  else
-    n &= ~0x2;
-
-  iowrite32(n, control_module + CM_WKUP_OFFSET + CM_WKUP_ADC_TSC_CLKCTRL);
-  iounmap(control_module);
-  
-  return count;
-}
-
-static ssize_t epwmsw_show (struct kobject *kobj,
-                            struct kobj_attribute *attr,
-                            char *buf) {
-  return sprintf(buf, "%d\n", epwmsw);
-}
-
-static ssize_t epwmsw_store (struct kobject *kobj,
-                             struct kobj_attribute *attr,
-                             const char *buf, size_t count) {
-  void *control_module;
-  int value, n;
-
-  n = sscanf(buf, "%d", &value);
-  adcsw = n == 1 ? 0 : 1;
-
-  if (mux) {
-    printk(KERN_INFO "NXPMX: invalid input\n");
-    return count;
-  }
-
-  if (value != 0 && value != 1) {
-    printk(KERN_INFO "NXPMX: invalid value\n");
-    return count;
-  }
-
-  if (!(control_module = ioremap(CM_PER_ADDR,
-                                 0x4000))) {
-    printk(KERN_INFO "NXPMX: unable to map clock module\n");
-    return count;
-  }
-
-  n = ioread32(control_module + CM_PER_EPWMSS0_CLKCTRL);
-  if (value == 1)
-    n |= 0x2;
-  else
-    n &= ~0x2;
-
-  iowrite32(n, control_module + CM_PER_EPWMSS0_CLKCTRL);
-  
-  n = ioread32(control_module + CM_PER_EPWMSS1_CLKCTRL);
-  if (value == 1)
-    n |= 0x2;
-  else
-    n &= ~0x2;
-
-  iowrite32(n, control_module + CM_PER_EPWMSS1_CLKCTRL);
-  
-  n = ioread32(control_module + CM_PER_EPWMSS2_CLKCTRL);
-  if (value == 1)
-    n |= 0x2;
-  else
-    n &= ~0x2;
-
-  iowrite32(n, control_module + CM_PER_EPWMSS2_CLKCTRL);
-  
-  iounmap(control_module);
-  
-  return count;
-}
-
 static struct kobj_attribute mux_attribute =
   __ATTR(mux, 0600, mux_show, mux_store);
-static struct kobj_attribute adcsw_attribute =
-  __ATTR(adcsw, 0600, adcsw_show, adcsw_store);
-static struct kobj_attribute epwmsw_attribute =
-  __ATTR(epwmsw, 0600, epwmsw_show, epwmsw_store);
 
 static struct attribute *attrs[] = {
   &mux_attribute.attr,
-  &adcsw_attribute.attr,
-  &epwmsw_attribute.attr,
   NULL,
 };
 
