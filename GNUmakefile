@@ -39,10 +39,12 @@ EXE11=hc-sr04-test
 SRC11=hc-sr04-test.c NXCTRL.c
 EXE11-BIN=hc-sr04-test.bin
 SRC11-PRU=hc-sr04-test.p
+EXE12=hc-sr04-simple-test
+SRC12=hc-sr04-simple-test.c NXCTRL.c
 
 ARTIFACTS=$(EXE01) $(EXE02) $(EXE03) $(EXE04) $(EXE04-BIN) $(EXE05) $(EXE06) $(EXE06-BIN) \
 	$(EXE07) $(EXE07-BIN) $(EXE08) $(EXE08-BIN) $(EXE09) $(EXE10) $(EXE10-BIN) \
-	$(EXE11) $(EXE11-BIN)
+	$(EXE11) $(EXE11-BIN) $(EXE12)
 
 all: $(ARTIFACTS)
 
@@ -96,6 +98,9 @@ $(EXE11): $(SRC11)
 
 $(EXE11-BIN): $(SRC11-PRU)
 	pasm -b $^
+
+$(EXE12): $(SRC12)
+	$(CC) $(CFLAGS) -o $@ $^ $(LDFLAGS) $(LIBS)
 
 clean:
 	rm -rf $(ARTIFACTS)
