@@ -140,6 +140,7 @@
 		};
 
 		gpio@44e07000 {
+			status = "okay";
 			compatible = "ti,omap4-gpio";
 			ti,hwmods = "gpio1";
 			gpio-controller;
@@ -153,6 +154,7 @@
 		};
 
 		gpio@4804c000 {
+			status = "okay";
 			compatible = "ti,omap4-gpio";
 			ti,hwmods = "gpio2";
 			gpio-controller;
@@ -166,6 +168,7 @@
 		};
 
 		gpio@481ac000 {
+			status = "okay";
 			compatible = "ti,omap4-gpio";
 			ti,hwmods = "gpio3";
 			gpio-controller;
@@ -179,6 +182,7 @@
 		};
 
 		gpio@481ae000 {
+			status = "okay";
 			compatible = "ti,omap4-gpio";
 			ti,hwmods = "gpio4";
 			gpio-controller;

@@ -25,8 +25,10 @@
 #include <signal.h>
 #include <NXCTRL.h>
 
-#define BUTTON_PIN NXCTRL_PIN11
-#define LED_PIN    NXCTRL_PIN17
+//#define BUTTON_PIN NXCTRL_PIN11
+//#define LED_PIN    NXCTRL_PIN17
+#define BUTTON_PIN NXCTRL_PIN45
+#define LED_PIN    NXCTRL_PIN46
 
 #define DEBOUNCING_CLOCK_COUNT 200
 

@@ -27,8 +27,8 @@
 // which can make more precise timing (untested and not validated)
 //
 
-#define TRIGGER_PIN (1<<2)
-#define ECHO_PIN    (1<<3)
+#define TRIGGER_PIN (1<<5)
+#define ECHO_PIN    (1<<4)
 
 .ORIGIN     0
 .ENTRYPOINT START
@@ -44,7 +44,7 @@ START:
 TRIGGER:
         // for trigger pin
         MOV     R2, TRIGGER_PIN
-        MOV     R3, GPIO2 | GPIO_SETDATAOUT
+        MOV     R3, GPIO0 | GPIO_SETDATAOUT
         SBBO    R2, R3, 0, 4
 
         // delay count for 10 microseconds (200MHz/2 instruction = 10 ns per loop)
@@ -56,13 +56,13 @@ TRIGGER_DELAY_LOOP:
 
         // make trigger pin low
         MOV     R2, TRIGGER_PIN
-        MOV     R3, GPIO2 | GPIO_CLEARDATAOUT
+        MOV     R3, GPIO0 | GPIO_CLEARDATAOUT
         SBBO    R2, R3, 0, 4
 
         // wait for echo pin to high
-        MOV     R3, GPIO2 | GPIO_DATAIN
+        MOV     R3, GPIO0 | GPIO_DATAIN
 ECHO_HIGH_WAIT_LOOP:
-        // read GPIO2 data
+        // read GPIO0 data
         LBBO    R2, R3, 0, 4
         // select echo pin
         AND     R2, R2, ECHO_PIN
@@ -72,14 +72,14 @@ ECHO_HIGH_WAIT_LOOP:
         // okay, now prepare for measure count
         MOV     R4, 0
 START_MEASURE:
-        // read GPIO2 data
+        // read GPIO0 data
         LBBO    R2, R3, 0, 4
         // select echo pin
         AND     R2, R2, ECHO_PIN
         // check measure completion
         QBNE    COMPLETE_MEASURE, R2, 1
 
-        // delay 1us XXX should be corrected w.r.t reading GPIO2
+        // delay 1us XXX should be corrected w.r.t reading GPIO0
         MOV     R0, 100
 ECHO_WAIT_LOOP:
         SUB     R0, R0, 1

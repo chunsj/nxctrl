@@ -209,7 +209,7 @@ bitINT32 (unsigned int v32, int i) {
 inline static void
 printINT32 (unsigned int v32) {
   INT32 v = { .v32 = v32 };
-  printf("%10d %d:%d:%d:%d:%d:%d:%d:%d:%d:%d:%d:%d:%d:%d:%d:%d:%d:%d:%d:%d:%d:%d:%d:%d:%d:%d:%d:%d:%d:%d:%d:%d \n",
+  printf("%10u %d:%d:%d:%d:%d:%d:%d:%d:%d:%d:%d:%d:%d:%d:%d:%d:%d:%d:%d:%d:%d:%d:%d:%d:%d:%d:%d:%d:%d:%d:%d:%d \n",
          v.v32,
          v.bit.b0, v.bit.b1, v.bit.b2, v.bit.b3, v.bit.b4, v.bit.b5,
          v.bit.b6, v.bit.b7, v.bit.b8, v.bit.b9, v.bit.b10, v.bit.b11,

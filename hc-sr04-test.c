@@ -32,10 +32,10 @@
 #define PRU_NUM    PRU0 // use PRU_0
 #define PRU_PATH   "./hc-sr04-test.bin"
 
-#define TRIGGER_PIN  NXCTRL_PIN07
-#define ECHO_PIN     NXCTRL_PIN08
+#define TRIGGER_PIN  NXCTRL_PIN17
+#define ECHO_PIN     NXCTRL_PIN18
 
-#define SENSOR_BANK  NXCTRL_P8
+#define SENSOR_BANK  NXCTRL_P9
 
 void
 NXCTRLSetup (void) {
@@ -43,9 +43,14 @@ NXCTRLSetup (void) {
   tpruss_intc_initdata intc = PRUSS_INTC_INITDATA;
   void *pPRUDataMem;
   unsigned int *pnPRUData;
+
+  NXCTRLPinMux(SENSOR_BANK, TRIGGER_PIN, NXCTRL_MODE7, NXCTRL_PULLDN, NXCTRL_LOW);
+  NXCTRLPinMux(SENSOR_BANK, ECHO_PIN, NXCTRL_MODE7, NXCTRL_PULLDN, NXCTRL_HIGH);
   
   NXCTRLPinMode(SENSOR_BANK, TRIGGER_PIN, NXCTRL_OUTPUT);
   NXCTRLPinMode(SENSOR_BANK, ECHO_PIN, NXCTRL_INPUT_PULLDN);
+
+  NXCTRLDigitalWrite(SENSOR_BANK, TRIGGER_PIN, NXCTRL_HIGH);
 
   // initialize PRU
   if ((nRet = prussdrv_init())) {
@@ -85,6 +90,7 @@ NXCTRLSetup (void) {
       fprintf(stderr, "prussdrv_pru_clear_event() failed\n");
 
     // okay, we have data
+    printINT32(pnPRUData[0]);
     printf("distance = %f cm\n", (float)pnPRUData[0]/58.77);
   }
 
