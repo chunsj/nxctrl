@@ -22,6 +22,11 @@
 
 #include "pru.hp"
 
+//
+// XXX instead of using GPIO pin, pin mux them as GPO/GPI,
+// which can make more precise timing (untested and not validated)
+//
+
 #define TRIGGER_PIN (1<<2)
 #define ECHO_PIN    (1<<3)
 
