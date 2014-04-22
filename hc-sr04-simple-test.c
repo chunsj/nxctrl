@@ -23,6 +23,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <signal.h>
+#include <sys/time.h>
 #include <NXCTRL.h>
 #define SENSOR_BANK NXCTRL_P9
 
@@ -33,6 +34,9 @@ void
 NXCTRLSetup (void) {
   int nMaxCount = 5000000;
   int i;
+  struct timeval tvStart;
+  struct timeval tvEnd;
+  unsigned long nStartTime, nEndTime;
 
   NXCTRLPinMode(SENSOR_BANK, TRIGGER_PIN, NXCTRL_OUTPUT);
   NXCTRLPinMode(SENSOR_BANK, ECHO_PIN, NXCTRL_INPUT_PULLDN);
@@ -44,24 +48,28 @@ NXCTRLSetup (void) {
   NXCTRLDigitalWrite(SENSOR_BANK, TRIGGER_PIN, NXCTRL_LOW);
 
   i = 0;
-  while (NXCTRLDigitalRead(SENSOR_BANK, ECHO_PIN) == NXCTRL_HIGH) {
-    NXCTRLSleep(0, 1);
+  while (NXCTRLDigitalRead(SENSOR_BANK, ECHO_PIN) != NXCTRL_HIGH) {
+    gettimeofday(&tvStart, NULL);
     if (i++ >= nMaxCount) {
-      fprintf(stderr, "waited too long for echo low\n");
+      fprintf(stderr, "waited too long for echo start response\n");
       return;
     }
   }
 
   i = 0;
-  while (NXCTRLDigitalRead(SENSOR_BANK, ECHO_PIN) != NXCTRL_HIGH) {
-    NXCTRLSleep(0, 1);
+  while (NXCTRLDigitalRead(SENSOR_BANK, ECHO_PIN) == NXCTRL_HIGH) {
+    gettimeofday(&tvEnd, NULL);
     if (i++ >= nMaxCount) {
-      fprintf(stderr, "waited too long for echo response\n");
+      fprintf(stderr, "waited too long for echo end response\n");
       return;
     }
   }
 
-  printf("%d %.2f\n", i, i/2.0/29.1);
+  nStartTime = 1000000 * tvStart.tv_sec + tvStart.tv_usec;
+  nEndTime = 1000000 * tvEnd.tv_sec + tvEnd.tv_usec;
+
+  printf("TIME: %lu\n", (nEndTime - nStartTime));
+  printf("DIST: %.0f\n", (nEndTime - nStartTime)/2.0/29.1);
 }
 
 void
