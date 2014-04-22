@@ -142,6 +142,7 @@ main (int argc, const char *argv[]) {
 
   printINT32(131);
   printINT32(643);
+  printINT32(BIT7);
 
   return 0;
 }

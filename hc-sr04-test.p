@@ -25,10 +25,9 @@
 //
 // XXX instead of using GPIO pin, pin mux them as GPO/GPI,
 // which can make more precise timing (untested and not validated)
+// P8 PIN11 (R30.15(OUT) as TRIGGER_PIN)
+// P8 PIN15 (R31.15(IN) as ECHO PIN)
 //
-
-#define TRIGGER_PIN (1<<5)
-#define ECHO_PIN    (1<<4)
 
 .ORIGIN     0
 .ENTRYPOINT START
@@ -43,19 +42,16 @@ START:
 
 TRIGGER:
         // make trigger pin low
-        MOV     R2, TRIGGER_PIN
-        MOV     R3, GPIO0 | GPIO_CLEARDATAOUT
-        SBBO    R2, R3, 0, 4
+        CLR     R30.T15
 
+        // wait for 2 microseconds
         MOV     R0, 200
 TRIGGER_LOW_LOOP:
         SUB     R0, R0, 1
         QBNE    TRIGGER_LOW_LOOP, R0, 0
 
-        // for trigger pin
-        MOV     R2, TRIGGER_PIN
-        MOV     R3, GPIO0 | GPIO_SETDATAOUT
-        SBBO    R2, R3, 0, 4
+        // make trigger pin high
+        SET     R30.T15
 
         // delay count for 10 microseconds (200MHz/2 instruction = 10 ns per loop)
         // so, we need 1000 loops for 10 us
@@ -65,32 +61,30 @@ TRIGGER_DELAY_LOOP:
         QBNE    TRIGGER_DELAY_LOOP, R0, 0
 
         // make trigger pin low
-        MOV     R2, TRIGGER_PIN
-        MOV     R3, GPIO0 | GPIO_CLEARDATAOUT
-        SBBO    R2, R3, 0, 4
+        CLR     R30.T15
 
-        // wait for echo pin to high
-        MOV     R3, GPIO0 | GPIO_DATAIN
+        // max loop count check
+        MOV     R5, 5000000
 ECHO_HIGH_WAIT_LOOP:
-        // read GPIO0 data
-        LBBO    R2, R3, 0, 4
-        // select echo pin
-        AND     R2, R2, ECHO_PIN
+        // check max iter count
+        SUB     R5, R5, 1
+        MOV     R4, 0
+        QBEQ    COMPLETE_MEASURE, R5, 0
         // check echo pin is high
-        QBNE    ECHO_HIGH_WAIT_LOOP, R2, 1
+        MOV     R2, R31
+        AND     R2, R2.B1, 1<<7 // 15th bit
+        QBNE    ECHO_HIGH_WAIT_LOOP, R2, 128 // 15th bit on
 
         // okay, now prepare for measure count
         MOV     R4, 0
 START_MEASURE:
-        // read GPIO0 data
-        LBBO    R2, R3, 0, 4
-        // select echo pin
-        AND     R2, R2, ECHO_PIN
         // check measure completion
-        QBNE    COMPLETE_MEASURE, R2, 1
+        MOV     R2, R31
+        AND     R2, R2.B1, 1<<7 // 15th bit
+        QBNE    COMPLETE_MEASURE, R2, 128 // 15th bit on
 
-        // delay 1us XXX should be corrected w.r.t reading GPIO0
-        MOV     R0, 100
+        // delay 1us, XXX how to consider above 3 instruction or 15ns into this?
+        MOV     R0, 99
 ECHO_WAIT_LOOP:
         SUB     R0, R0, 1
         QBNE    ECHO_WAIT_LOOP, R0, 0

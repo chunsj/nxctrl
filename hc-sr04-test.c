@@ -32,10 +32,12 @@
 #define PRU_NUM    PRU0 // use PRU_0
 #define PRU_PATH   "./hc-sr04-test.bin"
 
-#define TRIGGER_PIN  NXCTRL_PIN17
-#define ECHO_PIN     NXCTRL_PIN18
+#define NUM_MEASURE  10
 
-#define SENSOR_BANK  NXCTRL_P9
+#define SENSOR_BANK  NXCTRL_P8
+
+#define TRIGGER_PIN  NXCTRL_PIN11
+#define ECHO_PIN     NXCTRL_PIN15
 
 void
 NXCTRLSetup (void) {
@@ -44,13 +46,8 @@ NXCTRLSetup (void) {
   void *pPRUDataMem;
   unsigned int *pnPRUData;
 
-  NXCTRLPinMux(SENSOR_BANK, TRIGGER_PIN, NXCTRL_MODE7, NXCTRL_PULLDN, NXCTRL_LOW);
-  NXCTRLPinMux(SENSOR_BANK, ECHO_PIN, NXCTRL_MODE7, NXCTRL_PULLDN, NXCTRL_HIGH);
-  
-  NXCTRLPinMode(SENSOR_BANK, TRIGGER_PIN, NXCTRL_OUTPUT);
-  NXCTRLPinMode(SENSOR_BANK, ECHO_PIN, NXCTRL_INPUT_PULLDN);
-
-  NXCTRLDigitalWrite(SENSOR_BANK, TRIGGER_PIN, NXCTRL_HIGH);
+  NXCTRLPinMux(SENSOR_BANK, TRIGGER_PIN, NXCTRL_MODE6, NXCTRL_PULLDN, NXCTRL_LOW);
+  NXCTRLPinMux(SENSOR_BANK, ECHO_PIN, NXCTRL_MODE6, NXCTRL_PULLDN, NXCTRL_HIGH);
 
   // initialize PRU
   if ((nRet = prussdrv_init())) {
@@ -79,8 +76,8 @@ NXCTRLSetup (void) {
     exit(nRet);
   }
 
-  // get 10 measurements
-  for (i = 0; i < 10; i++) {
+  // get measurements
+  for (i = 0; i < NUM_MEASURE; i++) {
     // wait for PRU to generate interrupt for completion indication
     printf("waiting for interrupt from PRU0...\n");
     nRet = prussdrv_pru_wait_event(PRU_EVTOUT_0);
@@ -90,8 +87,7 @@ NXCTRLSetup (void) {
       fprintf(stderr, "prussdrv_pru_clear_event() failed\n");
 
     // okay, we have data
-    printINT32(pnPRUData[0]);
-    printf("distance = %f cm\n", (float)pnPRUData[0]/58.77);
+    printf("%02d distance = %.1f cm\n", i, (float)pnPRUData[0]/2/29.1);
   }
 
   printf("PRU program completed with: %d\n", nRet);
