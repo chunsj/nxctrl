@@ -42,6 +42,16 @@ START:
         SBCO    R0, CONST_PRUCFG, 4, 4
 
 TRIGGER:
+        // make trigger pin low
+        MOV     R2, TRIGGER_PIN
+        MOV     R3, GPIO0 | GPIO_CLEARDATAOUT
+        SBBO    R2, R3, 0, 4
+
+        MOV     R0, 200
+TRIGGER_LOW_LOOP:
+        SUB     R0, R0, 1
+        QBNE    TRIGGER_LOW_LOOP, R0, 0
+
         // for trigger pin
         MOV     R2, TRIGGER_PIN
         MOV     R3, GPIO0 | GPIO_SETDATAOUT

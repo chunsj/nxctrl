@@ -24,19 +24,44 @@
 #include <stdlib.h>
 #include <signal.h>
 #include <NXCTRL.h>
+#define SENSOR_BANK NXCTRL_P9
 
-#define TRIGGER_PIN NXCTRL_PIN11
-#define ECHO_PIN    NXCTRL_PIN17
+#define TRIGGER_PIN NXCTRL_PIN17
+#define ECHO_PIN    NXCTRL_PIN18
 
 void
 NXCTRLSetup (void) {
-  NXCTRLPinMode(NXCTRL_P8, TRIGGER_PIN, NXCTRL_OUTPUT);
-  NXCTRLPinMode(NXCTRL_P8, ECHO_PIN, NXCTRL_INPUT_PULLDN);
+  int nMaxCount = 5000000;
+  int i;
 
-  NXCTRLDigitalWrite(NXCTRL_P8, TRIGGER_PIN, NXCTRL_ON);
+  NXCTRLPinMode(SENSOR_BANK, TRIGGER_PIN, NXCTRL_OUTPUT);
+  NXCTRLPinMode(SENSOR_BANK, ECHO_PIN, NXCTRL_INPUT_PULLDN);
+
+  NXCTRLDigitalWrite(SENSOR_BANK, TRIGGER_PIN, NXCTRL_LOW);
+  NXCTRLSleep(0, 2);
+  NXCTRLDigitalWrite(SENSOR_BANK, TRIGGER_PIN, NXCTRL_HIGH);
   NXCTRLSleep(0, 10);
+  NXCTRLDigitalWrite(SENSOR_BANK, TRIGGER_PIN, NXCTRL_LOW);
 
-  while (NXCTRLDigitalRead(NXCTRL_P8, ECHO_PIN) != NXCTRL_ON);
+  i = 0;
+  while (NXCTRLDigitalRead(SENSOR_BANK, ECHO_PIN) == NXCTRL_HIGH) {
+    NXCTRLSleep(0, 1);
+    if (i++ >= nMaxCount) {
+      fprintf(stderr, "waited too long for echo low\n");
+      return;
+    }
+  }
+
+  i = 0;
+  while (NXCTRLDigitalRead(SENSOR_BANK, ECHO_PIN) != NXCTRL_HIGH) {
+    NXCTRLSleep(0, 1);
+    if (i++ >= nMaxCount) {
+      fprintf(stderr, "waited too long for echo response\n");
+      return;
+    }
+  }
+
+  printf("%d %.2f\n", i, i/2.0/29.1);
 }
 
 void
