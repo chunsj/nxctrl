@@ -25,6 +25,7 @@
 #include <signal.h>
 #include <sys/time.h>
 #include <NXCTRL.h>
+
 #define SENSOR_BANK NXCTRL_P9
 
 #define TRIGGER_PIN NXCTRL_PIN17
@@ -37,6 +38,9 @@ NXCTRLSetup (void) {
   struct timeval tvStart;
   struct timeval tvEnd;
   unsigned long nStartTime, nEndTime;
+
+  NXCTRLPinMux(SENSOR_BANK, TRIGGER_PIN, NXCTRL_MODE7, NXCTRL_PULLDN, NXCTRL_LOW);
+  NXCTRLPinMux(SENSOR_BANK, ECHO_PIN, NXCTRL_MODE7, NXCTRL_PULLDN, NXCTRL_HIGH);
 
   NXCTRLPinMode(SENSOR_BANK, TRIGGER_PIN, NXCTRL_OUTPUT);
   NXCTRLPinMode(SENSOR_BANK, ECHO_PIN, NXCTRL_INPUT_PULLDN);
