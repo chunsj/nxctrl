@@ -729,3 +729,4 @@ NXCTRLServoWrite (NXCTRL_BANK nBank, NXCTRL_PIN nPin,
                       SERVO_PWMDIV,
                       SERVO_FREQ, SERVO_RES, NXCTRL_OFF);
 }
+
