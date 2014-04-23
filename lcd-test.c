@@ -35,14 +35,21 @@ __WAIT (void) {
 
 void
 NXCTRLSetup (void) {
-  int nRet = NXCTRLLCDInit(&LCD,
-                           2, 16, 4,
-                           NXCTRL_P8, NXCTRL_P8,
-                           NXCTRL_PIN11, NXCTRL_PIN12,
-                           NXCTRL_P9, NXCTRL_P9, NXCTRL_P9, NXCTRL_P9,
-                           -1, -1, -1, -1,
-                           NXCTRL_PIN23, NXCTRL_PIN25, NXCTRL_PIN27, NXCTRL_PIN29,
-                           -1, -1, -1, -1);
+  int nRet;
+
+  if (NXCTRL_TRUE) {
+    fprintf(stderr, "UNTESTED PRORGAM!\n");
+    return;
+  }
+
+  nRet = NXCTRLLCDInit(&LCD,
+                       2, 16, 4,
+                       NXCTRL_P8, NXCTRL_P8,
+                       NXCTRL_PIN11, NXCTRL_PIN12,
+                       NXCTRL_P9, NXCTRL_P9, NXCTRL_P9, NXCTRL_P9,
+                       -1, -1, -1, -1,
+                       NXCTRL_PIN23, NXCTRL_PIN25, NXCTRL_PIN27, NXCTRL_PIN29,
+                       -1, -1, -1, -1);
   if (nRet < 0) {
     fprintf(stderr, "NXCTRLLCDInit: initialization failed\n");
     return;
