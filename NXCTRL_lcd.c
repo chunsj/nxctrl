@@ -192,7 +192,7 @@ NXCTRLLCDBegin (NXCTRLLCD *pLCD, uint8_t nCols, uint8_t nRows) {
   pLCD->nCurrLine = 0;
 
   // XXX for 5x10DOTS, how??? Refer Arduino's case
-  // pLCD->nDisplayFunction |= LCD_5x10DOTS;
+  //pLCD->nDisplayFunction |= LCD_5x10DOTS;
 
   NXCTRLSleep(50, 0);
 
@@ -205,17 +205,17 @@ NXCTRLLCDBegin (NXCTRLLCD *pLCD, uint8_t nCols, uint8_t nRows) {
 
   if (!(pLCD->nDisplayFunction & LCD_8BITMODE)) { // 4 bit mode
     __NXCTRLLCDWrite4Bits(pLCD, 0x03);
-    NXCTRLSleep(4, 500);
+    NXCTRLSleep(10, 0);
     __NXCTRLLCDWrite4Bits(pLCD, 0x03);
-    NXCTRLSleep(4, 500);
+    NXCTRLSleep(10, 0);
     __NXCTRLLCDWrite4Bits(pLCD, 0x03);
-    NXCTRLSleep(0, 150);
+    NXCTRLSleep(10, 0);
     __NXCTRLLCDWrite4Bits(pLCD, 0x02);
   } else {
     NXCTRLLCDCommand(pLCD, LCD_FUNCTIONSET | pLCD->nDisplayFunction);
-    NXCTRLSleep(4, 500);
+    NXCTRLSleep(10, 0);
     NXCTRLLCDCommand(pLCD, LCD_FUNCTIONSET | pLCD->nDisplayFunction);
-    NXCTRLSleep(4, 500);
+    NXCTRLSleep(10, 0);
     NXCTRLLCDCommand(pLCD, LCD_FUNCTIONSET | pLCD->nDisplayFunction);
   }
 
@@ -233,13 +233,13 @@ NXCTRLLCDBegin (NXCTRLLCD *pLCD, uint8_t nCols, uint8_t nRows) {
 void
 NXCTRLLCDClear (NXCTRLLCD *pLCD) {
   NXCTRLLCDCommand(pLCD, LCD_CLEARDISPLAY);
-  NXCTRLSleep(2, 0);
+  NXCTRLSleep(10, 0);
 }
 
 void
 NXCTRLLCDHome (NXCTRLLCD *pLCD) {
   NXCTRLLCDCommand(pLCD, LCD_RETURNHOME);
-  NXCTRLSleep(2, 0);
+  NXCTRLSleep(10, 0);
 }
 
 void
@@ -303,15 +303,15 @@ NXCTRLLCDSetCursor (NXCTRLLCD *pLCD, uint8_t nCol, uint8_t nRow) {
   NXCTRLLCDCommand(pLCD, LCD_SETDDRAMADDR | (nCol + nRowOffsets[nRow]));
 }
 
-size_t
-NXCTRLLCDWrite (NXCTRLLCD *pLCD, uint8_t nValue) {
-  __NXCTRLLCDSend(pLCD, nValue, NXCTRL_LOW);
-  return 1;
-}
-
 void
 NXCTRLLCDCommand (NXCTRLLCD *pLCD, uint8_t nValue) {
   __NXCTRLLCDSend(pLCD, nValue, NXCTRL_LOW);
+}
+
+size_t
+NXCTRLLCDWrite (NXCTRLLCD *pLCD, uint8_t nValue) {
+  __NXCTRLLCDSend(pLCD, nValue, NXCTRL_HIGH);
+  return 1;
 }
 
 size_t

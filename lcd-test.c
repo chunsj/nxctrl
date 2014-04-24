@@ -40,12 +40,6 @@
 
 NXCTRLLCD LCD;
 
-static void
-__WAIT (void) {
-  printf("Press ENTER to continue: ");
-  (void)fgetc(stdin);
-}
-
 void
 NXCTRLSetup (void) {
   int nRet;
@@ -75,16 +69,23 @@ NXCTRLSetup (void) {
   }
 
   NXCTRLLCDBegin(&LCD, 16, 2);
-
-  NXCTRLLCDSetCursor(&LCD, 0, 0);
-  NXCTRLLCDPutStr(&LCD, "LCD TEST");
-
-  __WAIT();
 }
 
 void
 NXCTRLLoop (void) {
-  NXCTRLExitLoop();
+  static int nCount = 0;
+  if (nCount++ >= 5) {
+    NXCTRLLCDSetCursor(&LCD, 0, 0);
+    NXCTRLLCDPrint(&LCD, "LCD TEST: DONE");
+    NXCTRLLCDSetCursor(&LCD, 0, 1);
+    NXCTRLLCDPrint(&LCD, "BYE");
+    NXCTRLExitLoop();
+    return;
+  }
+  
+  NXCTRLLCDSetCursor(&LCD, 0, 0);
+  NXCTRLLCDPrint(&LCD, "LCD TEST: %d", nCount);
+  NXCTRLSleep(1000, 0);
 }
 
 int
