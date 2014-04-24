@@ -1,0 +1,7 @@
+#!/bin/bash
+
+EXPORTED_PINS=`ls /sys/class/gpio/ | grep -v export | grep -v gpiochip`
+for pin in $EXPORTED_PINS; do
+    PIN_NO=`echo $pin | sed -e 's/gpio//g'`
+    sudo su -c "echo $PIN_NO > /sys/class/gpio/unexport"
+done
