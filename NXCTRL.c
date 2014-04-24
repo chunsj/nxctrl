@@ -52,6 +52,54 @@ static NXCTRL_INT32  *__rpnPWMs[2];
 volatile sig_atomic_t __nRunFLAG = 1;
 static NXCTRL_SIGINT_HANDLER __pfnSIGINTHANDLER = NULL;
 
+static int rnExportedGPIO[92];
+static int nExportedGPIO = 0;
+
+static void
+__SYSFSHACK (int nGPIO, NXCTRL_BOOL fOut) {
+  char rchGPIO[16];
+  char rchFN[BUFSIZ];
+  int fd = open("/sys/class/gpio/export", O_WRONLY);
+  if (fd == -1) {
+    fprintf(stderr, "__SYSFSHACK: cannot open /sys/class/gpio/export\n");
+    return;
+  }
+  sprintf(rchGPIO, "%d", nGPIO);
+  write(fd, rchGPIO, strlen(rchGPIO));
+  close(fd);
+
+  rnExportedGPIO[nExportedGPIO++] = nGPIO;
+
+  sprintf(rchFN, "/sys/class/gpio/gpio%d/direction", nGPIO);
+  fd = open(rchFN, O_WRONLY);
+  if (fd == -1) {
+    fprintf(stderr, "__SYSFSHACK: cannot open %s\n", rchFN);
+    return;
+  }
+
+  sprintf(rchGPIO, "%s", fOut ? "out" : "in");
+  write(fd, rchGPIO, strlen(rchGPIO));
+  close(fd);
+}
+
+static void
+__SYSFSHACKCLEAN (void) {
+  int i;
+  char rchGPIO[16];
+  int fd = open("/sys/class/gpio/unexport", O_WRONLY);
+  if (fd == -1) {
+    fprintf(stderr, "__SYSFSHACKCLEAN: cannot open /sys/class/gpio/unexport\n");
+    return;
+  }
+  for (i = 0; i < nExportedGPIO; i++) {
+    sprintf(rchGPIO, "%d", rnExportedGPIO[i]);
+    write(fd, rchGPIO, strlen(rchGPIO));
+  }
+  close(fd);
+
+  nExportedGPIO = 0;
+}
+
 NXCTRL_VOID
 NXCTRLSetSIGINTHandler (NXCTRL_SIGINT_HANDLER pfn) {
   __pfnSIGINTHANDLER = pfn;
@@ -91,6 +139,8 @@ NXCTRLMain (NXCTRL_VOID) {
   NXCTRLTSCADCClose();
   NXCTRLClose();
 
+  __SYSFSHACKCLEAN();
+  
   return 0;
 }
 
@@ -363,31 +413,6 @@ __NXCTRLWriteMode (NXCTRL_BANK nBank, NXCTRL_PIN nPin, NXCTRL_DIR nDir) {
     NXCTRLPinMux(nBank, nPin, NXCTRL_MODE7, NXCTRL_PULLDN, NXCTRL_ON);
     break;
   }
-}
-
-static void
-__SYSFSHACK (int nGPIO, NXCTRL_BOOL fOut) {
-  char rchGPIO[16];
-  char rchFN[BUFSIZ];
-  int fd = open("/sys/class/gpio/export", O_WRONLY);
-  if (fd == -1) {
-    fprintf(stderr, "__SYSFSHACK: cannot open /sys/class/gpio/export\n");
-    return;
-  }
-  sprintf(rchGPIO, "%d", nGPIO);
-  write(fd, rchGPIO, strlen(rchGPIO));
-  close(fd);
-
-  sprintf(rchFN, "/sys/class/gpio/gpio%d/direction", nGPIO);
-  fd = open(rchFN, O_WRONLY);
-  if (fd == -1) {
-    fprintf(stderr, "__SYSFSHACK: cannot open %s\n", rchFN);
-    return;
-  }
-
-  sprintf(rchGPIO, "%s", fOut ? "out" : "in");
-  write(fd, rchGPIO, strlen(rchGPIO));
-  close(fd);
 }
 
 #define GET_PIN(nBank,nPin)       (__rpnPins[(nBank)][((nPin) - 1)])
