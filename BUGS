@@ -1,0 +1,4 @@
+1. GPIO 1,2,3 DOES NOT WORK on PinMode Setting
+   Though I do not know exact reason on this problem, and 
+I cannot figure out why GPIO 0 works, using sysfs hack,
+this problem can be worked around.

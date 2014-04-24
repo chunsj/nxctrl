@@ -25,7 +25,20 @@
 #include <NXCTRL.h>
 #include <NXCTRL_lcd.h>
 
-NXLCDHW LCD;
+#define RSBANK   NXCTRL_P8
+#define RSPIN    NXCTRL_PIN11
+#define ENBANK   NXCTRL_P8
+#define ENPIN    NXCTRL_PIN12
+#define D0BANK   NXCTRL_P9
+#define D0PIN    NXCTRL_PIN12
+#define D1BANK   NXCTRL_P9
+#define D1PIN    NXCTRL_PIN15
+#define D2BANK   NXCTRL_P9
+#define D2PIN    NXCTRL_PIN23
+#define D3BANK   NXCTRL_P9
+#define D3PIN    NXCTRL_PIN25
+
+NXCTRLLCD LCD;
 
 static void
 __WAIT (void) {
@@ -37,26 +50,34 @@ void
 NXCTRLSetup (void) {
   int nRet;
 
-  if (NXCTRL_TRUE) {
-    fprintf(stderr, "UNTESTED PRORGAM!\n");
-    return;
-  }
+  NXCTRLPinMux(RSBANK, RSPIN, NXCTRL_MODE7, NXCTRL_NOPULL, NXCTRL_OFF);
+  NXCTRLPinMux(ENBANK, ENPIN, NXCTRL_MODE7, NXCTRL_NOPULL, NXCTRL_OFF);
+  NXCTRLPinMux(D0BANK, D0PIN, NXCTRL_MODE7, NXCTRL_NOPULL, NXCTRL_OFF);
+  NXCTRLPinMux(D1BANK, D1PIN, NXCTRL_MODE7, NXCTRL_NOPULL, NXCTRL_OFF);
+  NXCTRLPinMux(D2BANK, D2PIN, NXCTRL_MODE7, NXCTRL_NOPULL, NXCTRL_OFF);
+  NXCTRLPinMux(D3BANK, D3PIN, NXCTRL_MODE7, NXCTRL_NOPULL, NXCTRL_OFF);
 
   nRet = NXCTRLLCDInit(&LCD,
-                       2, 16, 4,
-                       NXCTRL_P8, NXCTRL_P8,
-                       NXCTRL_PIN11, NXCTRL_PIN12,
-                       NXCTRL_P9, NXCTRL_P9, NXCTRL_P9, NXCTRL_P9,
-                       -1, -1, -1, -1,
-                       NXCTRL_PIN23, NXCTRL_PIN25, NXCTRL_PIN27, NXCTRL_PIN29,
-                       -1, -1, -1, -1);
+                       RSBANK, RSPIN,
+                       -1, -1,
+                       ENBANK, ENPIN,
+                       D0BANK, D0PIN,
+                       D1BANK, D1PIN,
+                       D2BANK, D2PIN,
+                       D3BANK, D3PIN,
+                       -1, -1,
+                       -1, -1,
+                       -1, -1,
+                       -1, -1);
   if (nRet < 0) {
     fprintf(stderr, "NXCTRLLCDInit: initialization failed\n");
     return;
   }
 
-  NXCTRLLCDPosition(&LCD, 0, 0);
-  NXCTRLLCDStrPut(&LCD, "LCD TEST");
+  NXCTRLLCDBegin(&LCD, 16, 2);
+
+  NXCTRLLCDSetCursor(&LCD, 0, 0);
+  NXCTRLLCDPutStr(&LCD, "LCD TEST");
 
   __WAIT();
 }

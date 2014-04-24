@@ -144,21 +144,30 @@ NXCTRLOpen (NXCTRL_VOID) {
   __MMAP(__PWMSS1_ADDR, "PWMSS1", PWMSS1_REG_ADDR, PWMSS1_REG_SIZE);
   __MMAP(__PWMSS2_ADDR, "PWMSS2", PWMSS2_REG_ADDR, PWMSS2_REG_SIZE);
   
+#if 1 // shoud I need this?
+  U32REG_CM_PER_L3S_CLKCTRL |= BIT1;
+  U32REG_CM_PER_L3_CLKSTCTRL |= BIT1;
+  U32REG_CM_PER_L3_INSTR_CLKCTRL |= BIT1;
+  U32REG_CM_PER_L3_CLKCTRL |= BIT1;
+  U32REG_CM_PER_OCPWP_L3_CLKSTCTRL |= BIT1;
+  U32REG_CM_PER_L4LS_CLKSTCTRL |= BIT1;
+  U32REG_CM_PER_L4LS_CLKCTRL |= BIT1;
+#endif
+
   ENABLE_GPIO0_CLK(NXCTRL_ON); ENABLE_GPIO0_OPTFCLK(NXCTRL_ON);
   ENABLE_GPIO1_CLK(NXCTRL_ON); ENABLE_GPIO1_OPTFCLK(NXCTRL_ON);
   ENABLE_GPIO2_CLK(NXCTRL_ON); ENABLE_GPIO2_OPTFCLK(NXCTRL_ON);
   ENABLE_GPIO3_CLK(NXCTRL_ON); ENABLE_GPIO3_OPTFCLK(NXCTRL_ON);
 
-#if 0 // shoud I need this?
-  U32REG_CM_PER_L3S_CLKCTRL |= BIT1;
-  U32REG_CM_PER_L2_CLKSTCTRL |= BIT1;
-  U32REG_CM_PER_L3_INSTR_CLKCTRL |= BIT1;
-  U32REG_CM_PER_L3_CLKCTRL |= BIT1;
-  U32REG_CM_PER_OCPWP_L3_CLKSTCTRL |= BIT1;
-  U32REG_CM_PER_L4LS_CLKSTCTRL |= BIT1;
-  U32REG_CM_PERL4LS_CLKCTRL |= BIT1;
-#endif
-
+  U32REG_GPIO0_SYSCONFIG |= BIT3;
+  U32REG_GPIO1_SYSCONFIG |= BIT3;
+  U32REG_GPIO2_SYSCONFIG |= BIT3;
+  U32REG_GPIO3_SYSCONFIG |= BIT3;
+  U32REG_GPIO0_SYSCONFIG &= ~BIT4;
+  U32REG_GPIO1_SYSCONFIG &= ~BIT4;
+  U32REG_GPIO2_SYSCONFIG &= ~BIT4;
+  U32REG_GPIO3_SYSCONFIG &= ~BIT4;
+  
   return NXCTRL_TRUE;
 }
 
@@ -278,12 +287,12 @@ NXCTRLPinMux (NXCTRL_BANK nBank, NXCTRL_PIN nPin,
   int nFD, nOffset, nMUX;
 
   if (nBank != NXCTRL_P8 && nBank != NXCTRL_P9) {
-    fprintf(stderr, "NXCTRLPinMux: unsupported bank\n");
+    fprintf(stderr, "NXCTRLPinMux: unsupported bank - %d\n", nBank);
     return NXCTRL_FALSE;
   }
 
   if (nPin < 1 || nPin > 46) {
-    fprintf(stderr, "NXCTRLPinMux: unsupported pin number\n");
+    fprintf(stderr, "NXCTRLPinMux: unsupported pin number - %d\n", nPin);
     return NXCTRL_FALSE;
   }
 
@@ -356,6 +365,31 @@ __NXCTRLWriteMode (NXCTRL_BANK nBank, NXCTRL_PIN nPin, NXCTRL_DIR nDir) {
   }
 }
 
+static void
+__SYSFSHACK (int nGPIO, NXCTRL_BOOL fOut) {
+  char rchGPIO[16];
+  char rchFN[BUFSIZ];
+  int fd = open("/sys/class/gpio/export", O_WRONLY);
+  if (fd == -1) {
+    fprintf(stderr, "__SYSFSHACK: cannot open /sys/class/gpio/export\n");
+    return;
+  }
+  sprintf(rchGPIO, "%d", nGPIO);
+  write(fd, rchGPIO, strlen(rchGPIO));
+  close(fd);
+
+  sprintf(rchFN, "/sys/class/gpio/gpio%d/direction", nGPIO);
+  fd = open(rchFN, O_WRONLY);
+  if (fd == -1) {
+    fprintf(stderr, "__SYSFSHACK: cannot open %s\n", rchFN);
+    return;
+  }
+
+  sprintf(rchGPIO, "%s", fOut ? "out" : "in");
+  write(fd, rchGPIO, strlen(rchGPIO));
+  close(fd);
+}
+
 #define GET_PIN(nBank,nPin)       (__rpnPins[(nBank)][((nPin) - 1)])
 #define GET_CTRL_ADDR(nBank,nPin) (__rpnCTRLs[(nBank)][((nPin) - 1)]/4)
 
@@ -364,16 +398,15 @@ NXCTRLPinMode (NXCTRL_BANK nBank, NXCTRL_PIN nPin,
                NXCTRL_DIR nDir) {
   volatile NXCTRL_VOID *pCTRL = NULL;
   volatile NXCTRL_VOID *pREG = NULL;
-  int nFD;
-  const char *pszFN = "/sys/kernel/nxpmx/mux";
+  int nGPIO = 0;
   
   if (nBank != NXCTRL_P8 && nBank != NXCTRL_P9) {
-    fprintf(stderr, "NXCTRLPinMode unsupported bank\n");
+    fprintf(stderr, "NXCTRLPinMode unsupported bank - %d\n", nBank);
     return NXCTRL_FALSE;
   }
 
   if (nPin < 1 || nPin > 46) {
-    fprintf(stderr, "NXCTRLPinMode unsupported pin number\n");
+    fprintf(stderr, "NXCTRLPinMode unsupported pin number - %d\n", nPin);
     return NXCTRL_FALSE;
   }
 
@@ -381,13 +414,9 @@ NXCTRLPinMode (NXCTRL_BANK nBank, NXCTRL_PIN nPin,
     fprintf(stderr, "NXCTRLPinMode invalid pin position\n");
     return NXCTRL_FALSE;
   }
-  
-  nFD = open(pszFN, O_RDWR);
-  if (nFD < 0) {
-    fprintf(stderr, "NXCTRLPinMode cannot open pinmux file %s\n", pszFN);
-    return NXCTRL_FALSE;
-  }
 
+  nGPIO = GET_GPIO(nBank, nPin) * 32 + BITPOS(GET_PIN(nBank, nPin));
+  
   pCTRL = REGADDR(__CTRL_ADDR, GET_CTRL_ADDR(nBank,nPin));
   switch (GET_GPIO(nBank,nPin)) {
   case GPIO0:
@@ -404,28 +433,34 @@ NXCTRLPinMode (NXCTRL_BANK nBank, NXCTRL_PIN nPin,
     break;
   }
 
+  __NXCTRLWriteMode(nBank, nPin, nDir);
+
+  // XXX pCTRL does not work (needs privileged mode)
   if (nDir == NXCTRL_OUTPUT) {
     ASU32REG(pCTRL) |= 0x0F;
     ASU32REG(pREG) &= ~(GET_PIN(nBank, nPin));
+    __SYSFSHACK(nGPIO, NXCTRL_TRUE);
   } else if (nDir == NXCTRL_INPUT) {
     ASU32REG(pCTRL) |= 0x2F;
     ASU32REG(pREG) |= GET_PIN(nBank, nPin);
+    __SYSFSHACK(nGPIO, NXCTRL_FALSE);
   } else if (nDir == NXCTRL_OUTPUT_PULLUP) {
     ASU32REG(pCTRL) |= 0x17;
     ASU32REG(pREG) &= ~(GET_PIN(nBank, nPin));
+    __SYSFSHACK(nGPIO, NXCTRL_TRUE);
   } else if (nDir == NXCTRL_INPUT_PULLUP) {
     ASU32REG(pCTRL) |= 0x37;
     ASU32REG(pREG) |= GET_PIN(nBank, nPin);
+    __SYSFSHACK(nGPIO, NXCTRL_FALSE);
   } else if (nDir == NXCTRL_OUTPUT_PULLDN) {
     ASU32REG(pCTRL) |= 0x07;
     ASU32REG(pREG) &= ~(GET_PIN(nBank, nPin));
+    __SYSFSHACK(nGPIO, NXCTRL_TRUE);
   } else if (nDir == NXCTRL_INPUT_PULLDN) {
     ASU32REG(pCTRL) |= 0x27;
     ASU32REG(pREG) |= GET_PIN(nBank, nPin);
+    __SYSFSHACK(nGPIO, NXCTRL_FALSE);
   }
-
-  // XXX pCTRL does not work (privileged mode)
-  __NXCTRLWriteMode(nBank, nPin, nDir);
 
   return NXCTRL_TRUE;
 }

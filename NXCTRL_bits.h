@@ -112,7 +112,7 @@ bitINT16 (unsigned short v16, int i) {
 inline static void
 printINT16 (unsigned short v16) {
   INT16 v = { .v16 = v16 };
-  printf("%5d %d:%d:%d:%d:%d:%d:%d:%d:%d:%d:%d:%d:%d:%d:%d:%d \n",
+  printf("%5d %d:%d:%d:%d %d:%d:%d:%d %d:%d:%d:%d %d:%d:%d:%d \n",
          v.v16,
          v.bit.b0, v.bit.b1, v.bit.b2, v.bit.b3, v.bit.b4, v.bit.b5,
          v.bit.b6, v.bit.b7, v.bit.b8, v.bit.b9, v.bit.b10, v.bit.b11,
@@ -209,7 +209,7 @@ bitINT32 (unsigned int v32, int i) {
 inline static void
 printINT32 (unsigned int v32) {
   INT32 v = { .v32 = v32 };
-  printf("%10u %d:%d:%d:%d:%d:%d:%d:%d:%d:%d:%d:%d:%d:%d:%d:%d:%d:%d:%d:%d:%d:%d:%d:%d:%d:%d:%d:%d:%d:%d:%d:%d \n",
+  printf("%10u %d:%d:%d:%d %d:%d:%d:%d %d:%d:%d:%d %d:%d:%d:%d %d:%d:%d:%d %d:%d:%d:%d %d:%d:%d:%d %d:%d:%d:%d\n",
          v.v32,
          v.bit.b0, v.bit.b1, v.bit.b2, v.bit.b3, v.bit.b4, v.bit.b5,
          v.bit.b6, v.bit.b7, v.bit.b8, v.bit.b9, v.bit.b10, v.bit.b11,
@@ -218,5 +218,32 @@ printINT32 (unsigned int v32) {
          v.bit.b22, v.bit.b23, v.bit.b24, v.bit.b25, v.bit.b26, v.bit.b27,
          v.bit.b28, v.bit.b29, v.bit.b30, v.bit.b31);
 }
+
+static inline unsigned int
+BITPOS(int n) {
+  int b = 0;
+  n--;
+  if((n&0xffff) == 0xffff) {
+    b+=16;
+    n>>=16;
+  }
+  if((n&0xff) == 0xff) {
+    b+=8;
+    n>>=8;
+  }
+  if((n&0xf) == 0xf) {
+    b+=4;
+    n>>=4;
+  }
+  if((n&0x3) == 0x3) {
+    b+=2;
+    n>>=2;
+  }
+  if ((n&1) == 1) {
+      b++;
+      n>>=1;
+  }
+  return b;
+}       
 
 #endif /* __NXCTRL_BITS_HEADER__ */

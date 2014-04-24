@@ -144,5 +144,8 @@ main (int argc, const char *argv[]) {
   printINT32(643);
   printINT32(BIT7);
 
+  printINT32(BIT12);
+  printf("%d\n", BITPOS(BIT12));
+
   return 0;
 }
