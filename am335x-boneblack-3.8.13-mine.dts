@@ -797,6 +797,17 @@
 				linux,phandle = <0x41>;
 				phandle = <0x41>;
 			};
+
+			eqep@0x48300180 {
+				compatible = "ti,am33xx-eqep";
+				reg = <0x48300180 0x80>;
+				interrupt-parent = <0x1>;
+				interrupts = <0x4f>;
+				ti,hwmods = "eqep0";
+				status = "disabled";
+				linux,phandle = <0x42>;
+				phandle = <0x42>;
+			};
 		};
 
 		epwmss@48302000 {
@@ -807,8 +818,8 @@
 			#size-cells = <0x1>;
 			status = "disabled";
 			ranges = <0x48302100 0x48302100 0x80 0x48302180 0x48302180 0x80 0x48302200 0x48302200 0x80>;
-			linux,phandle = <0x42>;
-			phandle = <0x42>;
+			linux,phandle = <0x43>;
+			phandle = <0x43>;
 
 			ecap@48302100 {
 				compatible = "ti,am33xx-ecap";
@@ -816,8 +827,8 @@
 				reg = <0x48302100 0x80>;
 				ti,hwmods = "ecap1";
 				status = "disabled";
-				linux,phandle = <0x43>;
-				phandle = <0x43>;
+				linux,phandle = <0x44>;
+				phandle = <0x44>;
 			};
 
 			ehrpwm@48302200 {
@@ -826,8 +837,19 @@
 				reg = <0x48302200 0x80>;
 				ti,hwmods = "ehrpwm1";
 				status = "disabled";
-				linux,phandle = <0x44>;
-				phandle = <0x44>;
+				linux,phandle = <0x45>;
+				phandle = <0x45>;
+			};
+
+			eqep@0x48302180 {
+				compatible = "ti,am33xx-eqep";
+				reg = <0x48302180 0x80>;
+				interrupt-parent = <0x1>;
+				interrupts = <0x58>;
+				ti,hwmods = "eqep1";
+				status = "disabled";
+				linux,phandle = <0x46>;
+				phandle = <0x46>;
 			};
 		};
 
@@ -839,8 +861,8 @@
 			#size-cells = <0x1>;
 			status = "disabled";
 			ranges = <0x48304100 0x48304100 0x80 0x48304180 0x48304180 0x80 0x48304200 0x48304200 0x80>;
-			linux,phandle = <0x45>;
-			phandle = <0x45>;
+			linux,phandle = <0x47>;
+			phandle = <0x47>;
 
 			ecap@48304100 {
 				compatible = "ti,am33xx-ecap";
@@ -848,8 +870,8 @@
 				reg = <0x48304100 0x80>;
 				ti,hwmods = "ecap2";
 				status = "disabled";
-				linux,phandle = <0x46>;
-				phandle = <0x46>;
+				linux,phandle = <0x48>;
+				phandle = <0x48>;
 			};
 
 			ehrpwm@48304200 {
@@ -858,8 +880,19 @@
 				reg = <0x48304200 0x80>;
 				ti,hwmods = "ehrpwm2";
 				status = "disabled";
-				linux,phandle = <0x47>;
-				phandle = <0x47>;
+				linux,phandle = <0x49>;
+				phandle = <0x49>;
+			};
+
+			eqep@0x48304180 {
+				compatible = "ti,am33xx-eqep";
+				reg = <0x48304180 0x80>;
+				interrupt-parent = <0x1>;
+				interrupts = <0x59>;
+				ti,hwmods = "eqep2";
+				status = "disabled";
+				linux,phandle = <0x4a>;
+				phandle = <0x4a>;
 			};
 		};
 
@@ -874,8 +907,8 @@
 			dmas = <0x8 0x24>;
 			dma-names = "rx";
 			status = "okay";
-			linux,phandle = <0x48>;
-			phandle = <0x48>;
+			linux,phandle = <0x4b>;
+			phandle = <0x4b>;
 		};
 
 		aes@53500000 {
@@ -889,8 +922,8 @@
 			dmas = <0x8 0x6 0x8 0x5>;
 			dma-names = "tx", "rx";
 			status = "okay";
-			linux,phandle = <0x49>;
-			phandle = <0x49>;
+			linux,phandle = <0x4c>;
+			phandle = <0x4c>;
 		};
 
 		mcasp@48038000 {
@@ -906,8 +939,8 @@
 			rx-dma-offset = <0x46000000>;
 			dmas = <0x8 0x8 0x8 0x9>;
 			dma-names = "tx", "rx";
-			linux,phandle = <0x4a>;
-			phandle = <0x4a>;
+			linux,phandle = <0x4d>;
+			phandle = <0x4d>;
 		};
 
 		mcasp@4803C000 {
@@ -923,8 +956,8 @@
 			rx-dma-offset = <0x46400000>;
 			dmas = <0x8 0xa 0x8 0xb>;
 			dma-names = "tx", "rx";
-			linux,phandle = <0x4b>;
-			phandle = <0x4b>;
+			linux,phandle = <0x4e>;
+			phandle = <0x4e>;
 		};
 
 		bandgap@44e10448 {
@@ -977,15 +1010,15 @@
 			board@0 {
 				board-name = "A335BONE";
 				compatible-name = "ti,beaglebone";
-				linux,phandle = <0x4c>;
-				phandle = <0x4c>;
+				linux,phandle = <0x4f>;
+				phandle = <0x4f>;
 			};
 
 			board@1 {
 				board-name = "A335BNLT";
 				compatible-name = "ti,beaglebone-black";
-				linux,phandle = <0x4d>;
-				phandle = <0x4d>;
+				linux,phandle = <0x50>;
+				phandle = <0x50>;
 			};
 		};
 
@@ -1279,6 +1312,15 @@
 					dtbo = "cape-bebopr-R2.dtbo";
 				};
 			};
+
+			cape@16 {
+				part-number = "BB-BONE-LOGIBONE";
+
+				version@00R1 {
+					version = "00R1";
+					dtbo = "BB-BONE-LOGIBONE-00R1.dtbo";
+				};
+			};
 		};
 	};
 
@@ -1356,12 +1398,15 @@
 		epwmss0 = "/ocp/epwmss@48300000";
 		ecap0 = "/ocp/epwmss@48300000/ecap@48300100";
 		ehrpwm0 = "/ocp/epwmss@48300000/ehrpwm@48300200";
+		eqep0 = "/ocp/epwmss@48300000/eqep@0x48300180";
 		epwmss1 = "/ocp/epwmss@48302000";
 		ecap1 = "/ocp/epwmss@48302000/ecap@48302100";
 		ehrpwm1 = "/ocp/epwmss@48302000/ehrpwm@48302200";
+		eqep1 = "/ocp/epwmss@48302000/eqep@0x48302180";
 		epwmss2 = "/ocp/epwmss@48304000";
 		ecap2 = "/ocp/epwmss@48304000/ecap@48304100";
 		ehrpwm2 = "/ocp/epwmss@48304000/ehrpwm@48304200";
+		eqep2 = "/ocp/epwmss@48304000/eqep@0x48304180";
 		sham = "/ocp/sham@53100000";
 		aes = "/ocp/aes@53500000";
 		mcasp0 = "/ocp/mcasp@48038000";
