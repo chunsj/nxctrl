@@ -16,8 +16,8 @@ Main differences from default one is that I have removed pwm_test
 related pin configuration for this library supposed to do it
 without help of device tree (by directly modifying registers).
 
-For 3.14.x kernel(currently 3.14.0 in arch linux), pruss cannot
-be access by prussdrv.
+For 3.14.x kernel(currently 3.14.0 in arch linux), refer later part
+of this file.
 
 HOW TO USE (ArchLinuxARM and 3.8.13 kernel)
 ==========
@@ -52,3 +52,25 @@ HOW TO USE (ArchLinuxARM and 3.8.13 kernel)
    make
 
 9. Read, run example codes and find bugs and fix them :-)
+
+Using PRUSS in 3.14 Kernel (ArchLinuxARM and 3.14 Kernel)
+==========
+1. Back up and build new am335x-boneblack.dtb using dts file for 3.14.
+   cp /boot/dtbs/am335x-boneblack.dtb $HOME/am335x-boneblack.dtb.3.14.original
+   pacman -S dtc-overlay # if you do not have dtc installed
+   dtc -I dts -O dtb am335x-boneblack-3.14-mine.dts -o am335x-boneblack.dtb
+   cp am335x-boneblack.dtb /boot/dtbs/
+
+2. Build gpio pinmux utility kernel module and uio_pruss kernel module
+   cd nxpmx && make
+   cp nxpmx.ko /lib/modules/extramodules-3.14--am33x
+   cd ..
+   cd uio_pruss && make
+   cp uio_pruss.ko /lib/modules/extramodules-3.14--am33x
+   depmod -a
+
+3. Reboot
+
+4. Load required modules: uio_pruss and nxpmx
+   modprobe uio_pruss
+   modprobe nxpmx

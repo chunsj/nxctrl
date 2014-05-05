@@ -147,5 +147,7 @@ main (int argc, const char *argv[]) {
   printINT32(BIT12);
   printf("%d\n", BITPOS(BIT12));
 
+  printINT32(0x660000E3);
+
   return 0;
 }

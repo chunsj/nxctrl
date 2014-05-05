@@ -55,6 +55,8 @@
 #define CM_PER_REG_SIZE                 (0x44E03FFF-CM_PER_REG_ADDR+1)
 #define CM_WKUP_REG_ADDR                (0x44E00400)
 #define CM_WKUP_REG_OFFSET              (CM_WKUP_REG_ADDR-CM_PER_REG_ADDR)
+#define PRM_PER_REG_ADDR                (0x44E00C00)
+#define PRM_PER_REG_OFFSET              (PRM_PER_REG_ADDR-CM_PER_REG_ADDR)
 
 #define PWMSS0_REG_ADDR                 (0x48300000)
 #define PWMSS0_REG_SIZE                 (0x48301FFF-PWMSS0_REG_ADDR+1)
@@ -82,6 +84,12 @@
 #define CM_PER_EPWMSS0_CLKCTRL          (0x0D4)
 #define CM_PER_EPWMSS1_CLKCTRL          (0x0CC)
 #define CM_PER_EPWMSS2_CLKCTRL          (0x0D8)
+
+#define CM_PER_PRU_ICSS_CLKCTRL         (0x0E8)
+
+#define RM_PER_RSTCTRL                  (0x000)
+#define PM_PER_PWRSTST                  (0x008)
+#define PM_PER_PWRSTCTRL                (0x00C)
 
 #define TSC_ADC_SS_CTRL                 (0x040)
 #define TSC_ADC_SS_ADC_CLKDIV           (0x04C)
@@ -198,6 +206,13 @@
 #define ENABLE_EPWMSS1_CLK(f)                   (f) ? (U32REG_CM_PER_EPWMSS1_CLKCTRL |= BIT1) : (U32REG_CM_PER_EPWMSS1_CLKCTRL &= ~BIT1)
 #define ENABLE_EPWMSS2_CLK(f)                   (f) ? (U32REG_CM_PER_EPWMSS2_CLKCTRL |= BIT1) : (U32REG_CM_PER_EPWMSS2_CLKCTRL &= ~BIT1)
 
+#define U32REG_CM_PER_PRU_ICSS_CLKCTRL          U32REG(__CM_PER_ADDR,CM_PER_PRU_ICSS_CLKCTRL)
+#define U32REG_RM_PER_RSTCTRL                   U32REG(__PRM_PER_ADDR,RM_PER_RSTCTRL)
+#define U32REG_PM_PER_PWRSTST                   U32REG(__PRM_PER_ADDR,PM_PER_PWRSTST)
+#define U32REG_PM_PER_PWRSTCTRL                 U32REG(__PRM_PER_ADDR,PM_PER_PWRSTCTRL)
+
+#define ENABLE_PRU_ICSS_CLK(f)                  (f) ? (U32REG_CM_PER_PRU_ICSS_CLKCTRL |= BIT1) : (U32REG_CM_PER_PRU_ICSS_CLKCTRL &= ~BIT1)
+
 #define U32REG_PWMSS0_CLKCONFIG                 U32REG(__PWMSS0_ADDR,PWMSS_CLKCONFIG)
 #define U32REG_PWMSS1_CLKCONFIG                 U32REG(__PWMSS1_ADDR,PWMSS_CLKCONFIG)
 #define U32REG_PWMSS2_CLKCONFIG                 U32REG(__PWMSS2_ADDR,PWMSS_CLKCONFIG)
@@ -291,6 +306,7 @@
 //
 extern volatile void *__CM_PER_ADDR;
 extern volatile void *__CM_WKUP_ADDR;
+extern volatile void *__PRM_PER_ADDR;
 extern volatile void *__GPIO0_ADDR;
 extern volatile void *__GPIO1_ADDR;
 extern volatile void *__GPIO2_ADDR;
