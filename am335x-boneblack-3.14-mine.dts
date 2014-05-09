@@ -1363,7 +1363,20 @@
 			ti,hwmods = "spi1";
 			dmas = <0x2c 0x2a 0x2c 0x2b 0x2c 0x2c 0x2c 0x2d>;
 			dma-names = "tx0", "rx0", "tx1", "rx1";
-			status = "disabled";
+			status = "okay";
+
+			spi@0 {
+				compatible = "spidev";
+				reg = <0x0>;
+				spi-max-frequency = <0xf42400>;
+				spi-cpha;
+			};
+
+			spi@1 {
+				compatible = "spidev";
+				reg = <0x1>;
+				spi-max-frequency = <0xf42400>;
+			};
 		};
 
 		usb@47400000 {

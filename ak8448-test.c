@@ -1,7 +1,7 @@
 /*
  * NXCTRL BeagleBone Black Control Library
  *
- * SPI EEPROM(Microchip 25LC512) Test Program
+ * SPI ADC(AK8448) Test Program
  *
  * Copyright (C) 2014 Sungjin Chun <chunsj@gmail.com>
  *
@@ -32,34 +32,36 @@
 #include <linux/types.h>
 #include <linux/spi/spidev.h>
 
-#define SPI_CS0  17
-#define SPI_D1   18
-#define SPI_D0   21
-#define SPI_CLK  22
+#define SPI_CS0  17  // BLUE
+#define SPI_D1   18  // RED
+#define SPI_D0   21  // YELLOW
+#define SPI_CLK  22  // GREEN
 
-const uint8_t INSTREAD  = 0b00000011;
-const uint8_t INSTWRITE = 0b00000010;
-const uint8_t INSTWREN  = 0b00000110;
-const uint8_t INSTWRDI  = 0b00000100;
-const uint8_t INSTRDSR  = 0b00000101;
+#define DELAY_USEC 200
 
 static int
-__SPI_read (int nFD, uint16_t nAddr, uint8_t *pnD) {
+__SPI_read (int nFD) {
   int nStatus;
   struct spi_ioc_transfer xfer[2];
-  char rchTXData[4];
-  char rchRXData[4];
-  
+  char rchTXData[2];
+  char rchRXData[2];
+
+  // for register 0
   memset(xfer, 0, sizeof(xfer));
 
-  memcpy(rchTXData, &INSTREAD, sizeof(uint8_t));
-  memcpy(rchTXData + 1, &nAddr, sizeof(uint16_t));
-  memcpy(rchTXData + 1 + 2, pnD, sizeof(uint8_t));
+  rchTXData[0] = 0;
+  rchTXData[1] = 0;
+  rchRXData[0] = 0;
+  rchRXData[1] = 0;
+
+  rchTXData[0] |= BIT7; // read
 
   xfer[0].tx_buf = (unsigned int)rchTXData;
   xfer[0].rx_buf = (unsigned int)rchRXData;
-  xfer[0].len = 4;
-  xfer[0].delay_usecs = 200;
+  xfer[0].len = 2;
+  xfer[0].delay_usecs = DELAY_USEC;
+
+  printf("Press any key to continue..."); getchar();
 
   nStatus = ioctl(nFD, SPI_IOC_MESSAGE(1), xfer);
   if (nStatus < 0) {
@@ -67,26 +69,63 @@ __SPI_read (int nFD, uint16_t nAddr, uint8_t *pnD) {
     return -1;
   }
 
-  *pnD = rchRXData[3];
+  printf("TX: "); printINT16(rchTXData[0] | (rchTXData[1] << 8));
+  printf("RX: "); printINT16(rchRXData[0] | (rchRXData[1] << 8));
+
+  // for register 1
+  memset(xfer, 0, sizeof(xfer));
+
+  rchTXData[0] = 0;
+  rchTXData[1] = 0;
+  rchRXData[0] = 0;
+  rchRXData[1] = 0;
+
+  rchTXData[0] |= BIT7;
+  rchTXData[0] |= BIT0; // register 1
+
+  xfer[0].tx_buf = (unsigned int)rchTXData;
+  xfer[0].rx_buf = (unsigned int)rchRXData;
+  xfer[0].len = 2;
+  xfer[0].delay_usecs = DELAY_USEC;
+
+  printf("Press any key to continue..."); getchar();
+
+  nStatus = ioctl(nFD, SPI_IOC_MESSAGE(1), xfer);
+  if (nStatus < 0) {
+    perror("SPI_IOC_MESSAGE");
+    return -1;
+  }
+
+  printf("TX: "); printINT16(rchTXData[0] | (rchTXData[1] << 8));
+  printf("RX: "); printINT16(rchRXData[0] | (rchRXData[1] << 8));
 
   return 0;
 }
 
 static int
-__SPI_write (int nFD, uint16_t nAddr, uint8_t nD) {
+__SPI_write (int nFD) {
   int nStatus;
   struct spi_ioc_transfer xfer[2];
-  char rchTXData[4];
-  char rchRXData[4];
+  char rchTXData[2];
+  char rchRXData[2];
 
+  // for register 0
   memset(xfer, 0, sizeof(xfer));
 
-  memcpy(rchTXData, &INSTWREN, sizeof(uint8_t));
+  rchTXData[0] = 0;
+  rchTXData[1] = 0;
+  rchRXData[0] = 0;
+  rchRXData[1] = 0;
+
+  rchTXData[1] |= BIT7; // Clamp Mode
+  rchTXData[1] |= BIT5; // For CIS (0V to +V)
 
   xfer[0].tx_buf = (unsigned int)rchTXData;
   xfer[0].rx_buf = (unsigned int)rchRXData;
-  xfer[0].len = 1;
-  xfer[0].delay_usecs = 200;
+  xfer[0].len = 2;
+  xfer[0].delay_usecs = DELAY_USEC;
+
+  printf("Press any key to continue..."); getchar();
 
   nStatus = ioctl(nFD, SPI_IOC_MESSAGE(1), xfer);
   if (nStatus < 0) {
@@ -94,50 +133,48 @@ __SPI_write (int nFD, uint16_t nAddr, uint8_t nD) {
     return -1;
   }
 
+  printf("TX: "); printINT16(rchTXData[0] | (rchTXData[1] << 8));
+  printf("RX: "); printINT16(rchRXData[0] | (rchRXData[1] << 8));
+
+  // for register 1
   memset(xfer, 0, sizeof(xfer));
 
-  memcpy(rchTXData, &INSTWRITE, sizeof(uint8_t));
-  memcpy(rchTXData + 1, &nAddr, sizeof(uint16_t));
-  memcpy(rchTXData + 1 + 2, &nD, sizeof(uint8_t));
+  rchTXData[0] = 0;
+  rchTXData[1] = 0;
+  rchRXData[0] = 0;
+  rchRXData[1] = 0;
+
+  rchTXData[0] |= BIT0; // register 1
+  rchTXData[1] |= BIT5; // test pattern
+  rchTXData[1] |= BIT3; // 10 bit
 
   xfer[0].tx_buf = (unsigned int)rchTXData;
   xfer[0].rx_buf = (unsigned int)rchRXData;
-  xfer[0].len = 4;
-  xfer[0].delay_usecs = 200;
+  xfer[0].len = 2;
+  xfer[0].delay_usecs = DELAY_USEC;
+
+  printf("Press any key to continue..."); getchar();
 
   nStatus = ioctl(nFD, SPI_IOC_MESSAGE(1), xfer);
   if (nStatus < 0) {
     perror("SPI_IOC_MESSAGE");
     return -1;
   }
-  
-  memset(xfer, 0, sizeof(xfer));
 
-  memcpy(rchTXData, &INSTWRDI, sizeof(uint8_t));
-
-  xfer[0].tx_buf = (unsigned int)rchTXData;
-  xfer[0].rx_buf = (unsigned int)rchRXData;
-  xfer[0].len = 1;
-  xfer[0].delay_usecs = 200;
-
-  nStatus = ioctl(nFD, SPI_IOC_MESSAGE(1), xfer);
-  if (nStatus < 0) {
-    perror("SPI_IOC_MESSAGE");
-    return -1;
-  }
+  printf("TX: "); printINT16(rchTXData[0] | (rchTXData[1] << 8));
+  printf("RX: "); printINT16(rchRXData[0] | (rchRXData[1] << 8));
 
   return 0;
 }
 
 NXCTRL_VOID
 NXCTRLSetup (NXCTRL_VOID) {
-  int nFD, i;
-  uint8_t nLSB, nD;
+  int nFD;
+  uint8_t nLSB;
   uint32_t nSpeed, nSPIMode;
-  uint16_t nAddr;
   
-  NXCTRLPinMux(NXCTRL_P9, SPI_CS0, NXCTRL_MODE0, NXCTRL_PULLUP, NXCTRL_LOW);
-  NXCTRLPinMux(NXCTRL_P9, SPI_D1, NXCTRL_MODE0, NXCTRL_PULLUP, NXCTRL_LOW);
+  NXCTRLPinMux(NXCTRL_P9, SPI_CS0, NXCTRL_MODE0, NXCTRL_PULLDN, NXCTRL_LOW);
+  NXCTRLPinMux(NXCTRL_P9, SPI_D1, NXCTRL_MODE0, NXCTRL_PULLDN, NXCTRL_LOW);
   NXCTRLPinMux(NXCTRL_P9, SPI_D0, NXCTRL_MODE0, NXCTRL_PULLUP, NXCTRL_HIGH);
   NXCTRLPinMux(NXCTRL_P9, SPI_CLK, NXCTRL_MODE0, NXCTRL_PULLUP, NXCTRL_HIGH);
 
@@ -145,24 +182,14 @@ NXCTRLSetup (NXCTRL_VOID) {
 
   nLSB = 0;
   ioctl(nFD, SPI_IOC_WR_LSB_FIRST, &nLSB);
-  nSpeed = 500000;
+  nSpeed = 1000000;
   ioctl(nFD, SPI_IOC_WR_MAX_SPEED_HZ, &nSpeed);
-  nSPIMode = SPI_MODE_0;
+  nSPIMode = SPI_MODE_3;
   ioctl(nFD, SPI_IOC_WR_MODE, &nSPIMode);
 
-  nAddr = 305;
-  nD = -1;
-
-  for (i = 0; i < 10; i++) {
-    __SPI_read(nFD, nAddr, &nD);
-    printf("%d: %d\n", i, nD);
-
-    nD = (uint8_t)i;
-    __SPI_write(nFD, nAddr, nD);
-
-    NXCTRLSleep(5, 0);
-  }
-    
+  __SPI_write(nFD);
+  __SPI_read(nFD);
+  
   close(nFD);
 }
 
