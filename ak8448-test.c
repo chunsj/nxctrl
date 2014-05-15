@@ -32,12 +32,23 @@
 #include <linux/types.h>
 #include <linux/spi/spidev.h>
 
+#define USE_SPI1 0 // 1 for spi1 0 for spi2
+
+#if USE_SPI1
 #define SPI_CS0  17  // BLUE
 #define SPI_D1   18  // RED
 #define SPI_D0   21  // YELLOW
 #define SPI_CLK  22  // GREEN
+#define SPI_DEV  "/dev/spidev1.0"
+#else
+#define SPI_CS0  28  // BLUE
+#define SPI_D1   30  // RED
+#define SPI_D0   29  // YELLOW
+#define SPI_CLK  31  // GREEN
+#define SPI_DEV  "/dev/spidev2.0"
+#endif
 
-#define DELAY_USEC 200
+#define DELAY_USEC 0
 
 static int
 __SPI_read (int nFD) {
@@ -172,17 +183,24 @@ NXCTRLSetup (NXCTRL_VOID) {
   int nFD;
   uint8_t nLSB;
   uint32_t nSpeed, nSPIMode;
-  
+
+#if USE_SPI1
   NXCTRLPinMux(NXCTRL_P9, SPI_CS0, NXCTRL_MODE0, NXCTRL_PULLDN, NXCTRL_LOW);
   NXCTRLPinMux(NXCTRL_P9, SPI_D1, NXCTRL_MODE0, NXCTRL_PULLDN, NXCTRL_LOW);
   NXCTRLPinMux(NXCTRL_P9, SPI_D0, NXCTRL_MODE0, NXCTRL_PULLUP, NXCTRL_HIGH);
   NXCTRLPinMux(NXCTRL_P9, SPI_CLK, NXCTRL_MODE0, NXCTRL_PULLUP, NXCTRL_HIGH);
+#else
+  NXCTRLPinMux(NXCTRL_P9, SPI_CS0, NXCTRL_MODE3, NXCTRL_PULLDN, NXCTRL_LOW);
+  NXCTRLPinMux(NXCTRL_P9, SPI_D1, NXCTRL_MODE3, NXCTRL_PULLDN, NXCTRL_LOW);
+  NXCTRLPinMux(NXCTRL_P9, SPI_D0, NXCTRL_MODE3, NXCTRL_PULLUP, NXCTRL_HIGH);
+  NXCTRLPinMux(NXCTRL_P9, SPI_CLK, NXCTRL_MODE3, NXCTRL_PULLUP, NXCTRL_HIGH);
+#endif
 
-  nFD = open("/dev/spidev1.0", O_RDWR);
+  nFD = open(SPI_DEV, O_RDWR);
 
   nLSB = 0;
   ioctl(nFD, SPI_IOC_WR_LSB_FIRST, &nLSB);
-  nSpeed = 1000000;
+  nSpeed = 10000000;
   ioctl(nFD, SPI_IOC_WR_MAX_SPEED_HZ, &nSpeed);
   nSPIMode = SPI_MODE_3;
   ioctl(nFD, SPI_IOC_WR_MODE, &nSPIMode);

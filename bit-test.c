@@ -148,6 +148,9 @@ main (int argc, const char *argv[]) {
   printf("%d\n", BITPOS(BIT12));
 
   printINT32(0x660000E3);
+  printINT32(0x00F42400);
+  printINT32(0x02FAF080);
+  printf("0x%x\n", 0x02FAF080*2);
 
   return 0;
 }
