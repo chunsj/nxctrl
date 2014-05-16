@@ -50,6 +50,15 @@
 
 #define DELAY_USEC 0
 
+#define CHECK_USER 0
+
+static void
+__checkUSR (void) {
+#if CHECK_USER
+  printf("Press any key to continue..."); getchar();
+#endif
+}
+
 static int
 __SPI_read (int nFD) {
   int nStatus;
@@ -72,7 +81,7 @@ __SPI_read (int nFD) {
   xfer[0].len = 2;
   xfer[0].delay_usecs = DELAY_USEC;
 
-  printf("Press any key to continue..."); getchar();
+  __checkUSR();
 
   nStatus = ioctl(nFD, SPI_IOC_MESSAGE(1), xfer);
   if (nStatus < 0) {
@@ -99,7 +108,7 @@ __SPI_read (int nFD) {
   xfer[0].len = 2;
   xfer[0].delay_usecs = DELAY_USEC;
 
-  printf("Press any key to continue..."); getchar();
+  __checkUSR();
 
   nStatus = ioctl(nFD, SPI_IOC_MESSAGE(1), xfer);
   if (nStatus < 0) {
@@ -136,7 +145,7 @@ __SPI_write (int nFD) {
   xfer[0].len = 2;
   xfer[0].delay_usecs = DELAY_USEC;
 
-  printf("Press any key to continue..."); getchar();
+  __checkUSR();
 
   nStatus = ioctl(nFD, SPI_IOC_MESSAGE(1), xfer);
   if (nStatus < 0) {
@@ -164,7 +173,7 @@ __SPI_write (int nFD) {
   xfer[0].len = 2;
   xfer[0].delay_usecs = DELAY_USEC;
 
-  printf("Press any key to continue..."); getchar();
+  __checkUSR();
 
   nStatus = ioctl(nFD, SPI_IOC_MESSAGE(1), xfer);
   if (nStatus < 0) {
