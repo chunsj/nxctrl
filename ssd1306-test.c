@@ -50,9 +50,18 @@ NXCTRLOLED oled;
 NXCTRL_VOID
 NXCTRLSetup (NXCTRL_VOID) {
   int nFD;
-  uint8_t nOffset;
+  uint8_t nLSB;
+  uint32_t nSpeed, nSPIMode;
+  //uint8_t nOffset;
 
   nFD = open("/dev/spidev1.0", O_RDWR);
+
+  nLSB = 0;
+  ioctl(nFD, SPI_IOC_WR_LSB_FIRST, &nLSB);
+  nSpeed = 500000;
+  ioctl(nFD, SPI_IOC_WR_MAX_SPEED_HZ, &nSpeed);
+  nSPIMode = SPI_MODE_0;
+  ioctl(nFD, SPI_IOC_WR_MODE, &nSPIMode);
 
   NXCTRLOLEDInit(&oled, BNK, SPI_CS0, SPI_D1, SPI_CLK,
                  BNK, OLED_DC, BNK, OLED_RST,
@@ -68,6 +77,8 @@ NXCTRLSetup (NXCTRL_VOID) {
   NXCTRLSleep(500, 0);
   NXCTRLOLEDNormalDisplay(&oled);
   NXCTRLSleep(500, 0);
+
+  NXCTRLOLEDDrawText(&oled, 0, 0, "Hello", 5, 2, 0);
 
   close(nFD);
 }

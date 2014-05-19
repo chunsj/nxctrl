@@ -124,7 +124,7 @@ NXCTRLOLEDInit (NXCTRLOLED *pOLED,
   pOLED->nRSBank = nRSBank;
   pOLED->nRSPin = nRSPin;
   pOLED->nColOffset = 0;
-  pOLED->nSPIFD = 0;
+  pOLED->nSPIFD = nSPIFD;
   pOLED->bFlipped = NXCTRL_OFF;
 
   NXCTRLBITMAPInit(&(pOLED->bitmap), pOLED->nBufferCols, pOLED->nBufferRows);
@@ -154,8 +154,10 @@ NXCTRLOLEDCommand (NXCTRLOLED *pOLED, uint8_t *pnCMD, uint8_t nCMDLength) {
   xfer[0].delay_usecs = SPI_DELAY;
 
   nStatus = ioctl(pOLED->nSPIFD, SPI_IOC_MESSAGE(1), xfer);
-  if (nStatus < 0)
+  if (nStatus < 0) {
+    perror("NXCTRLOLEDCommand");
     return -1;
+  }
 
   return 0;
 }
