@@ -45,41 +45,29 @@
 #define OLED_DATA         SPI_D1
 #define OLED_CLK          SPI_CLK
 
-typedef struct __tagNXCTRLOLED {
-  int nCols, nRows;
-  int nBufferRows;
-  int nMemBytes;
-  uint8_t nDCBank, nDCPin;
-  uint8_t nResetBank, nResetPin;
-  int nColOffset;
-} NXCTRLOLED;
-
 NXCTRLOLED oled;
 
 NXCTRL_VOID
 NXCTRLSetup (NXCTRL_VOID) {
   int nFD;
-
-  NXCTRLPinMux(BNK, SPI_CS0, NXCTRL_MODE0, NXCTRL_PULLUP, NXCTRL_LOW);
-  NXCTRLPinMux(BNK, SPI_D1, NXCTRL_MODE0, NXCTRL_PULLUP, NXCTRL_LOW);
-  NXCTRLPinMux(BNK, SPI_CLK, NXCTRL_MODE0, NXCTRL_PULLUP, NXCTRL_HIGH);
-
-  NXCTRLPinMode(BNK, OLED_RST, NXCTRL_OUTPUT);
-  NXCTRLDigitalWrite(BNK, OLED_RST, NXCTRL_HIGH);
-  NXCTRLPinMode(BNK, OLED_DC, NXCTRL_OUTPUT);
-  NXCTRLDigitalWrite(BNK, OLED_DC, NXCTRL_HIGH);
-
-  oled.nCols = 128;
-  oled.nRows = 32;
-  oled.nBufferRows = 64;
-  oled.nMemBytes = oled.nBufferRows * oled.nCols / 8;
-  oled.nDCBank = BNK;
-  oled.nDCPin = OLED_DC;
-  oled.nResetBank = BNK;
-  oled.nResetPin = OLED_RST;
-  oled.nColOffset = 0;
+  uint8_t nOffset;
 
   nFD = open("/dev/spidev1.0", O_RDWR);
+
+  NXCTRLOLEDInit(&oled, BNK, SPI_CS0, SPI_D1, SPI_CLK,
+                 BNK, OLED_DC, BNK, OLED_RST,
+                 128, 32,
+                 128, 64,
+                 nFD);
+
+  NXCTRLOLEDBegin(&oled, OLED_SWITCH_CAP_VCC);
+  NXCTRLOLEDClearDisplay(&oled);
+  NXCTRLOLEDDisplay(&oled);
+
+  NXCTRLOLEDInvertDisplay(&oled);
+  NXCTRLSleep(500, 0);
+  NXCTRLOLEDNormalDisplay(&oled);
+  NXCTRLSleep(500, 0);
 
   close(nFD);
 }
