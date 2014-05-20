@@ -26,6 +26,10 @@
 #include <stdio.h>
 #include <string.h>
 #include <signal.h>
+#include <linux/spi/spidev.h>
+#include <linux/types.h>
+#include <sys/ioctl.h>
+#include <errno.h>
 
 #include <NXCTRL.h>
 #include "NXCTRL_private.h"
@@ -807,3 +811,21 @@ NXCTRLServoWrite (NXCTRL_BANK nBank, NXCTRL_PIN nPin,
                       SERVO_FREQ, SERVO_RES, NXCTRL_OFF);
 }
 
+NXCTRL_INT32
+NXCTRLSPIWrite (int nSPIFD,
+                const NXCTRL_UINT8 *rchBytes,
+                NXCTRL_UINT32 nLength) {
+  NXCTRL_UINT32 nSpeed = 20000000;
+  struct spi_ioc_transfer xfer = {
+    .tx_buf = (unsigned int)rchBytes,
+    .rx_buf = (unsigned int)NULL, // write only XXX
+    .len = nLength,
+    .delay_usecs = 0,
+    .speed_hz = nSpeed,
+    .bits_per_word = 8
+  };
+  int nRet = ioctl(nSPIFD, SPI_IOC_MESSAGE(1), &xfer);
+  if (nRet == -1)
+    perror("NXCTRLSPIWrite");
+  return nRet;
+}

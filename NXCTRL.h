@@ -77,4 +77,8 @@ NXCTRL_VOID          NXCTRLAnalogWriteEx (NXCTRL_BANK nBank, NXCTRL_PIN nPin,
                                           NXCTRL_UINT32 nFREQHZ, NXCTRL_UINT32 nRESOLUTION,
                                           NXCTRL_BOOL nLog);
 
+NXCTRL_INT32         NXCTRLSPIWrite (int nSPIFD,
+                                     const NXCTRL_UINT8 *rchBytes,
+                                     NXCTRL_UINT32 nLength);
+
 #endif /* __NXCTRL_HEADER__ */

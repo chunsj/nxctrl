@@ -36,7 +36,7 @@
 #define BNK               NXCTRL_P9
 
 #define SPI_CS0           17
-#define SPI_D1            18
+#define SPI_D1            21
 #define SPI_CLK           22
 
 #define OLED_DC           13
@@ -52,40 +52,31 @@ NXCTRLSetup (NXCTRL_VOID) {
   int nFD;
   uint8_t nLSB;
   uint32_t nSpeed, nSPIMode;
-  //uint8_t nOffset;
 
   nFD = open("/dev/spidev1.0", O_RDWR);
 
   nLSB = 0;
   ioctl(nFD, SPI_IOC_WR_LSB_FIRST, &nLSB);
-  nSpeed = 500000;
+  nSpeed = 20000000;
   ioctl(nFD, SPI_IOC_WR_MAX_SPEED_HZ, &nSpeed);
   nSPIMode = SPI_MODE_0;
   ioctl(nFD, SPI_IOC_WR_MODE, &nSPIMode);
 
-  NXCTRLOLEDInit(&oled, BNK, SPI_CS0, SPI_D1, SPI_CLK,
+  NXCTRLOLEDInit(&oled,
                  BNK, OLED_DC, BNK, OLED_RST,
-                 128, 32,
-                 128, 64,
                  nFD);
 
-  NXCTRLOLEDBegin(&oled, OLED_SWITCH_CAP_VCC);
-  NXCTRLOLEDClearDisplay(&oled);
-  NXCTRLOLEDDisplay(&oled);
-
-  NXCTRLOLEDInvertDisplay(&oled);
-  NXCTRLSleep(500, 0);
-  NXCTRLOLEDNormalDisplay(&oled);
-  NXCTRLSleep(500, 0);
-
-  NXCTRLOLEDDrawText(&oled, 0, 0, "Hello", 5, 2, 0);
+  NXCTRLOLEDDisplayNormal(&oled);
+  NXCTRLSleep(4000, 0);
+  NXCTRLOLEDDisplayInverse(&oled);
+  NXCTRLSleep(4000, 0);
 
   close(nFD);
 }
 
 NXCTRL_VOID
 NXCTRLLoop (NXCTRL_VOID) {
-NXCTRLExitLoop();
+  NXCTRLExitLoop();
 }
 
 int
