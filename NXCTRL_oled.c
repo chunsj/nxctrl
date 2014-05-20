@@ -257,3 +257,218 @@ NXCTRL_VOID
 NXCTRLOLEDWrite (NXCTRLOLED *pOLED, NXCTRL_UINT8 ch) {
   NXCTRLOLEDWriteEx(pOLED, ch, NXCTRL_ON);
 }
+
+NXCTRL_VOID
+NXCTRLOLEDDrawFastHLine (NXCTRLOLED *pOLED,
+                         NXCTRL_INT8 x, NXCTRL_INT8 y,
+                         NXCTRL_INT8 w, NXCTRL_BOOL onOff) {
+  register NXCTRL_UINT8 *pBuf;
+  register NXCTRL_UINT8 chMask;
+  
+  if (y < 0 || y >= OLED_HEIGHT)
+    return;
+
+  if (x <0) {
+    w += x;
+    x = 0;
+  }
+
+  if ((x + w) > OLED_WIDTH)
+    w = OLED_HEIGHT - x;
+
+  if (w <= 0)
+    return;
+
+  pBuf = pOLED->rchBuf;
+  pBuf += ((y/8) * OLED_WIDTH);
+  pBuf += x;
+
+  chMask = 1 << (y&7);
+
+  if (onOff)
+    while (w--)
+      *pBuf++ |= chMask;
+  else
+    while (w--)
+      *pBuf++ &= ~chMask;
+}
+
+NXCTRL_VOID
+NXCTRLOLEDDrawFastVLine (NXCTRLOLED *pOLED,
+                         NXCTRL_INT8 x, NXCTRL_INT8 y,
+                         NXCTRL_INT8 h, NXCTRL_BOOL onOff) {
+  register NXCTRL_UINT8 *pBuf = pOLED->rchBuf;
+  register NXCTRL_UINT8 nMod;
+  
+  if (x < 0 || x >= OLED_WIDTH)
+    return;
+
+  if (y < 0) {
+    h += y;
+    y = 0;
+  }
+
+  if ((y + h) > OLED_HEIGHT)
+    h = OLED_HEIGHT - y;
+
+  if (h <= 0)
+    return;
+
+  pBuf += ((y/8) * OLED_WIDTH);
+  pBuf += x;
+
+  nMod = y & 7;
+  if (nMod) {
+    static NXCTRL_UINT8 rchPreMask[8] = { 0x00, 0x80, 0xC0, 0xE0, 0xF0, 0xF8, 0xFC, 0xFE };
+    register NXCTRL_UINT8 chMask;
+
+    nMod = 8 - nMod;
+    chMask = rchPreMask[nMod];
+    
+    if (h < nMod)
+      chMask &= (0xFF >> (nMod - h));
+
+    if (onOff)
+      *pBuf |= chMask;
+    else
+      *pBuf &= ~chMask;
+
+    if (h < nMod)
+      return;
+
+    h -= nMod;
+
+    pBuf += OLED_WIDTH;
+  }
+
+  if (h >= 8) {
+    register NXCTRL_UINT8 chVal = onOff ? 255 : 0;
+
+    do {
+      *pBuf = chVal;
+      pBuf += OLED_WIDTH;
+      h -= 8;
+    } while(h >= 8);
+  }
+
+  if (h) {
+    static NXCTRL_UINT8 rchPostMask[8] = { 0x00, 0x01, 0x03, 0x07, 0x0F, 0x1F, 0x3F, 0x7F };
+    register NXCTRL_UINT8 chMask;
+   
+    nMod = h & 7;
+    chMask = rchPostMask[nMod];
+
+    if (onOff)
+      *pBuf |= chMask;
+    else
+      *pBuf &= ~chMask;
+  }
+}
+
+NXCTRL_VOID
+NXCTRLOLEDDrawRect (NXCTRLOLED *pOLED,
+                    NXCTRL_INT8 x, NXCTRL_INT8 y,
+                    NXCTRL_INT8 w, NXCTRL_INT8 h,
+                    NXCTRL_BOOL onOff) {
+  NXCTRLOLEDDrawFastHLine(pOLED, x, y, w, onOff);
+  NXCTRLOLEDDrawFastHLine(pOLED, x, y + h - 1, w, onOff);
+  NXCTRLOLEDDrawFastVLine(pOLED, x, y, h, onOff);
+  NXCTRLOLEDDrawFastVLine(pOLED, x + w - 1, y, h, onOff);
+}
+
+NXCTRL_VOID
+NXCTRLOLEDFillRect (NXCTRLOLED *pOLED,
+                    NXCTRL_INT8 x, NXCTRL_INT8 y,
+                    NXCTRL_INT8 w, NXCTRL_INT8 h,
+                    NXCTRL_BOOL onOff) {
+  register int i;
+  for (i = x; i < x + w; i++)
+    NXCTRLOLEDDrawFastVLine(pOLED, i, y, h, onOff);
+}
+
+NXCTRL_VOID
+NXCTRLOLEDDrawCircle (NXCTRLOLED *pOLED,
+                      NXCTRL_INT8 x0, NXCTRL_INT8 y0,
+                      NXCTRL_INT8 r,
+                      NXCTRL_BOOL onOff) {
+  NXCTRL_INT16 f = 1 - r;
+  NXCTRL_INT16 ddFx = 1;
+  NXCTRL_INT16 ddFy = -2 * r;
+  NXCTRL_INT16 x = 0;
+  NXCTRL_INT16 y = r;
+
+  NXCTRLOLEDDrawPixel(pOLED, x0, y0 + r, onOff);
+  NXCTRLOLEDDrawPixel(pOLED, x0, y0 - r, onOff);
+  NXCTRLOLEDDrawPixel(pOLED, x0 + r, y0, onOff);
+  NXCTRLOLEDDrawPixel(pOLED, x0 - r, y0, onOff);
+
+  while (x < y) {
+    if (f >= 0) {
+      y--;
+      ddFy += 2;
+      f += ddFy;
+    }
+    x++;
+    ddFx += 2;
+    f += ddFx;
+
+    NXCTRLOLEDDrawPixel(pOLED, x0 + x, y0 + y, onOff);
+    NXCTRLOLEDDrawPixel(pOLED, x0 - x, y0 + y, onOff);
+    NXCTRLOLEDDrawPixel(pOLED, x0 + x, y0 - y, onOff);
+    NXCTRLOLEDDrawPixel(pOLED, x0 - x, y0 - y, onOff);
+    NXCTRLOLEDDrawPixel(pOLED, x0 + y, y0 + x, onOff);
+    NXCTRLOLEDDrawPixel(pOLED, x0 - y, y0 + x, onOff);
+    NXCTRLOLEDDrawPixel(pOLED, x0 + y, y0 - x, onOff);
+    NXCTRLOLEDDrawPixel(pOLED, x0 - y, y0 - x, onOff);
+  }
+}
+
+NXCTRL_VOID
+NXCTRLOLEDFillCircleHelper (NXCTRLOLED *pOLED,
+                            NXCTRL_INT8 x0, NXCTRL_INT8 y0,
+                            NXCTRL_INT8 r,
+                            NXCTRL_INT8 nCornerName, NXCTRL_INT8 nDelta,
+                            NXCTRL_BOOL onOff) {
+  NXCTRL_INT16 f = 1 - r;
+  NXCTRL_INT16 ddFx = 1;
+  NXCTRL_INT16 ddFy = -2 * r;
+  NXCTRL_INT16 x = 0;
+  NXCTRL_INT16 y = r;
+
+  while (x < y) {
+    if (f >= 0) {
+      y--;
+      ddFy += 2;
+      f += ddFy;
+    }
+    x++;
+    ddFx += 2;
+    f += ddFx;
+
+    if (nCornerName & 0x1) {
+      NXCTRLOLEDDrawFastVLine(pOLED,
+                              x0 + x, y0 - y,
+                              2*y + 1 + nDelta, onOff);
+      NXCTRLOLEDDrawFastVLine(pOLED,
+                              x0 + y, y0 - x,
+                              2*x + 1 + nDelta, onOff);
+    }
+    if (nCornerName & 0x2) {
+      NXCTRLOLEDDrawFastVLine(pOLED,
+                              x0 - x, y0 - y,
+                              2*y + 1 + nDelta, onOff);
+      NXCTRLOLEDDrawFastVLine(pOLED,
+                              x0 - y, y0 - x,
+                              2*x + 1 + nDelta, onOff);
+    }
+  }
+}
+
+NXCTRL_VOID
+NXCTRLOLEDFillCircle (NXCTRLOLED *pOLED,
+                      NXCTRL_INT8 x0, NXCTRL_INT8 y0,
+                      NXCTRL_INT8 r,
+                      NXCTRL_BOOL onOff) {
+  NXCTRLOLEDDrawFastVLine(pOLED, x0, y0 - r, 2*r + 1, onOff);
+  NXCTRLOLEDFillCircleHelper(pOLED, x0, y0, r, 3, 0, onOff);
+}

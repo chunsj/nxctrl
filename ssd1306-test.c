@@ -151,17 +151,69 @@ NXCTRLSetup (NXCTRL_VOID) {
   NXCTRLOLEDClearDisplay(&oled);
   NXCTRLOLEDUpdateDisplay(&oled);
 
+  for (i = 0; i < OLED_HEIGHT/2; i += 2) {
+    NXCTRLOLEDDrawRect(&oled,
+                       i, i,
+                       OLED_WIDTH - 2 * i, OLED_HEIGHT - 2 * i, NXCTRL_ON);
+    NXCTRLOLEDUpdateDisplay(&oled);
+  }
+  NXCTRLSleep(250, 0);
+  
+  NXCTRLOLEDClearDisplay(&oled);
+  NXCTRLOLEDUpdateDisplay(&oled);
+
+  for (i = 0; i < OLED_HEIGHT/2; i += 3) {
+    NXCTRLOLEDFillRect(&oled,
+                       i, i,
+                       OLED_WIDTH - i*2, OLED_HEIGHT - 2*i,
+                       (i%2) == 0 ? NXCTRL_ON : NXCTRL_OFF);
+    NXCTRLOLEDUpdateDisplay(&oled);
+  }
+  NXCTRLSleep(250, 0);
+  
+  NXCTRLOLEDClearDisplay(&oled);
+  NXCTRLOLEDUpdateDisplay(&oled);
+
+  for (i = 0; i < OLED_HEIGHT; i += 2) {
+    NXCTRLOLEDDrawCircle(&oled,
+                         OLED_WIDTH/2, OLED_HEIGHT/2,
+                         i, NXCTRL_ON);
+    NXCTRLOLEDUpdateDisplay(&oled);
+  }
+  NXCTRLSleep(250, 0);
+  
+  NXCTRLOLEDClearDisplay(&oled);
+  NXCTRLOLEDUpdateDisplay(&oled);
+
+  NXCTRLOLEDDrawCircle(&oled,
+                       OLED_WIDTH/2, OLED_HEIGHT/2,
+                       30, NXCTRL_ON);
+  NXCTRLOLEDUpdateDisplay(&oled);
+  NXCTRLSleep(250, 0);
+  
+  NXCTRLOLEDClearDisplay(&oled);
+  NXCTRLOLEDUpdateDisplay(&oled);
+
+  NXCTRLOLEDFillCircle(&oled,
+                       OLED_WIDTH/2, OLED_HEIGHT/2,
+                       30, NXCTRL_ON);
+  NXCTRLOLEDUpdateDisplay(&oled);
+  NXCTRLSleep(250, 0);
+  
+  NXCTRLOLEDClearDisplay(&oled);
+  NXCTRLOLEDUpdateDisplay(&oled);
+
   for (ch = 0; ch < 168; ch++) {
     if (ch == '\n') continue;
     NXCTRLOLEDWrite(&oled, ch);
   }
   NXCTRLOLEDUpdateDisplay(&oled);
-  NXCTRLSleep(2000, 0);
+  NXCTRLSleep(1000, 0);
 
   NXCTRLOLEDClearDisplay(&oled);
   NXCTRLOLEDUpdateDisplay(&oled);
 
-  NXCTRLOLEDSetCursor(&oled, 0, 0);
+  NXCTRLOLEDSetCursor(&oled, 46, 28);
   NXCTRLOLEDWrite(&oled, '1');
   NXCTRLOLEDWrite(&oled, '2');
   NXCTRLOLEDWrite(&oled, '3');
@@ -170,12 +222,22 @@ NXCTRLSetup (NXCTRL_VOID) {
   NXCTRLOLEDWrite(&oled, '5');
   NXCTRLOLEDWrite(&oled, '6');
   NXCTRLOLEDUpdateDisplay(&oled);
-  NXCTRLSleep(2000, 0);
+  NXCTRLSleep(1000, 0);
 
   NXCTRLOLEDClearDisplay(&oled);
   NXCTRLOLEDUpdateDisplay(&oled);
 
   fprintf(stdout, "done\n"); fflush(stdout);
+
+  NXCTRLOLEDSetCursor(&oled, 46, 28);
+  NXCTRLOLEDWrite(&oled, 'D');
+  NXCTRLOLEDWrite(&oled, 'I');
+  NXCTRLOLEDWrite(&oled, 'S');
+  NXCTRLOLEDWrite(&oled, 'P');
+  NXCTRLOLEDWrite(&oled, 'L');
+  NXCTRLOLEDWrite(&oled, 'A');
+  NXCTRLOLEDWrite(&oled, 'Y');
+  NXCTRLOLEDUpdateDisplay(&oled);
 }
 
 NXCTRL_VOID
