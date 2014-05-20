@@ -23,6 +23,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <strings.h>
 #include <NXCTRL.h>
 #include <NXCTRL_oled.h>
 
@@ -47,10 +48,11 @@
 #define OLED_CLK          SPI_CLK
 
 NXCTRLOLED oled;
+int nFD;
 
 NXCTRL_VOID
 NXCTRLSetup (NXCTRL_VOID) {
-  int nFD, i;
+  int i;
   char ch;
   uint8_t nLSB;
   uint32_t nSpeed, nSPIMode;
@@ -68,6 +70,8 @@ NXCTRLSetup (NXCTRL_VOID) {
   ioctl(nFD, SPI_IOC_WR_MAX_SPEED_HZ, &nSpeed);
   nSPIMode = SPI_MODE_0;
   ioctl(nFD, SPI_IOC_WR_MODE, &nSPIMode);
+
+  fprintf(stdout, "Running Demo... "); fflush(stdout);
 
   NXCTRLOLEDInit(&oled,
                  BNK, OLED_DC, BNK, OLED_RST,
@@ -171,12 +175,33 @@ NXCTRLSetup (NXCTRL_VOID) {
   NXCTRLOLEDClearDisplay(&oled);
   NXCTRLOLEDUpdateDisplay(&oled);
 
-  close(nFD);
+  fprintf(stdout, "done\n"); fflush(stdout);
 }
 
 NXCTRL_VOID
 NXCTRLLoop (NXCTRL_VOID) {
-  NXCTRLExitLoop();
+  char rchLine[BUFSIZ];
+  int i;
+  memset(rchLine, 0, BUFSIZ);
+  fprintf(stdout, "DISPLAY: ");
+  fgets(rchLine, 1024, stdin);
+  if (strlen(rchLine) > 0)
+    rchLine[strlen(rchLine)-1] = 0;
+
+  if (strcasecmp(rchLine, "quit") == 0) {
+    NXCTRLOLEDClearDisplay(&oled);
+    NXCTRLOLEDUpdateDisplay(&oled);
+    close(nFD);
+    NXCTRLExitLoop();
+    return;
+  }
+
+  NXCTRLOLEDSetCursor(&oled, 0, 0);
+  NXCTRLOLEDClearDisplay(&oled);
+
+  for (i = 0; i < strlen(rchLine); i++)
+    NXCTRLOLEDWrite(&oled, rchLine[i]);
+  NXCTRLOLEDUpdateDisplay(&oled);
 }
 
 int
