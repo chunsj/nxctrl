@@ -157,6 +157,20 @@ NXCTRLSetup (NXCTRL_VOID) {
   NXCTRLOLEDClearDisplay(&oled);
   NXCTRLOLEDUpdateDisplay(&oled);
 
+  NXCTRLOLEDSetCursor(&oled, 0, 0);
+  NXCTRLOLEDWrite(&oled, '1');
+  NXCTRLOLEDWrite(&oled, '2');
+  NXCTRLOLEDWrite(&oled, '3');
+  NXCTRLOLEDWrite(&oled, '.');
+  NXCTRLOLEDWrite(&oled, '4');
+  NXCTRLOLEDWrite(&oled, '5');
+  NXCTRLOLEDWrite(&oled, '6');
+  NXCTRLOLEDUpdateDisplay(&oled);
+  NXCTRLSleep(2000, 0);
+
+  NXCTRLOLEDClearDisplay(&oled);
+  NXCTRLOLEDUpdateDisplay(&oled);
+
   close(nFD);
 }
 
