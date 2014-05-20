@@ -36,7 +36,8 @@
 #define BNK               NXCTRL_P9
 
 #define SPI_CS0           17
-#define SPI_D1            21
+#define SPI_D0            21
+#define SPI_D1            18
 #define SPI_CLK           22
 
 #define OLED_DC           13
@@ -49,9 +50,15 @@ NXCTRLOLED oled;
 
 NXCTRL_VOID
 NXCTRLSetup (NXCTRL_VOID) {
-  int nFD;
+  int nFD, i;
+  char ch;
   uint8_t nLSB;
   uint32_t nSpeed, nSPIMode;
+
+  NXCTRLPinMux(BNK, SPI_CS0, NXCTRL_MODE0, NXCTRL_PULLDN, NXCTRL_LOW);
+  NXCTRLPinMux(BNK, SPI_D1, NXCTRL_MODE0, NXCTRL_PULLDN, NXCTRL_LOW);
+  NXCTRLPinMux(BNK, SPI_D0, NXCTRL_MODE0, NXCTRL_PULLUP, NXCTRL_HIGH);
+  NXCTRLPinMux(BNK, SPI_CLK, NXCTRL_MODE0, NXCTRL_PULLUP, NXCTRL_HIGH);
 
   nFD = open("/dev/spidev1.0", O_RDWR);
 
@@ -67,9 +74,88 @@ NXCTRLSetup (NXCTRL_VOID) {
                  nFD);
 
   NXCTRLOLEDDisplayNormal(&oled);
-  NXCTRLSleep(4000, 0);
+  NXCTRLOLEDSetBanner(&oled);
+  NXCTRLOLEDUpdateDisplay(&oled);
+  NXCTRLSleep(1000, 0);
+  
   NXCTRLOLEDDisplayInverse(&oled);
-  NXCTRLSleep(4000, 0);
+  NXCTRLSleep(1000, 0);
+  
+  NXCTRLOLEDDisplayNormal(&oled);
+  NXCTRLOLEDClearDisplay(&oled);
+  NXCTRLOLEDUpdateDisplay(&oled);
+  
+  NXCTRLOLEDDrawPixel(&oled, 10, 10, NXCTRL_ON);
+  NXCTRLOLEDDrawPixel(&oled, 10, OLED_HEIGHT - 10, NXCTRL_ON);
+  NXCTRLOLEDDrawPixel(&oled, OLED_WIDTH - 10, 10, NXCTRL_ON);
+  NXCTRLOLEDDrawPixel(&oled, OLED_WIDTH - 10, OLED_HEIGHT - 10, NXCTRL_ON);
+  NXCTRLOLEDUpdateDisplay(&oled);
+  NXCTRLSleep(1000, 0);
+  
+  NXCTRLOLEDClearDisplay(&oled);
+  NXCTRLOLEDUpdateDisplay(&oled);
+
+  for (i = 0; i < OLED_WIDTH; i += 4) {
+    NXCTRLOLEDDrawLine(&oled, 0, 0, i, OLED_HEIGHT - 1, NXCTRL_ON);
+    NXCTRLOLEDUpdateDisplay(&oled);
+  }
+  for (i = 0; i < OLED_HEIGHT; i += 4) {
+    NXCTRLOLEDDrawLine(&oled, 0, 0, OLED_WIDTH - 1, i, NXCTRL_ON);
+    NXCTRLOLEDUpdateDisplay(&oled);
+  }
+  NXCTRLSleep(250, 0);
+  
+  NXCTRLOLEDClearDisplay(&oled);
+  NXCTRLOLEDUpdateDisplay(&oled);
+
+  for (i = 0; i < OLED_WIDTH; i += 4) {
+    NXCTRLOLEDDrawLine(&oled, 0, OLED_HEIGHT - 1, i, 0, NXCTRL_ON);
+    NXCTRLOLEDUpdateDisplay(&oled);
+  }
+  for (i = OLED_HEIGHT - 1; i >= 0; i -= 4) {
+    NXCTRLOLEDDrawLine(&oled, 0, OLED_HEIGHT - 1, OLED_WIDTH - 1, i, NXCTRL_ON);
+    NXCTRLOLEDUpdateDisplay(&oled);
+  }
+  NXCTRLSleep(250, 0);
+  
+  NXCTRLOLEDClearDisplay(&oled);
+  NXCTRLOLEDUpdateDisplay(&oled);
+
+  for (i = OLED_WIDTH - 1; i >= 0 ; i -= 4) {
+    NXCTRLOLEDDrawLine(&oled, OLED_WIDTH - 1, OLED_HEIGHT - 1, i, 0, NXCTRL_ON);
+    NXCTRLOLEDUpdateDisplay(&oled);
+  }
+  for (i = OLED_HEIGHT - 1; i >= 0; i -= 4) {
+    NXCTRLOLEDDrawLine(&oled, OLED_WIDTH - 1, OLED_HEIGHT - 1, 0, i, NXCTRL_ON);
+    NXCTRLOLEDUpdateDisplay(&oled);
+  }
+  NXCTRLSleep(250, 0);
+  
+  NXCTRLOLEDClearDisplay(&oled);
+  NXCTRLOLEDUpdateDisplay(&oled);
+
+  for (i = 0; i < OLED_HEIGHT; i += 4) {
+    NXCTRLOLEDDrawLine(&oled, OLED_WIDTH - 1, 0, 0, i, NXCTRL_ON);
+    NXCTRLOLEDUpdateDisplay(&oled);
+  }
+  for (i = 0; i < OLED_WIDTH; i += 4) {
+    NXCTRLOLEDDrawLine(&oled, OLED_WIDTH - 1, 0, i, OLED_HEIGHT - 1, NXCTRL_ON);
+    NXCTRLOLEDUpdateDisplay(&oled);
+  }
+  NXCTRLSleep(250, 0);
+  
+  NXCTRLOLEDClearDisplay(&oled);
+  NXCTRLOLEDUpdateDisplay(&oled);
+
+  for (ch = 0; ch < 168; ch++) {
+    if (ch == '\n') continue;
+    NXCTRLOLEDWrite(&oled, ch);
+  }
+  NXCTRLOLEDUpdateDisplay(&oled);
+  NXCTRLSleep(2000, 0);
+
+  NXCTRLOLEDClearDisplay(&oled);
+  NXCTRLOLEDUpdateDisplay(&oled);
 
   close(nFD);
 }

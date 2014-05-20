@@ -3,9 +3,11 @@
 
 typedef unsigned int                    NXCTRL_UINT32;
 typedef unsigned short                  NXCTRL_UINT16;
+typedef unsigned char                   NXCTRL_UINT8;
 typedef void                            NXCTRL_VOID;
 typedef int                             NXCTRL_INT32;
-typedef unsigned char                   NXCTRL_UINT8;
+typedef short                           NXCTRL_INT16;
+typedef char                            NXCTRL_INT8;
 
 typedef char                            NXCTRL_BOOL;
 #define NXCTRL_TRUE                     ((NXCTRL_BOOL)1)
