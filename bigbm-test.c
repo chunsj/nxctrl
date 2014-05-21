@@ -53,7 +53,7 @@ NXCTRLOLED oled;
 int nFD;
 
 static NXCTRL_UINT8 bigBitmap[] = {
-#include "../bmp/result.bit.h"
+#include "../bmp/bitmap.h"
 };
 
 // should be larger than OLED_WIDTH
