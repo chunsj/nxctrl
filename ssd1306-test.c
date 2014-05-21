@@ -50,12 +50,34 @@
 NXCTRLOLED oled;
 int nFD;
 
+#define LOGO16_GLCD_HEIGHT 16
+#define LOGO16_GLCD_WIDTH  16
+static const NXCTRL_UINT8 logo16_glcd_bmp[] = {
+  0b00000000, 0b11000000,
+  0b00000001, 0b11000000,
+  0b00000001, 0b11000000,
+  0b00000011, 0b11100000,
+  0b11110011, 0b11100000,
+  0b11111110, 0b11111000,
+  0b01111110, 0b11111111,
+  0b00110011, 0b10011111,
+  0b00011111, 0b11111100,
+  0b00001101, 0b01110000,
+  0b00011011, 0b10100000,
+  0b00111111, 0b11100000,
+  0b00111111, 0b11110000,
+  0b01111100, 0b11110000,
+  0b01110000, 0b01110000,
+  0b00000000, 0b00110000
+};
+
 NXCTRL_VOID
 NXCTRLSetup (NXCTRL_VOID) {
   int i;
   char ch;
   uint8_t nLSB;
   uint32_t nSpeed, nSPIMode;
+  NXCTRL_BOOL f;
 
   NXCTRLPinMux(BNK, SPI_CS0, NXCTRL_MODE0, NXCTRL_PULLDN, NXCTRL_LOW);
   NXCTRLPinMux(BNK, SPI_D1, NXCTRL_MODE0, NXCTRL_PULLDN, NXCTRL_LOW);
@@ -203,6 +225,80 @@ NXCTRLSetup (NXCTRL_VOID) {
   NXCTRLOLEDClearDisplay(&oled);
   NXCTRLOLEDUpdateDisplay(&oled);
 
+  for (i = 0; i < OLED_HEIGHT/2 - 2; i += 2) {
+    NXCTRLOLEDDrawRoundRect(&oled,
+                            i, i,
+                            OLED_WIDTH - 2*i, OLED_HEIGHT - 2*i,
+                            OLED_HEIGHT/4, NXCTRL_ON);
+    NXCTRLOLEDUpdateDisplay(&oled);
+  }
+  NXCTRLSleep(250, 0);
+  
+  NXCTRLOLEDClearDisplay(&oled);
+  NXCTRLOLEDUpdateDisplay(&oled);
+
+  for (i = 0; i < OLED_HEIGHT/2 - 2; i += 3) {
+    NXCTRLOLEDFillRoundRect(&oled,
+                            i, i,
+                            OLED_WIDTH - 2*i, OLED_HEIGHT - 2*i,
+                            OLED_HEIGHT/4,
+                            (i%2) == 0 ? NXCTRL_ON : NXCTRL_OFF);
+    NXCTRLOLEDUpdateDisplay(&oled);
+  }
+  NXCTRLSleep(250, 0);
+
+  NXCTRLOLEDClearDisplay(&oled);
+  NXCTRLOLEDUpdateDisplay(&oled);
+
+  NXCTRLOLEDDrawRoundRect(&oled,
+                          10, 10,
+                          OLED_WIDTH - 20, OLED_HEIGHT - 20,
+                          OLED_HEIGHT/4, NXCTRL_ON);
+  NXCTRLOLEDUpdateDisplay(&oled);
+  NXCTRLSleep(250, 0);
+  
+  NXCTRLOLEDClearDisplay(&oled);
+  NXCTRLOLEDUpdateDisplay(&oled);
+
+  NXCTRLOLEDFillRoundRect(&oled,
+                          15, 15,
+                          OLED_WIDTH - 30, OLED_HEIGHT - 30,
+                          OLED_HEIGHT/4, NXCTRL_ON);
+  NXCTRLOLEDUpdateDisplay(&oled);
+  NXCTRLSleep(250, 0);
+  
+  NXCTRLOLEDClearDisplay(&oled);
+  NXCTRLOLEDUpdateDisplay(&oled);
+
+  for (i = 0; i < OLED_HEIGHT / 2; i += 5) {
+    NXCTRLOLEDDrawTriangle(&oled,
+                           OLED_WIDTH/2, OLED_HEIGHT/2 - i,
+                           OLED_WIDTH/2 - i, OLED_HEIGHT/2 + i,
+                           OLED_WIDTH/2 + i, OLED_HEIGHT/2 + i,
+                           NXCTRL_ON);
+    NXCTRLOLEDUpdateDisplay(&oled);
+  }
+  NXCTRLSleep(250, 0);
+  
+  NXCTRLOLEDClearDisplay(&oled);
+  NXCTRLOLEDUpdateDisplay(&oled);
+
+  f = NXCTRL_ON;
+  for (i = OLED_HEIGHT/2; i > 0; i -= 5) {
+    NXCTRLOLEDFillTriangle(&oled,
+                           OLED_WIDTH/2, OLED_HEIGHT/2 - i,
+                           OLED_WIDTH/2 - i, OLED_HEIGHT/2 + i,
+                           OLED_WIDTH/2 + i, OLED_HEIGHT/2 + i,
+                           f);
+    if (f) f = NXCTRL_OFF;
+    else f = NXCTRL_ON;
+    NXCTRLOLEDUpdateDisplay(&oled);
+  }
+  NXCTRLSleep(250, 0);
+  
+  NXCTRLOLEDClearDisplay(&oled);
+  NXCTRLOLEDUpdateDisplay(&oled);
+
   for (ch = 0; ch < 168; ch++) {
     if (ch == '\n') continue;
     NXCTRLOLEDWrite(&oled, ch);
@@ -221,6 +317,33 @@ NXCTRLSetup (NXCTRL_VOID) {
   NXCTRLOLEDWrite(&oled, '4');
   NXCTRLOLEDWrite(&oled, '5');
   NXCTRLOLEDWrite(&oled, '6');
+  NXCTRLOLEDUpdateDisplay(&oled);
+  NXCTRLSleep(1000, 0);
+
+  NXCTRLOLEDStartScrollRight(&oled, 0x00, 0x0F);
+  NXCTRLSleep(2000, 0);
+  NXCTRLOLEDStopScroll(&oled);
+  NXCTRLSleep(1000, 0);
+  NXCTRLOLEDStartScrollLeft(&oled, 0x00, 0x0F);
+  NXCTRLSleep(2000, 0);
+  NXCTRLOLEDStopScroll(&oled);
+  NXCTRLSleep(1000, 0);
+  NXCTRLOLEDStartScrollDiagRight(&oled, 0x00, 0x07);
+  NXCTRLSleep(2000, 0);
+  NXCTRLOLEDStartScrollDiagLeft(&oled, 0x00, 0x07);
+  NXCTRLSleep(2000, 0);
+  NXCTRLOLEDStopScroll(&oled);
+  NXCTRLSleep(1000, 0);
+
+  NXCTRLOLEDClearDisplay(&oled);
+  NXCTRLOLEDUpdateDisplay(&oled);
+
+  NXCTRLOLEDDrawBitmap(&oled,
+                       30, 16,
+                       logo16_glcd_bmp,
+                       LOGO16_GLCD_WIDTH,
+                       LOGO16_GLCD_HEIGHT,
+                       NXCTRL_ON);
   NXCTRLOLEDUpdateDisplay(&oled);
   NXCTRLSleep(1000, 0);
 
@@ -250,7 +373,7 @@ NXCTRLLoop (NXCTRL_VOID) {
   if (strlen(rchLine) > 0)
     rchLine[strlen(rchLine)-1] = 0;
 
-  if (strcasecmp(rchLine, "quit") == 0) {
+  if (strcasecmp(rchLine, ".quit") == 0) {
     NXCTRLOLEDClearDisplay(&oled);
     NXCTRLOLEDUpdateDisplay(&oled);
     close(nFD);

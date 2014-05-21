@@ -63,28 +63,67 @@ NXCTRL_VOID NXCTRLOLEDDrawRect (NXCTRLOLED *pOLED,
                                 NXCTRL_INT8 x, NXCTRL_INT8 y,
                                 NXCTRL_INT8 w, NXCTRL_INT8 h,
                                 NXCTRL_BOOL onOff);
+NXCTRL_VOID NXCTRLOLEDDrawRoundRect (NXCTRLOLED *pOLED,
+                                     NXCTRL_INT8 x, NXCTRL_INT8 y,
+                                     NXCTRL_INT8 w, NXCTRL_INT8 h,
+                                     NXCTRL_INT8 r,
+                                     NXCTRL_BOOL onOff);
 NXCTRL_VOID NXCTRLOLEDDrawCircle (NXCTRLOLED *pOLED,
                                   NXCTRL_INT8 x0, NXCTRL_INT8 y0,
                                   NXCTRL_INT8 r,
                                   NXCTRL_BOOL onOff);
+NXCTRL_VOID NXCTRLOLEDDrawTriangle (NXCTRLOLED *pOLED,
+                                    NXCTRL_INT8 x0, NXCTRL_INT8 y0,
+                                    NXCTRL_INT8 x1, NXCTRL_INT8 y1,
+                                    NXCTRL_INT8 x2, NXCTRL_INT8 y2,
+                                    NXCTRL_BOOL onOff);
 NXCTRL_VOID NXCTRLOLEDDrawChar (NXCTRLOLED *pOLED,
                                 NXCTRL_INT8 x, NXCTRL_INT8 y,
                                 NXCTRL_UINT8 ch,
                                 NXCTRL_BOOL onOffFG, NXCTRL_BOOL onOffBG);
+NXCTRL_VOID NXCTRLOLEDDrawBitmap (NXCTRLOLED *pOLED,
+                                  NXCTRL_INT8 x, NXCTRL_INT8 y,
+                                  const NXCTRL_UINT8 *pBitmap,
+                                  NXCTRL_UINT16 w, NXCTRL_UINT16 h,
+                                  NXCTRL_BOOL onOff);
 
 NXCTRL_VOID NXCTRLOLEDFillRect (NXCTRLOLED *pOLED,
                                 NXCTRL_INT8 x, NXCTRL_INT8 y,
                                 NXCTRL_INT8 w, NXCTRL_INT8 h,
                                 NXCTRL_BOOL onOff);
+NXCTRL_VOID NXCTRLOLEDFillRoundRect (NXCTRLOLED *pOLED,
+                                     NXCTRL_INT8 x, NXCTRL_INT8 y,
+                                     NXCTRL_INT8 w, NXCTRL_INT8 h,
+                                     NXCTRL_INT8 r,
+                                     NXCTRL_BOOL onOff);
 NXCTRL_VOID NXCTRLOLEDFillCircle (NXCTRLOLED *pOLED,
                                   NXCTRL_INT8 x0, NXCTRL_INT8 y0,
                                   NXCTRL_INT8 r,
                                   NXCTRL_BOOL onOff);
+NXCTRL_VOID NXCTRLOLEDFillTriangle (NXCTRLOLED *pOLED,
+                                    NXCTRL_INT8 x0, NXCTRL_INT8 y0,
+                                    NXCTRL_INT8 x1, NXCTRL_INT8 y1,
+                                    NXCTRL_INT8 x2, NXCTRL_INT8 y2,
+                                    NXCTRL_BOOL onOff);
 
 NXCTRL_VOID NXCTRLOLEDSetCursor (NXCTRLOLED *pOLED,
                                  NXCTRL_INT8 x, NXCTRL_INT8 y);
 NXCTRL_VOID NXCTRLOLEDWrite (NXCTRLOLED *pOLED, NXCTRL_UINT8 ch);
 NXCTRL_VOID NXCTRLOLEDWriteEx (NXCTRLOLED *pOLED, NXCTRL_UINT8 ch,
                                NXCTRL_BOOL bWrap);
+
+NXCTRL_VOID NXCTRLOLEDStartScrollRight (NXCTRLOLED *pOLED,
+                                        NXCTRL_UINT8 nStart,
+                                        NXCTRL_UINT8 nStop);
+NXCTRL_VOID NXCTRLOLEDStartScrollLeft (NXCTRLOLED *pOLED,
+                                       NXCTRL_UINT8 nStart,
+                                       NXCTRL_UINT8 nStop);
+NXCTRL_VOID NXCTRLOLEDStartScrollDiagRight (NXCTRLOLED *pOLED,
+                                            NXCTRL_UINT8 nStart,
+                                            NXCTRL_UINT8 nStop);
+NXCTRL_VOID NXCTRLOLEDStartScrollDiagLeft (NXCTRLOLED *pOLED,
+                                           NXCTRL_UINT8 nStart,
+                                           NXCTRL_UINT8 nStop);
+NXCTRL_VOID NXCTRLOLEDStopScroll (NXCTRLOLED *pOLED);
 
 #endif /* __NXCTRL_OLED_HEADER__ */

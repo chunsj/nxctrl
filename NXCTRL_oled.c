@@ -472,3 +472,230 @@ NXCTRLOLEDFillCircle (NXCTRLOLED *pOLED,
   NXCTRLOLEDDrawFastVLine(pOLED, x0, y0 - r, 2*r + 1, onOff);
   NXCTRLOLEDFillCircleHelper(pOLED, x0, y0, r, 3, 0, onOff);
 }
+
+NXCTRL_VOID
+NXCTRLOLEDDrawCircleHelper (NXCTRLOLED *pOLED,
+                            NXCTRL_INT8 x0, NXCTRL_INT8 y0,
+                            NXCTRL_INT8 r,
+                            NXCTRL_INT8 nCornerName,
+                            NXCTRL_BOOL onOff) {
+  NXCTRL_INT16 f = 1 - r;
+  NXCTRL_INT16 ddFx = 1;
+  NXCTRL_INT16 ddFy = -2 * r;
+  NXCTRL_INT16 x = 0;
+  NXCTRL_INT16 y = r;
+
+  while (x < y) {
+    if (f >= 0) {
+      y--;
+      ddFy += 2;
+      f += ddFy;
+    }
+    x++;
+    ddFx += 2;
+    f += ddFx;
+
+    if (nCornerName & 0x4) {
+      NXCTRLOLEDDrawPixel(pOLED, x0 + x, y0 + y, onOff);
+      NXCTRLOLEDDrawPixel(pOLED, x0 + y, y0 + x, onOff);
+    }
+    if (nCornerName & 0x2) {
+      NXCTRLOLEDDrawPixel(pOLED, x0 + x, y0 - y, onOff);
+      NXCTRLOLEDDrawPixel(pOLED, x0 + y, y0 - x, onOff);
+    }
+    if (nCornerName & 0x8) {
+      NXCTRLOLEDDrawPixel(pOLED, x0 - x, y0 + y, onOff);
+      NXCTRLOLEDDrawPixel(pOLED, x0 - y, y0 + x, onOff);
+    }
+    if (nCornerName & 0x1) {
+      NXCTRLOLEDDrawPixel(pOLED, x0 - x, y0 - y, onOff);
+      NXCTRLOLEDDrawPixel(pOLED, x0 - y, y0 - x, onOff);
+    }
+  }
+}
+
+NXCTRL_VOID
+NXCTRLOLEDDrawRoundRect (NXCTRLOLED *pOLED,
+                         NXCTRL_INT8 x, NXCTRL_INT8 y,
+                         NXCTRL_INT8 w, NXCTRL_INT8 h,
+                         NXCTRL_INT8 r,
+                         NXCTRL_BOOL onOff) {
+  NXCTRLOLEDDrawFastHLine(pOLED, x + r, y, w - 2*r, onOff);
+  NXCTRLOLEDDrawFastHLine(pOLED, x + r, y + h - 1, w - 2*r, onOff);
+  NXCTRLOLEDDrawFastVLine(pOLED, x, y + r, h - 2*r, onOff);
+  NXCTRLOLEDDrawFastVLine(pOLED, x + w - 1, y +r, h - 2*r, onOff);
+
+  NXCTRLOLEDDrawCircleHelper(pOLED, x + r, y + r, r, 1, onOff);
+  NXCTRLOLEDDrawCircleHelper(pOLED, x + w - r - 1, y + r, r, 2, onOff);
+  NXCTRLOLEDDrawCircleHelper(pOLED, x + w - r - 1, y + h - r - 1, r, 4, onOff);
+  NXCTRLOLEDDrawCircleHelper(pOLED, x + r, y + h - r - 1, r, 8, onOff);
+}
+
+NXCTRL_VOID
+NXCTRLOLEDFillRoundRect (NXCTRLOLED *pOLED,
+                         NXCTRL_INT8 x, NXCTRL_INT8 y,
+                         NXCTRL_INT8 w, NXCTRL_INT8 h,
+                         NXCTRL_INT8 r,
+                         NXCTRL_BOOL onOff) {
+  NXCTRLOLEDFillRect(pOLED, x + r, y, w - 2 * r, h, onOff);
+
+  NXCTRLOLEDFillCircleHelper(pOLED, x + w - r - 1, y + r, r, 1, h - 2 * r - 1, onOff);
+  NXCTRLOLEDFillCircleHelper(pOLED, x + r, y + r, r, 2, h - 2 * r - 1, onOff);
+}
+
+NXCTRL_VOID
+NXCTRLOLEDDrawTriangle (NXCTRLOLED *pOLED,
+                        NXCTRL_INT8 x0, NXCTRL_INT8 y0,
+                        NXCTRL_INT8 x1, NXCTRL_INT8 y1,
+                        NXCTRL_INT8 x2, NXCTRL_INT8 y2,
+                        NXCTRL_BOOL onOff) {
+  NXCTRLOLEDDrawLine(pOLED, x0, y0, x1, y1, onOff);
+  NXCTRLOLEDDrawLine(pOLED, x1, y1, x2, y2, onOff);
+  NXCTRLOLEDDrawLine(pOLED, x2, y2, x0, y0, onOff);
+}
+
+NXCTRL_VOID
+NXCTRLOLEDFillTriangle (NXCTRLOLED *pOLED,
+                        NXCTRL_INT8 x0, NXCTRL_INT8 y0,
+                        NXCTRL_INT8 x1, NXCTRL_INT8 y1,
+                        NXCTRL_INT8 x2, NXCTRL_INT8 y2,
+                        NXCTRL_BOOL onOff) {
+  NXCTRL_INT16 a, b, y, last, t;
+  NXCTRL_INT16 dx01, dx02, dx12, dy01, dy02, dy12, sa, sb;
+
+  if (y0 > y1) {
+    t = y0; y0 = y1; y1 = t;
+    t = x0; x0 = x1; x1 = t;
+  }
+  if (y1 > y2) {
+    t = y1; y1 = y2; y2 = t;
+    t = x1; x1 = x2; x2 = t;
+  }
+  if (y0 > y1) {
+    t = y0; y0 = y1; y1 = t;
+    t = x0; x0 = x1; x1 = t;
+  }
+
+  if (y0 == y2) {
+    a = b = x0;
+    if (x1 < a) a = x1;
+    else if (x1 > b) b = x1;
+    if (x2 < a) a = x2;
+    else if (x2 > b) b = x2;
+    NXCTRLOLEDDrawFastHLine(pOLED, a, y0, b - a + 1, onOff);
+    return;
+  }
+
+  dx01 = x1 - x0;
+  dy01 = y1 - y0;
+  dx02 = x2 - x0;
+  dy02 = y2 - y0;
+  dx12 = x2 - x1;
+  dy12 = y2 - y1;
+  sa = 0;
+  sb = 0;
+
+  if (y1 == y2) last = y1;
+  else last = y1 - 1;
+
+  for (y = y0; y <= last; y++) {
+    a = x0 + sa / dy01;
+    b = x0 + sb / dy02;
+    sa += dx01;
+    sb += dx02;
+    if (a > b) { t = a; a = b; b = t; }
+    NXCTRLOLEDDrawFastHLine(pOLED, a, y, b - a + 1, onOff);
+  }
+
+  sa = dx12 * (y - y1);
+  sb = dx02 * (y - y0);
+  for (; y <= y2; y++) {
+    a = x1 + sa / dy12;
+    b = x0 + sb / dy02;
+    sa += dx12;
+    sb += dx02;
+    if (a > b) { t = a; a = b; b = t; }
+    NXCTRLOLEDDrawFastHLine(pOLED, a, y, b - a + 1, onOff);
+  }
+}
+
+NXCTRL_VOID
+NXCTRLOLEDStartScrollRight (NXCTRLOLED *pOLED,
+                            NXCTRL_UINT8 nStart,
+                            NXCTRL_UINT8 nStop) {
+  NXCTRLOLEDCommand(pOLED, SSD1306_RIGHT_HORIZONTAL_SCROLL);
+  NXCTRLOLEDCommand(pOLED, 0x00);
+  NXCTRLOLEDCommand(pOLED, nStart);
+  NXCTRLOLEDCommand(pOLED, 0x00);
+  NXCTRLOLEDCommand(pOLED, nStop);
+  NXCTRLOLEDCommand(pOLED, 0x00);
+  NXCTRLOLEDCommand(pOLED, 0xFF);
+  NXCTRLOLEDCommand(pOLED, SSD1306_ACTIVATE_SCROLL);
+}
+
+NXCTRL_VOID
+NXCTRLOLEDStartScrollLeft (NXCTRLOLED *pOLED,
+                           NXCTRL_UINT8 nStart,
+                           NXCTRL_UINT8 nStop) {
+  NXCTRLOLEDCommand(pOLED, SSD1306_LEFT_HORIZONTAL_SCROLL);
+  NXCTRLOLEDCommand(pOLED, 0x00);
+  NXCTRLOLEDCommand(pOLED, nStart);
+  NXCTRLOLEDCommand(pOLED, 0x00);
+  NXCTRLOLEDCommand(pOLED, nStop);
+  NXCTRLOLEDCommand(pOLED, 0x00);
+  NXCTRLOLEDCommand(pOLED, 0xFF);
+  NXCTRLOLEDCommand(pOLED, SSD1306_ACTIVATE_SCROLL);
+}
+
+NXCTRL_VOID
+NXCTRLOLEDStartScrollDiagRight (NXCTRLOLED *pOLED,
+                                NXCTRL_UINT8 nStart,
+                                NXCTRL_UINT8 nStop) {
+  NXCTRLOLEDCommand(pOLED, SSD1306_SET_VERTICAL_SCROLL_AREA);
+  NXCTRLOLEDCommand(pOLED, 0x00);
+  NXCTRLOLEDCommand(pOLED, OLED_HEIGHT);
+  NXCTRLOLEDCommand(pOLED, SSD1306_VERTICAL_AND_RIGHT_HORIZONTAL_SCROLL);
+  NXCTRLOLEDCommand(pOLED, 0x00);
+  NXCTRLOLEDCommand(pOLED, nStart);
+  NXCTRLOLEDCommand(pOLED, 0x00);
+  NXCTRLOLEDCommand(pOLED, nStop);
+  NXCTRLOLEDCommand(pOLED, 0x01);
+  NXCTRLOLEDCommand(pOLED, SSD1306_ACTIVATE_SCROLL);
+}
+
+NXCTRL_VOID
+NXCTRLOLEDStartScrollDiagLeft (NXCTRLOLED *pOLED,
+                               NXCTRL_UINT8 nStart,
+                               NXCTRL_UINT8 nStop) {
+  NXCTRLOLEDCommand(pOLED, SSD1306_SET_VERTICAL_SCROLL_AREA);
+  NXCTRLOLEDCommand(pOLED, 0x00);
+  NXCTRLOLEDCommand(pOLED, OLED_HEIGHT);
+  NXCTRLOLEDCommand(pOLED, SSD1306_VERTICAL_AND_LEFT_HORIZONTAL_SCROLL);
+  NXCTRLOLEDCommand(pOLED, 0x00);
+  NXCTRLOLEDCommand(pOLED, nStart);
+  NXCTRLOLEDCommand(pOLED, 0x00);
+  NXCTRLOLEDCommand(pOLED, nStop);
+  NXCTRLOLEDCommand(pOLED, 0x01);
+  NXCTRLOLEDCommand(pOLED, SSD1306_ACTIVATE_SCROLL);
+}
+
+NXCTRL_VOID
+NXCTRLOLEDStopScroll (NXCTRLOLED *pOLED) {
+  NXCTRLOLEDCommand(pOLED, SSD1306_DEACTIVATE_SCROLL);
+}
+
+NXCTRL_VOID
+NXCTRLOLEDDrawBitmap (NXCTRLOLED *pOLED,
+                      NXCTRL_INT8 x, NXCTRL_INT8 y,
+                      const NXCTRL_UINT8 *pBitmap,
+                      NXCTRL_UINT16 w, NXCTRL_UINT16 h,
+                      NXCTRL_BOOL onOff) {
+  NXCTRL_INT16 i, j, nWidth = (w + 7) / 8;
+  for (j = 0; j < h; j++) {
+    for (i = 0; i < w; i++) {
+      if ((*(const NXCTRL_UINT8 *)(pBitmap + j * nWidth + i / 8)) &
+          (128 >> (i & 7)))
+        NXCTRLOLEDDrawPixel(pOLED, x + i, y + j,  onOff);
+    }
+  }
+}
