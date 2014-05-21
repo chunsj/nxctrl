@@ -48,11 +48,11 @@ SRC14=ak8448-test.c NXCTRL.c
 EXE15=ssd1306-test
 SRC15=ssd1306-test.c NXCTRL.c NXCTRL_oled.c
 EXE16=bigbm-test
-SRC16=bigbm-test.c NXCTRL.c NXCTRL_oled.c
+SRC16=bigbm-test.c NXCTRL.c NXCTRL_oled.c NXCTRL_bitArray.c
 
 ARTIFACTS=$(EXE01) $(EXE02) $(EXE03) $(EXE04) $(EXE04-BIN) $(EXE05) $(EXE06) $(EXE06-BIN) \
 	$(EXE07) $(EXE07-BIN) $(EXE08) $(EXE08-BIN) $(EXE09) $(EXE10) $(EXE10-BIN) \
-	$(EXE11) $(EXE11-BIN) $(EXE12) $(EXE13) $(EXE14) $(EXE15) $(EXEC16)
+	$(EXE11) $(EXE11-BIN) $(EXE12) $(EXE13) $(EXE14) $(EXE15) $(EXE16)
 
 all: $(ARTIFACTS)
 

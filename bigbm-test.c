@@ -26,6 +26,7 @@
 #include <strings.h>
 #include <NXCTRL.h>
 #include <NXCTRL_oled.h>
+#include <NXCTRL_bitArray.h>
 
 #include <unistd.h>
 #include <stdint.h>
@@ -66,6 +67,10 @@ static NXCTRL_UINT8 bigBitmap[] = {
 NXCTRL_VOID
 __DrawBigBitmap (int nX, int nY) {
   int i, j;
+  NXCTRLBITARRAY arrBits;
+  arrBits.arr = bigBitmap;
+  arrBits.nBits = BIG_BITMAP_W * BIG_BITMAP_H;
+  
   if ((nX + OLED_WIDTH) > BIG_BITMAP_W)
     nX = BIG_BITMAP_W - OLED_WIDTH - 1;
   if ((nY + OLED_HEIGHT) > BIG_BITMAP_H)
@@ -73,7 +78,8 @@ __DrawBigBitmap (int nX, int nY) {
   
   for (i = nX; i < (nX + OLED_WIDTH); i++) {
     for (j = nY; j < (nY + OLED_HEIGHT); j++) {
-      if (bigBitmap[i + j*BIG_BITMAP_W] > 0)
+      if (NXCTRLBITARRAYGet(&arrBits, i + j * BIG_BITMAP_W))
+        //if (bigBitmap[i + j*BIG_BITMAP_W] > 0)
         NXCTRLOLEDDrawPixel(&oled, (i - nX), (j - nY), NXCTRL_ON);
       else
         NXCTRLOLEDDrawPixel(&oled, (i - nX), (j - nY), NXCTRL_OFF);
