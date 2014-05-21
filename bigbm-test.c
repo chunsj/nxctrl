@@ -53,13 +53,15 @@ NXCTRLOLED oled;
 int nFD;
 
 static NXCTRL_UINT8 bigBitmap[] = {
-#include "../bmp/bitmap.h"
+#include "./bitmap/bitmap.h"
 };
 
 // should be larger than OLED_WIDTH
-#define BIG_BITMAP_W 800
+#define BIG_BITMAP_W 1800
 // should be larger than OLED_HEIGHT
-#define BIG_BITMAP_H 322
+#define BIG_BITMAP_H 1196
+
+#define SCROLL_STEP_DIV 4
 
 NXCTRL_VOID
 __DrawBigBitmap (int nX, int nY) {
@@ -129,8 +131,8 @@ NXCTRL_VOID
 NXCTRLLoop (NXCTRL_VOID) {
   NXCTRL_UINT8 ch;
   static int nPageX = 0, nPageY = 0;
-  const int nPageWidth = OLED_WIDTH/3;
-  const int nPageHeight = OLED_HEIGHT/3;
+  const int nPageWidth = OLED_WIDTH/SCROLL_STEP_DIV;
+  const int nPageHeight = OLED_HEIGHT/SCROLL_STEP_DIV;
   const int nPageW = BIG_BITMAP_W/nPageWidth;
   const int nPageH = BIG_BITMAP_H/nPageHeight;
 
