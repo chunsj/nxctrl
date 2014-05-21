@@ -47,6 +47,8 @@ EXE14=ak8448-test
 SRC14=ak8448-test.c NXCTRL.c
 EXE15=ssd1306-test
 SRC15=ssd1306-test.c NXCTRL.c NXCTRL_oled.c
+EXE16=bigbm-test
+SRC16=bigbm-test.c NXCTRL.c NXCTRL_oled.c
 
 ARTIFACTS=$(EXE01) $(EXE02) $(EXE03) $(EXE04) $(EXE04-BIN) $(EXE05) $(EXE06) $(EXE06-BIN) \
 	$(EXE07) $(EXE07-BIN) $(EXE08) $(EXE08-BIN) $(EXE09) $(EXE10) $(EXE10-BIN) \
@@ -115,6 +117,9 @@ $(EXE14): $(SRC14)
 	$(CC) $(CFLAGS) -o $@ $^ $(LDFLAGS) $(LIBS)
 
 $(EXE15): $(SRC15)
+	$(CC) $(CFLAGS) -o $@ $^ $(LDFLAGS) $(LIBS)
+
+$(EXE16): $(SRC16)
 	$(CC) $(CFLAGS) -o $@ $^ $(LDFLAGS) $(LIBS)
 
 clean:

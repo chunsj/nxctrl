@@ -73,7 +73,6 @@ static const NXCTRL_UINT8 logo16_glcd_bmp[] = {
   0b00000000, 0b00110000
 };
 
-
 #define NUMFLAKES 10
 #define ANI_COUNT 50
 
@@ -150,7 +149,7 @@ NXCTRLSetup (NXCTRL_VOID) {
   
   NXCTRLOLEDDisplayInverse(&oled);
   NXCTRLSleep(1000, 0);
-  
+
   NXCTRLOLEDDisplayNormal(&oled);
   NXCTRLOLEDClearDisplay(&oled);
   NXCTRLOLEDUpdateDisplay(&oled);
@@ -428,7 +427,6 @@ NXCTRLLoop (NXCTRL_VOID) {
     NXCTRLExitLoop();
     return;
   }
-
   NXCTRLOLEDSetCursor(&oled, 0, 0);
   NXCTRLOLEDClearDisplay(&oled);
 
