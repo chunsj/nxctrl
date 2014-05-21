@@ -813,12 +813,13 @@ NXCTRLServoWrite (NXCTRL_BANK nBank, NXCTRL_PIN nPin,
 
 NXCTRL_INT32
 NXCTRLSPIWrite (int nSPIFD,
-                const NXCTRL_UINT8 *rchBytes,
+                const NXCTRL_UINT8 *rchTXBytes,
+                NXCTRL_UINT8 *rchRXBytes,
                 NXCTRL_UINT32 nLength) {
   NXCTRL_UINT32 nSpeed = 20000000;
   struct spi_ioc_transfer xfer = {
-    .tx_buf = (unsigned int)rchBytes,
-    .rx_buf = (unsigned int)NULL, // write only XXX
+    .tx_buf = (unsigned int)rchTXBytes,
+    .rx_buf = (unsigned int)rchRXBytes,
     .len = nLength,
     .delay_usecs = 0,
     .speed_hz = nSpeed,
