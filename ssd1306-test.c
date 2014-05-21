@@ -34,6 +34,8 @@
 #include <linux/types.h>
 #include <linux/spi/spidev.h>
 
+extern long int random (void);
+
 #define BNK               NXCTRL_P9
 
 #define SPI_CS0           17
@@ -70,6 +72,48 @@ static const NXCTRL_UINT8 logo16_glcd_bmp[] = {
   0b01110000, 0b01110000,
   0b00000000, 0b00110000
 };
+
+
+#define NUMFLAKES 10
+#define ANI_COUNT 50
+
+NXCTRL_VOID
+__Animate (NXCTRL_VOID) {
+  NXCTRL_UINT8 rchIcons[NUMFLAKES][3];
+  NXCTRL_UINT8 f, nCnt = 0;
+
+  for (f = 0; f < NUMFLAKES; f++) {
+    rchIcons[f][0] = random() % OLED_WIDTH;
+    rchIcons[f][1] = 0;
+    rchIcons[f][2] = random() % 5 + 1;
+  }
+
+  while (nCnt++ <= ANI_COUNT) {
+    for (f = 0; f < NUMFLAKES; f++)
+      NXCTRLOLEDDrawBitmap(&oled,
+                           rchIcons[f][0], rchIcons[f][1],
+                           logo16_glcd_bmp,
+                           LOGO16_GLCD_WIDTH, LOGO16_GLCD_HEIGHT,
+                           NXCTRL_ON);
+    NXCTRLOLEDUpdateDisplay(&oled);
+    NXCTRLSleep(200, 0);
+
+    for (f = 0; f < NUMFLAKES; f++) {
+      NXCTRLOLEDDrawBitmap(&oled,
+                           rchIcons[f][0], rchIcons[f][1],
+                           logo16_glcd_bmp, 
+                           LOGO16_GLCD_WIDTH, LOGO16_GLCD_HEIGHT,
+                           NXCTRL_OFF);
+      rchIcons[f][1] += rchIcons[f][2];
+
+      if (rchIcons[f][1] > OLED_HEIGHT) {
+        rchIcons[f][0] = random() % OLED_WIDTH;
+        rchIcons[f][1] = 0;
+        rchIcons[f][2] = random() % 5 + 1;
+      }
+    }
+  }
+}
 
 NXCTRL_VOID
 NXCTRLSetup (NXCTRL_VOID) {
@@ -347,6 +391,10 @@ NXCTRLSetup (NXCTRL_VOID) {
   NXCTRLOLEDUpdateDisplay(&oled);
   NXCTRLSleep(1000, 0);
 
+  NXCTRLOLEDClearDisplay(&oled);
+  NXCTRLOLEDUpdateDisplay(&oled);
+
+  __Animate();
   NXCTRLOLEDClearDisplay(&oled);
   NXCTRLOLEDUpdateDisplay(&oled);
 
