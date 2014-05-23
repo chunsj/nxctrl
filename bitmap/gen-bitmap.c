@@ -67,8 +67,6 @@ main (int argc, const char *argv[]) {
     goto CLEANUP;
   }
 
-  fprintf(stderr, "here\n");
-
   fprintf(pFile, "// NAME:   %s\n", argv[1]);
   fprintf(pFile, "// WIDTH:  %u\n", bmp.width);
   fprintf(pFile, "// HEIGHT: %u\n", bmp.height);
