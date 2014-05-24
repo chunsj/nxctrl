@@ -1,0 +1,9 @@
+[Unit]
+Description=BBB Control Application
+
+[Service]
+ExecStart=/usr/bin/ctrl-app
+
+[Install]
+WantedBy=multi-user.target
+
