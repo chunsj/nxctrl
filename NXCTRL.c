@@ -55,7 +55,8 @@ static NXCTRL_UINT32 *__rpnCTRLs[2];
 static NXCTRL_INT32  *__rpnPWMs[2];
 
 volatile sig_atomic_t __nRunFLAG = 1;
-static NXCTRL_SIGINT_HANDLER __pfnSIGINTHANDLER = NULL;
+static NXCTRL_SIG_HANDLER __pfnSIGINTHANDLER = NULL;
+static NXCTRL_SIG_HANDLER __pfnSIGTERMHANDLER = NULL;
 
 static int rnExportedGPIO[92];
 static int nExportedGPIO = 0;
@@ -106,8 +107,13 @@ __SYSFSHACKCLEAN (void) {
 }
 
 NXCTRL_VOID
-NXCTRLSetSIGINTHandler (NXCTRL_SIGINT_HANDLER pfn) {
+NXCTRLSetSIGINTHandler (NXCTRL_SIG_HANDLER pfn) {
   __pfnSIGINTHANDLER = pfn;
+}
+
+NXCTRL_VOID
+NXCTRLSetSIGTERMHandler (NXCTRL_SIG_HANDLER pfn) {
+  __pfnSIGTERMHANDLER = pfn;
 }
 
 NXCTRL_VOID
@@ -123,12 +129,21 @@ __SIGINT_HANDLER (NXCTRL_INT32 nSIG) {
     __pfnSIGINTHANDLER();
 }
 
+static NXCTRL_VOID
+__SIGTERM_HANDLER (NXCTRL_INT32 nSIG) {
+  fprintf(stderr, "SIGTERM!\n");
+  NXCTRLExitLoop();
+  if (__pfnSIGTERMHANDLER)
+    __pfnSIGTERMHANDLER();
+}
+
 NXCTRL_INT32
 NXCTRLMain (NXCTRL_VOID) {
   extern NXCTRL_VOID NXCTRLSetup (NXCTRL_VOID);
   extern NXCTRL_VOID NXCTRLLoop (NXCTRL_VOID);
 
   signal(SIGINT, __SIGINT_HANDLER);
+  signal(SIGTERM, __SIGTERM_HANDLER);
 
   if (!NXCTRLOpen())
     return -1;

@@ -63,7 +63,7 @@
 #define OLED_DATA                   SPI_D1
 #define OLED_CLK                    SPI_CLK
 
-#define DPY_IDLE_COUNT_MAX          600
+#define DPY_IDLE_COUNT_MAX          300
 #define MIN_ACTION_DURATION         400
 
 #define MENU_IDX_CNT                3
@@ -71,6 +71,9 @@
 #define MENU_IDX_TURN_OFF_MENU      0
 #define MENU_IDX_CONN_INFO          1
 #define MENU_IDX_SHUTDOWN           2
+
+#define FONT_WIDTH                  6
+#define FONT_HEIGHT                 8
 
 int MENU_BUTTON_STATE = NXCTRL_LOW;
 int EXEC_BUTTON_STATE = NXCTRL_LOW;
@@ -108,6 +111,24 @@ __WriteStringToOLED (const char *psz) {
 }
 
 NXCTRL_VOID
+__WriteDateTime (NXCTRL_VOID) {
+  char rch[20];
+  time_t t = time(NULL);
+  struct tm tm = *localtime(&t);
+  sprintf(rch,
+          "%d-%s%d-%s%d %s%d:%s%d:%s%d",
+          tm.tm_year + 1900,
+          (tm.tm_mon + 1) > 9 ? "" : "0", tm.tm_mon + 1,
+          tm.tm_mday > 9 ? "" : "0", tm.tm_mday,
+          tm.tm_hour > 9 ? "" : "0", tm.tm_hour,
+          tm.tm_min > 9 ? "" : "0", tm.tm_min,
+          tm.tm_sec > 9 ? "" : "0", tm.tm_sec);
+  rch[19] = 0;
+  NXCTRLOLEDSetCursor(&OLED, FONT_WIDTH, 0);
+  __WriteStringToOLED(rch);
+}
+
+NXCTRL_VOID
 MENU_ACTION_TURN_OFF_MENU (NXCTRL_VOID) {
   DPY_IDLE_COUNT = 0;
   NXCTRLOLEDClearDisplay(&OLED);
@@ -132,7 +153,8 @@ MENU_ACTION_CONN_INFO (NXCTRL_VOID) {
     return;
   }
 
-  __WriteStringToOLED("CONNECTION INFO:\n\n");
+  NXCTRLOLEDSetCursor(&OLED, FONT_WIDTH*3, 0);
+  __WriteStringToOLED("CONNECTION INFO\n\n");
 
   for (ifa = ifaddr; ifa != NULL; ifa = ifa->ifa_next) {
     if (ifa->ifa_addr == NULL) continue;
@@ -150,7 +172,7 @@ MENU_ACTION_CONN_INFO (NXCTRL_VOID) {
 NXCTRL_VOID
 MENU_ACTION_SHUTDOWN (NXCTRL_VOID) {
   NXCTRLOLEDClearDisplay(&OLED);
-  NXCTRLOLEDSetCursor(&OLED, 0, 0);
+  NXCTRLOLEDSetCursor(&OLED, 5*FONT_WIDTH, 3*FONT_HEIGHT);
   __WriteStringToOLED("SHUTDOWN...");
   NXCTRLOLEDUpdateDisplay(&OLED);
 
@@ -175,7 +197,8 @@ NXCTRL_VOID
 __DisplayMenu (NXCTRL_VOID) {
   unsigned char chSel = 16;
   NXCTRLOLEDClearDisplay(&OLED);
-  NXCTRLOLEDSetCursor(&OLED, 0, 0);
+  __WriteDateTime();
+  NXCTRLOLEDSetCursor(&OLED, 0, 2*FONT_HEIGHT);
 
   if (MENU_IDX == MENU_IDX_TURN_OFF_MENU) {
     NXCTRLOLEDWrite(&OLED, chSel);
@@ -225,6 +248,7 @@ NXCTRLSetup (NXCTRL_VOID) {
                  nSPIFD);
   
   NXCTRLSetSIGINTHandler(INTC_HANDLER);
+  NXCTRLSetSIGTERMHandler(INTC_HANDLER);
 
   __NextActionOkay();
   NXCTRLOLEDDisplayNormal(&OLED);
@@ -235,6 +259,7 @@ NXCTRLSetup (NXCTRL_VOID) {
 
 NXCTRL_VOID
 NXCTRLLoop (NXCTRL_VOID) {
+  static int nTimeUpdateCount = 0;
   if (MENU_BUTTON_STATE == NXCTRL_LOW) {
     if (NXCTRLDigitalRead(MENU_BUTTON_BANK, MENU_BUTTON_PIN) == NXCTRL_HIGH) {
       MENU_BUTTON_STATE = NXCTRL_HIGH;
@@ -306,6 +331,16 @@ NXCTRLLoop (NXCTRL_VOID) {
       DPY_IDLE_COUNT++;
       if (DPY_IDLE_COUNT > DPY_IDLE_COUNT_MAX)
         MENU_ACTION_TURN_OFF_MENU();
+      else {
+        nTimeUpdateCount++;
+        if (nTimeUpdateCount > 9) {
+          nTimeUpdateCount = 0;
+          if (!IN_EXEC) {
+            __WriteDateTime();
+            NXCTRLOLEDUpdateDisplay(&OLED);
+          }
+        }
+      }
     }
   }
 

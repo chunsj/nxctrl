@@ -106,6 +106,6 @@ typedef int                             NXCTRL_PULLTYPE;
 #define NXCTRL_PULLUP                   ((NXCTRL_PULLTYPE)1)
 #define NXCTRL_PULLDN                   ((NXCTRL_PULLTYPE)2)
 
-typedef void                            (*NXCTRL_SIGINT_HANDLER) (void);
+typedef void                            (*NXCTRL_SIG_HANDLER) (void);
 
 #endif /* __NXCTRL_TYPES_HEADER__ */
