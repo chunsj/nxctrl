@@ -66,11 +66,12 @@
 #define DPY_IDLE_COUNT_MAX          300
 #define MIN_ACTION_DURATION         400
 
-#define MENU_IDX_CNT                3
+#define MENU_IDX_CNT                4
 
 #define MENU_IDX_TURN_OFF_MENU      0
 #define MENU_IDX_CONN_INFO          1
 #define MENU_IDX_SHUTDOWN           2
+#define MENU_IDX_ESHUTDOWN          3
 
 #define FONT_WIDTH                  6
 #define FONT_HEIGHT                 8
@@ -172,8 +173,22 @@ MENU_ACTION_CONN_INFO (NXCTRL_VOID) {
 NXCTRL_VOID
 MENU_ACTION_SHUTDOWN (NXCTRL_VOID) {
   NXCTRLOLEDClearDisplay(&OLED);
+  NXCTRLOLEDSetCursor(&OLED, 4*FONT_WIDTH, 3*FONT_HEIGHT);
+  __WriteStringToOLED("POWER OFF...");
+  NXCTRLOLEDUpdateDisplay(&OLED);
+
+  sync();
+  NXCTRLSleep(500, 0);
+  NXCTRLOLEDClearDisplay(&OLED);
+  NXCTRLOLEDUpdateDisplay(&OLED);
+  system("/usr/bin/poweroff");
+}
+
+NXCTRL_VOID
+MENU_ACTION_ESHUTDOWN (NXCTRL_VOID) {
+  NXCTRLOLEDClearDisplay(&OLED);
   NXCTRLOLEDSetCursor(&OLED, 5*FONT_WIDTH, 3*FONT_HEIGHT);
-  __WriteStringToOLED("SHUTDOWN...");
+  __WriteStringToOLED("TURN OFF...");
   NXCTRLOLEDUpdateDisplay(&OLED);
 
   sync();
@@ -182,8 +197,7 @@ MENU_ACTION_SHUTDOWN (NXCTRL_VOID) {
   NXCTRLSleep(500, 0);
   NXCTRLOLEDClearDisplay(&OLED);
   NXCTRLOLEDUpdateDisplay(&OLED);
-  //reboot(RB_POWER_OFF);
-  system("/usr/bin/poweroff");
+  reboot(RB_POWER_OFF);
 }
 
 NXCTRL_VOID
@@ -214,9 +228,15 @@ __DisplayMenu (NXCTRL_VOID) {
 
   if (MENU_IDX == MENU_IDX_SHUTDOWN) {
     NXCTRLOLEDWrite(&OLED, chSel);
-    __WriteStringToOLED(" EMERGENCY SHUTDOWN\n");
+    __WriteStringToOLED(" POWER OFF\n");
   } else
-    __WriteStringToOLED("  EMERGENCY SHUTDOWN\n");
+    __WriteStringToOLED("  POWER OFF\n");
+
+  if (MENU_IDX == MENU_IDX_ESHUTDOWN) {
+    NXCTRLOLEDWrite(&OLED, chSel);
+    __WriteStringToOLED(" TURN OFF\n");
+  } else
+    __WriteStringToOLED("  TURN OFF\n");
 }
 
 NXCTRL_VOID
@@ -322,6 +342,9 @@ NXCTRLLoop (NXCTRL_VOID) {
               break;
             case MENU_IDX_SHUTDOWN:
               MENU_ACTION_SHUTDOWN();
+              break;
+            case MENU_IDX_ESHUTDOWN:
+              MENU_ACTION_ESHUTDOWN();
               break;
             }
           }
