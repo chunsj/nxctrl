@@ -63,6 +63,8 @@
 #define OLED_DATA                   SPI_D1
 #define OLED_CLK                    SPI_CLK
 
+#define TMP36_PIN                   NXCTRL_A3
+
 #define DPY_IDLE_COUNT_MAX          300
 #define MIN_ACTION_DURATION         400
 
@@ -113,19 +115,20 @@ __WriteStringToOLED (const char *psz) {
 
 NXCTRL_VOID
 __WriteDateTime (NXCTRL_VOID) {
-  char rch[20];
+  char rch[21];
   time_t t = time(NULL);
   struct tm tm = *localtime(&t);
+  float fTmp = (NXCTRLAnalogRead(NXCTRL_A3)/4096.0*1800-500) / 10.0;
   sprintf(rch,
-          "%d-%s%d-%s%d %s%d:%s%d:%s%d",
-          tm.tm_year + 1900,
+          "%s%d/%s%d %s%d:%s%d:%s%d %2.0fC",
           (tm.tm_mon + 1) > 9 ? "" : "0", tm.tm_mon + 1,
           tm.tm_mday > 9 ? "" : "0", tm.tm_mday,
           tm.tm_hour > 9 ? "" : "0", tm.tm_hour,
           tm.tm_min > 9 ? "" : "0", tm.tm_min,
-          tm.tm_sec > 9 ? "" : "0", tm.tm_sec);
-  rch[19] = 0;
-  NXCTRLOLEDSetCursor(&OLED, FONT_WIDTH, 0);
+          tm.tm_sec > 9 ? "" : "0", tm.tm_sec,
+          fTmp);
+  rch[20] = 0;
+  NXCTRLOLEDSetCursor(&OLED, 2*FONT_WIDTH, 0);
   __WriteStringToOLED(rch);
 }
 
