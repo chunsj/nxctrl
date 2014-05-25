@@ -118,7 +118,8 @@ __WriteDateTime (NXCTRL_VOID) {
   char rch[21];
   time_t t = time(NULL);
   struct tm tm = *localtime(&t);
-  float fTmp = (NXCTRLAnalogRead(NXCTRL_A3)/4096.0*1800-500) / 10.0;
+  float v = NXCTRLAnalogRead(TMP36_PIN)/4096.0 * 1.8;
+  float fTmp = 100 * v - 50;
   sprintf(rch,
           "%s%d/%s%d %s%d:%s%d:%s%d %2.0fC",
           (tm.tm_mon + 1) > 9 ? "" : "0", tm.tm_mon + 1,
