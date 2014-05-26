@@ -63,7 +63,7 @@
 #define OLED_DATA                   SPI_D1
 #define OLED_CLK                    SPI_CLK
 
-#define TMP36_PIN                   NXCTRL_A3
+#define TMP36_PIN                   NXCTRL_A0
 
 #define DPY_IDLE_COUNT_MAX          300
 #define MIN_ACTION_DURATION         400
@@ -120,6 +120,7 @@ __WriteDateTime (NXCTRL_VOID) {
   struct tm tm = *localtime(&t);
   float v = NXCTRLAnalogRead(TMP36_PIN)/4096.0 * 1.8;
   float fTmp = 100 * v - 50;
+  //printf("V: %.2f, T: %.2f\n", v, fTmp);
   sprintf(rch,
           "%s%d/%s%d %s%d:%s%d:%s%d %2.0fC",
           (tm.tm_mon + 1) > 9 ? "" : "0", tm.tm_mon + 1,
