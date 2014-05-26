@@ -63,7 +63,7 @@
 #define OLED_DATA                   SPI_D1
 #define OLED_CLK                    SPI_CLK
 
-#define TMP36_PIN                   NXCTRL_A0
+#define TMP36_PIN                   NXCTRL_A1
 
 #define DPY_IDLE_COUNT_MAX          300
 #define MIN_ACTION_DURATION         400
@@ -115,22 +115,23 @@ __WriteStringToOLED (const char *psz) {
 
 NXCTRL_VOID
 __WriteDateTime (NXCTRL_VOID) {
-  char rch[21];
+  char rch[22];
   time_t t = time(NULL);
   struct tm tm = *localtime(&t);
   float v = NXCTRLAnalogRead(TMP36_PIN)/4096.0 * 1.8;
   float fTmp = 100 * v - 50;
-  //printf("V: %.2f, T: %.2f\n", v, fTmp);
+  memset(rch, 0, 22);
   sprintf(rch,
-          "%s%d/%s%d %s%d:%s%d:%s%d %2.0fC",
+          "  %s%d/%s%d %s%d:%s%d:%s%d %2.0fC",
           (tm.tm_mon + 1) > 9 ? "" : "0", tm.tm_mon + 1,
           tm.tm_mday > 9 ? "" : "0", tm.tm_mday,
           tm.tm_hour > 9 ? "" : "0", tm.tm_hour,
           tm.tm_min > 9 ? "" : "0", tm.tm_min,
           tm.tm_sec > 9 ? "" : "0", tm.tm_sec,
           fTmp);
-  rch[20] = 0;
-  NXCTRLOLEDSetCursor(&OLED, 2*FONT_WIDTH, 0);
+  if (strlen(rch) < 22)
+    rch[strlen(rch)] = ' ';
+  NXCTRLOLEDSetCursor(&OLED, 0, 0);
   __WriteStringToOLED(rch);
 }
 
