@@ -67,6 +67,7 @@
 
 #define DPY_IDLE_COUNT_MAX          300
 #define MIN_ACTION_DURATION         400
+#define TMP36_UPDATE_PERIOD         100
 
 #define MENU_IDX_CNT                4
 
@@ -87,6 +88,9 @@ int DPY_IDLE_COUNT = 0;
 
 int MENU_IDX = MENU_IDX_TURN_OFF_MENU;
 NXCTRL_BOOL IN_EXEC = NXCTRL_FALSE;
+
+float TMP36_VOLTAGE = 0;
+int TMP36_UPDATE_CNT = 0;
 
 NXCTRLOLED OLED;
 int nSPIFD;
@@ -115,12 +119,13 @@ __WriteStringToOLED (const char *psz) {
 
 NXCTRL_VOID
 __WriteDateTime (NXCTRL_VOID) {
+  #if 1
+  int i;
   char rch[22];
   time_t t = time(NULL);
   struct tm tm = *localtime(&t);
-  float v = NXCTRLAnalogRead(TMP36_PIN)/4096.0 * 1.8;
-  float fTmp = 100 * v - 50;
-  memset(rch, 0, 22);
+  float fTmp = 100 * TMP36_VOLTAGE - 50;
+  if (fTmp < -40 || fTmp > 80) fTmp = 0;
   sprintf(rch,
           "  %s%d/%s%d %s%d:%s%d:%s%d %2.0fC",
           (tm.tm_mon + 1) > 9 ? "" : "0", tm.tm_mon + 1,
@@ -129,10 +134,12 @@ __WriteDateTime (NXCTRL_VOID) {
           tm.tm_min > 9 ? "" : "0", tm.tm_min,
           tm.tm_sec > 9 ? "" : "0", tm.tm_sec,
           fTmp);
-  if (strlen(rch) < 22)
-    rch[strlen(rch)] = ' ';
+  for (i = strlen(rch); i < 21; i++)
+    rch[i] = ' ';
+  rch[21] = 0;
   NXCTRLOLEDSetCursor(&OLED, 0, 0);
   __WriteStringToOLED(rch);
+  #endif
 }
 
 NXCTRL_VOID
@@ -281,6 +288,8 @@ NXCTRLSetup (NXCTRL_VOID) {
   __DisplayMenu();
   NXCTRLOLEDUpdateDisplay(&OLED);
   DPY_STATE = NXCTRL_ON;
+
+  TMP36_VOLTAGE = NXCTRLAnalogRead(TMP36_PIN)/4096.0 * 1.8;
 }
 
 NXCTRL_VOID
@@ -371,6 +380,12 @@ NXCTRLLoop (NXCTRL_VOID) {
         }
       }
     }
+  }
+
+  TMP36_UPDATE_CNT++;
+  if (TMP36_UPDATE_CNT > TMP36_UPDATE_PERIOD) {
+    TMP36_UPDATE_CNT = 0;
+    TMP36_VOLTAGE = NXCTRLAnalogRead(TMP36_PIN)/4096.0 * 1.8;
   }
 
   NXCTRLSleep(100, 0);
