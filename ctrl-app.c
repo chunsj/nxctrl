@@ -44,6 +44,7 @@
 #include <ifaddrs.h>
 
 #include <sys/reboot.h>
+#include <sys/sysinfo.h>
 
 #define MENU_BUTTON_BANK            NXCTRL_P9
 #define MENU_BUTTON_PIN             NXCTRL_PIN27
@@ -67,13 +68,14 @@
 
 #define DPY_IDLE_COUNT_MAX          300
 #define MIN_ACTION_DURATION         400
-#define TMP36_UPDATE_PERIOD         100
+#define TMP36_UPDATE_PERIOD         50
+#define TMP36_DELTA                 0.06
 
 #define MENU_IDX_CNT                4
 
 #define MENU_IDX_TURN_OFF_MENU      0
 #define MENU_IDX_CONN_INFO          1
-#define MENU_IDX_SHUTDOWN           2
+#define MENU_IDX_SYSINFO            2
 #define MENU_IDX_ESHUTDOWN          3
 
 #define FONT_WIDTH                  6
@@ -119,13 +121,14 @@ __WriteStringToOLED (const char *psz) {
 
 NXCTRL_VOID
 __WriteDateTime (NXCTRL_VOID) {
-  #if 1
   int i;
   char rch[22];
   time_t t = time(NULL);
   struct tm tm = *localtime(&t);
-  float fTmp = 100 * TMP36_VOLTAGE - 50;
-  if (fTmp < -40 || fTmp > 80) fTmp = 0;
+  struct sysinfo si;
+  float fTmp = (TMP36_VOLTAGE + TMP36_DELTA - 0.5) * 100;
+  sysinfo(&si);
+  if (fTmp < -30 || fTmp > 50) fTmp = 0;
   sprintf(rch,
           "  %s%d/%s%d %s%d:%s%d:%s%d %2.0fC",
           (tm.tm_mon + 1) > 9 ? "" : "0", tm.tm_mon + 1,
@@ -139,7 +142,6 @@ __WriteDateTime (NXCTRL_VOID) {
   rch[21] = 0;
   NXCTRLOLEDSetCursor(&OLED, 0, 0);
   __WriteStringToOLED(rch);
-  #endif
 }
 
 NXCTRL_VOID
@@ -184,17 +186,34 @@ MENU_ACTION_CONN_INFO (NXCTRL_VOID) {
 }
 
 NXCTRL_VOID
-MENU_ACTION_SHUTDOWN (NXCTRL_VOID) {
+MENU_ACTION_SYSINFO (NXCTRL_VOID) {
+  struct sysinfo si;
+  int d, h, m;
+  char rch[22];
+  sysinfo(&si);
+  d = si.uptime/(3600*24);
+  h = (si.uptime - (d*3600*24))/3600;
+  m = (si.uptime - (d*3600*24) - (h*3600))/60;
   NXCTRLOLEDClearDisplay(&OLED);
-  NXCTRLOLEDSetCursor(&OLED, 4*FONT_WIDTH, 3*FONT_HEIGHT);
-  __WriteStringToOLED("POWER OFF...");
-  NXCTRLOLEDUpdateDisplay(&OLED);
+  NXCTRLOLEDSetCursor(&OLED, 4*FONT_WIDTH, 0);
+  __WriteStringToOLED("SYSTEM STATUS\n\n");
 
-  sync();
-  NXCTRLSleep(500, 0);
-  NXCTRLOLEDClearDisplay(&OLED);
+  sprintf(rch, " LDA:  %2.1f %2.1f %2.1f\n",
+          si.loads[0]/65536.0,
+          si.loads[1]/65536.0,
+          si.loads[2]/65536.0);
+  __WriteStringToOLED(rch);
+
+  sprintf(rch, " RAM:  %03d %03d %03d\n",
+          (int)(si.totalram/1024/1024),
+          (int)(si.bufferram/1024/1024),
+          (int)(si.freeram/1024/1024));
+  __WriteStringToOLED(rch);
+
+  sprintf(rch, " RUN: %3dD %02dH %02dM\n", d, h, m);
+  __WriteStringToOLED(rch);
+
   NXCTRLOLEDUpdateDisplay(&OLED);
-  system("/usr/bin/poweroff");
 }
 
 NXCTRL_VOID
@@ -211,6 +230,7 @@ MENU_ACTION_ESHUTDOWN (NXCTRL_VOID) {
   NXCTRLOLEDClearDisplay(&OLED);
   NXCTRLOLEDUpdateDisplay(&OLED);
   reboot(RB_POWER_OFF);
+  //system("/usr/bin/poweroff");
 }
 
 NXCTRL_VOID
@@ -239,11 +259,11 @@ __DisplayMenu (NXCTRL_VOID) {
   } else
     __WriteStringToOLED("  CONNECTION INFO\n");
 
-  if (MENU_IDX == MENU_IDX_SHUTDOWN) {
+  if (MENU_IDX == MENU_IDX_SYSINFO) {
     NXCTRLOLEDWrite(&OLED, chSel);
-    __WriteStringToOLED(" POWER OFF\n");
+    __WriteStringToOLED(" SYSTEM STATUS\n");
   } else
-    __WriteStringToOLED("  POWER OFF\n");
+    __WriteStringToOLED("  SYSTEM STATUS\n");
 
   if (MENU_IDX == MENU_IDX_ESHUTDOWN) {
     NXCTRLOLEDWrite(&OLED, chSel);
@@ -289,7 +309,7 @@ NXCTRLSetup (NXCTRL_VOID) {
   NXCTRLOLEDUpdateDisplay(&OLED);
   DPY_STATE = NXCTRL_ON;
 
-  TMP36_VOLTAGE = NXCTRLAnalogRead(TMP36_PIN)/4096.0 * 1.8;
+  TMP36_VOLTAGE = NXCTRLAnalogRead(TMP36_PIN)*1.8/4096.0;
 }
 
 NXCTRL_VOID
@@ -355,8 +375,8 @@ NXCTRLLoop (NXCTRL_VOID) {
             case MENU_IDX_CONN_INFO:
               MENU_ACTION_CONN_INFO();
               break;
-            case MENU_IDX_SHUTDOWN:
-              MENU_ACTION_SHUTDOWN();
+            case MENU_IDX_SYSINFO:
+              MENU_ACTION_SYSINFO();
               break;
             case MENU_IDX_ESHUTDOWN:
               MENU_ACTION_ESHUTDOWN();
@@ -385,7 +405,7 @@ NXCTRLLoop (NXCTRL_VOID) {
   TMP36_UPDATE_CNT++;
   if (TMP36_UPDATE_CNT > TMP36_UPDATE_PERIOD) {
     TMP36_UPDATE_CNT = 0;
-    TMP36_VOLTAGE = NXCTRLAnalogRead(TMP36_PIN)/4096.0 * 1.8;
+    TMP36_VOLTAGE = NXCTRLAnalogRead(TMP36_PIN)*1.8/4096.0;
   }
 
   NXCTRLSleep(100, 0);
