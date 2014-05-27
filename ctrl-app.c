@@ -151,6 +151,7 @@ MENU_ACTION_TURN_OFF_MENU (NXCTRL_VOID) {
   NXCTRLOLEDUpdateDisplay(&OLED);
   DPY_STATE = NXCTRL_OFF;
   MENU_IDX = MENU_IDX_TURN_OFF_MENU;
+  LAST_ACTION_TIME = 0;
 }
 
 NXCTRL_VOID
@@ -340,14 +341,13 @@ NXCTRLLoop (NXCTRL_VOID) {
   }
 
   if (DPY_STATE == NXCTRL_OFF) {
-    if (__NextActionOkay()) {
-      if (MENU_BUTTON_STATE == NXCTRL_HIGH) {
-        DPY_IDLE_COUNT = 0;
-        NXCTRLOLEDDisplayNormal(&OLED);
-        __DisplayMenu();
-        NXCTRLOLEDUpdateDisplay(&OLED);
-        DPY_STATE = NXCTRL_ON;
-      }
+    if (MENU_BUTTON_STATE == NXCTRL_HIGH) {
+      DPY_IDLE_COUNT = 0;
+      NXCTRLOLEDDisplayNormal(&OLED);
+      __DisplayMenu();
+      NXCTRLOLEDUpdateDisplay(&OLED);
+      DPY_STATE = NXCTRL_ON;
+      __NextActionOkay();
     }
   } else {
     if (MENU_BUTTON_STATE == NXCTRL_HIGH || EXEC_BUTTON_STATE == NXCTRL_HIGH) {
