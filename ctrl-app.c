@@ -67,7 +67,7 @@
 #define TMP36_PIN                   NXCTRL_A1
 
 #define DPY_IDLE_COUNT_MAX          300
-#define MIN_ACTION_DURATION         400
+#define MIN_ACTION_DURATION         250
 #define TMP36_UPDATE_PERIOD         50
 #define TMP36_DELTA                 0.06
 
