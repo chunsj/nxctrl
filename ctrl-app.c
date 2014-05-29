@@ -69,7 +69,7 @@
 #define DPY_IDLE_COUNT_MAX          300
 #define MIN_ACTION_DURATION         250
 #define TMP36_UPDATE_PERIOD         20
-#define TMP36_DELTA                 0.04
+#define TMP36_DELTA                 0.175
 
 #define MENU_IDX_CNT                4
 
