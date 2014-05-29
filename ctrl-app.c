@@ -46,8 +46,8 @@
 #include <sys/reboot.h>
 #include <sys/sysinfo.h>
 
-#define MENU_BUTTON_BANK            NXCTRL_P9
-#define MENU_BUTTON_PIN             NXCTRL_PIN27
+#define MENU_BUTTON_BANK            NXCTRL_P8
+#define MENU_BUTTON_PIN             NXCTRL_PIN29
 #define EXEC_BUTTON_BANK            NXCTRL_P8
 #define EXEC_BUTTON_PIN             NXCTRL_PIN31
 
@@ -58,8 +58,8 @@
 #define SPI_D1                      NXCTRL_PIN18
 #define SPI_CLK                     NXCTRL_PIN22
 
-#define OLED_DC                     NXCTRL_PIN13
-#define OLED_RST                    NXCTRL_PIN15
+#define OLED_DC                     NXCTRL_PIN15
+#define OLED_RST                    NXCTRL_PIN13
 #define OLED_CS                     SPI_CS0
 #define OLED_DATA                   SPI_D1
 #define OLED_CLK                    SPI_CLK
@@ -69,7 +69,7 @@
 #define DPY_IDLE_COUNT_MAX          300
 #define MIN_ACTION_DURATION         250
 #define TMP36_UPDATE_PERIOD         20
-#define TMP36_DELTA                 0.175
+#define TMP36_DELTA                 0.00
 
 #define MENU_IDX_CNT                4
 
