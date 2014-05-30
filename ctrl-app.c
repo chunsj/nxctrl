@@ -203,8 +203,10 @@ NXCTRL_VOID
 MENU_ACTION_SYSINFO (NXCTRL_VOID) {
   struct sysinfo si;
   int d, h, m;
+  int t;
   char rch[22];
   sysinfo(&si);
+  t = __CPUTemp() / 1000;
   d = si.uptime/(3600*24);
   h = (si.uptime - (d*3600*24))/3600;
   m = (si.uptime - (d*3600*24) - (h*3600))/60;
@@ -225,6 +227,9 @@ MENU_ACTION_SYSINFO (NXCTRL_VOID) {
   __WriteStringToOLED(rch);
 
   sprintf(rch, " RUN: %3dD %02dH %02dM\n", d, h, m);
+  __WriteStringToOLED(rch);
+
+  sprintf(rch, " TMP: %3dC\n", t);
   __WriteStringToOLED(rch);
 
   NXCTRLOLEDUpdateDisplay(&OLED);
