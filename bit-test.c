@@ -152,5 +152,11 @@ main (int argc, const char *argv[]) {
   printINT32(0x02FAF080);
   printf("0x%x\n", 0x02FAF080*2);
 
+  printINT32(1<<0);
+  printINT32(1<<1);
+  printINT32(1<<2);
+
+  printINT32(20);
+
   return 0;
 }

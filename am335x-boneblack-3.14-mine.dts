@@ -1688,6 +1688,11 @@
 			dma-names = "tx", "rx";
 		};
 
+                bandgap@44e10448 {
+                        compatible = "ti,am335x-bandgap";
+                        reg = <0x44e10448 0x8>;
+                };
+
 		mcasp@48038000 {
 			compatible = "ti,am33xx-mcasp-audio";
 			ti,hwmods = "mcasp0";

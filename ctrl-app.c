@@ -70,6 +70,7 @@
 #define MIN_ACTION_DURATION         250
 #define TMP36_UPDATE_PERIOD         20
 #define TMP36_DELTA                 0.00
+#define CPUTEMP_BASE                55.0
 
 #define MENU_IDX_CNT                4
 
@@ -96,6 +97,16 @@ int TMP36_UPDATE_CNT = 0;
 
 NXCTRLOLED OLED;
 int nSPIFD;
+
+unsigned int
+__CPUTemp (NXCTRL_VOID) {
+  const char *psz = "/sys/class/hwmon/hwmon0/device/temp1_input";
+  unsigned int n;
+  FILE *pFile = fopen(psz, "r");
+  fscanf(pFile, "%d", &n);
+  fclose(pFile);
+  return n;
+}
 
 NXCTRL_BOOL
 __NextActionOkay (NXCTRL_VOID) {
@@ -127,6 +138,8 @@ __WriteDateTime (NXCTRL_VOID) {
   struct tm tm = *localtime(&t);
   struct sysinfo si;
   float fTmp = (TMP36_VOLTAGE + TMP36_DELTA - 0.5) * 100;
+  float fCPUTemp = __CPUTemp()/1000.0;
+  fTmp -= (fCPUTemp > CPUTEMP_BASE) ? (fCPUTemp - CPUTEMP_BASE) : 0;
   sysinfo(&si);
   if (fTmp < -30 || fTmp > 50) fTmp = 0;
   sprintf(rch,
