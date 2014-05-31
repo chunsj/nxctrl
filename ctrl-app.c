@@ -70,7 +70,7 @@
 #define MIN_ACTION_DURATION         250
 #define TMP36_UPDATE_PERIOD         20
 #define TMP36_DELTA                 0.00
-#define CPUTEMP_BASE                55.0
+#define CPUTEMP_BASE                58.0
 
 #define MENU_IDX_CNT                4
 
