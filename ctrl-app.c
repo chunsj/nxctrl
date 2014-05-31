@@ -70,8 +70,7 @@
 #define MIN_ACTION_DURATION         250
 #define TMP36_UPDATE_PERIOD         20
 #define TMP36_DELTA                 0.00
-#define CPUTEMP_BASE                58.0
-
+#define CPUTEMP_BASE                56.0
 #define MENU_IDX_CNT                4
 
 #define MENU_IDX_TURN_OFF_MENU      0
@@ -103,6 +102,24 @@ __CPUTemp (NXCTRL_VOID) {
   const char *psz = "/sys/class/hwmon/hwmon0/device/temp1_input";
   unsigned int n;
   FILE *pFile = fopen(psz, "r");
+  if (!pFile) {
+    system("rmmod am335x_bandgap");
+    system("modprobe am335x_bandgap");
+  }
+  pFile = fopen(psz, "r");
+  if (!pFile) {
+    return 0;
+  }
+  fscanf(pFile, "%d", &n);
+  fclose(pFile);
+  if (n > 120) {
+    system("rmmod am335x_bandgap");
+    system("modprobe am335x_bandgap");
+  }
+  pFile = fopen(psz, "r");
+  if (!pFile) {
+    return 0;
+  }
   fscanf(pFile, "%d", &n);
   fclose(pFile);
   return n;
@@ -139,6 +156,7 @@ __WriteDateTime (NXCTRL_VOID) {
   struct sysinfo si;
   float fTmp = (TMP36_VOLTAGE + TMP36_DELTA - 0.5) * 100;
   float fCPUTemp = __CPUTemp()/1000.0;
+  fCPUTemp = (fCPUTemp > 120) ? (fCPUTemp - 74) : fCPUTemp;
   fTmp -= (fCPUTemp > CPUTEMP_BASE) ? (fCPUTemp - CPUTEMP_BASE) : 0;
   sysinfo(&si);
   if (fTmp < -30 || fTmp > 50) fTmp = 0;
