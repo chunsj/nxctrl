@@ -22,14 +22,15 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 #include <signal.h>
 #include <sys/time.h>
 #include <NXCTRL.h>
 
-#define SENSOR_BANK NXCTRL_P9
+#define SENSOR_BANK NXCTRL_P8
 
-#define TRIGGER_PIN NXCTRL_PIN17
-#define ECHO_PIN    NXCTRL_PIN18
+#define TRIGGER_PIN NXCTRL_PIN45
+#define ECHO_PIN    NXCTRL_PIN46
 
 void
 NXCTRLSetup (void) {
@@ -38,6 +39,9 @@ NXCTRLSetup (void) {
   struct timeval tvStart;
   struct timeval tvEnd;
   unsigned long nStartTime, nEndTime;
+
+  memset(&tvStart, 0, sizeof(tvStart));
+  memset(&tvEnd, 0, sizeof(tvEnd));
 
   NXCTRLPinMux(SENSOR_BANK, TRIGGER_PIN, NXCTRL_MODE7, NXCTRL_PULLDN, NXCTRL_LOW);
   NXCTRLPinMux(SENSOR_BANK, ECHO_PIN, NXCTRL_MODE7, NXCTRL_PULLDN, NXCTRL_HIGH);
@@ -52,6 +56,7 @@ NXCTRLSetup (void) {
   NXCTRLDigitalWrite(SENSOR_BANK, TRIGGER_PIN, NXCTRL_LOW);
 
   i = 0;
+  gettimeofday(&tvStart, NULL);
   while (NXCTRLDigitalRead(SENSOR_BANK, ECHO_PIN) != NXCTRL_HIGH) {
     gettimeofday(&tvStart, NULL);
     if (i++ >= nMaxCount) {

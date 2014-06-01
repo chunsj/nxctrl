@@ -132,7 +132,7 @@ $(EXE17): $(SRC17)
 	$(CC) $(CFLAGS) -o $@ $^ $(LDFLAGS) $(LIBS) -lnsbmp
 
 $(EXE18): $(SRC18)
-	$(CC) $(CFLAGS) -o $@ $^ $(LDFLAGS) $(LIBS)
+	$(CC) $(CFLAGS) -o $@ $^ $(LDFLAGS) $(LIBS) $(PRU_LIBS)
 
 clean:
 	rm -rf $(ARTIFACTS) $(AUX_ARTIFACTS)
