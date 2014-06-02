@@ -83,6 +83,7 @@
 #define TMP36_UPDATE_PERIOD         20
 #define TMP36_DELTA                 0.00
 #define CPUTEMP_BASE                56.0
+#define CPUTEMP_SSG                 60.0
 
 #define MENU_IDX_CNT                5
 
@@ -174,8 +175,13 @@ __WriteDateTime (NXCTRL_VOID) {
   struct sysinfo si;
   float fTmp = (TMP36_VOLTAGE + TMP36_DELTA - 0.5) * 100;
   float fCPUTemp = __CPUTemp()/1000.0;
+
   fCPUTemp = (fCPUTemp > 120) ? (fCPUTemp - 74) : fCPUTemp;
-  fTmp -= (fCPUTemp > CPUTEMP_BASE) ? (fCPUTemp - CPUTEMP_BASE) : 0;
+  if (fCPUTemp < CPUTEMP_SSG)
+    fTmp -= (fCPUTemp > CPUTEMP_BASE) ? (fCPUTemp - CPUTEMP_BASE) : 0;
+  else
+    fTmp -= (fCPUTemp > CPUTEMP_BASE) ? (fCPUTemp - CPUTEMP_BASE + 0.7) : 0;
+
   sysinfo(&si);
   if (fTmp < -30 || fTmp > 50) fTmp = 0;
   sprintf(rch,
