@@ -84,6 +84,7 @@
 #define TMP36_DELTA                 0.00
 #define CPUTEMP_BASE                56.0
 #define CPUTEMP_SSG                 60.0
+#define SSG_DELTA                   0.00
 
 #define MENU_IDX_CNT                5
 
@@ -180,7 +181,7 @@ __WriteDateTime (NXCTRL_VOID) {
   if (fCPUTemp < CPUTEMP_SSG)
     fTmp -= (fCPUTemp > CPUTEMP_BASE) ? (fCPUTemp - CPUTEMP_BASE) : 0;
   else
-    fTmp -= (fCPUTemp > CPUTEMP_BASE) ? (fCPUTemp - CPUTEMP_BASE + 0.7) : 0;
+    fTmp -= (fCPUTemp > CPUTEMP_BASE) ? (fCPUTemp - CPUTEMP_BASE + SSG_DELTA) : 0;
 
   sysinfo(&si);
   if (fTmp < -30 || fTmp > 50) fTmp = 0;
