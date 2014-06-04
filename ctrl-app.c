@@ -333,8 +333,8 @@ MENU_ACTION_HCSR04 (NXCTRL_VOID) {
 NXCTRL_VOID
 MENU_ACTION_ESHUTDOWN (NXCTRL_VOID) {
   NXCTRLOLEDClearDisplay(&OLED);
-  NXCTRLOLEDSetCursor(&OLED, 5*FONT_WIDTH, 3*FONT_HEIGHT);
-  __WriteStringToOLED("TURN OFF...");
+  NXCTRLOLEDSetCursor(&OLED, 3*FONT_WIDTH, 3*FONT_HEIGHT);
+  __WriteStringToOLED("TURNING OFF...");
   NXCTRLOLEDUpdateDisplay(&OLED);
 
   sync();
@@ -363,9 +363,9 @@ __DisplayMenu (NXCTRL_VOID) {
 
   if (MENU_IDX == MENU_IDX_TURN_OFF_MENU) {
     NXCTRLOLEDWrite(&OLED, chSel);
-    __WriteStringToOLED(" TURN OFF MENU\n");
+    __WriteStringToOLED(" MENU OFF\n");
   } else
-    __WriteStringToOLED("  TURN OFF MENU\n");
+    __WriteStringToOLED("  MENU OFF\n");
     
   if (MENU_IDX == MENU_IDX_CONN_INFO) {
     NXCTRLOLEDWrite(&OLED, chSel);
