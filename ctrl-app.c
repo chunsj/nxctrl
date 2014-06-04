@@ -71,6 +71,8 @@
 #define PRU_NUM                     PRU0
 #define PRU_PATH                    "/usr/bin/ctrl-app.bin"
 
+#define REPORT_PATH                 "/usr/bin/ctrl-app-report"
+
 #define HCSR04_BANK                 NXCTRL_P8
 
 #define TRIGGER_PIN                 NXCTRL_PIN11
@@ -112,10 +114,6 @@ int TMP36_UPDATE_CNT = 0;
 
 NXCTRLOLED OLED;
 int nSPIFD;
-
-tpruss_intc_initdata nINTC = PRUSS_INTC_INITDATA;
-void *pPRUDataMem = NULL;
-unsigned int *pnPRUData = NULL;
 
 unsigned int
 __CPUTemp (NXCTRL_VOID) {
@@ -280,11 +278,52 @@ MENU_ACTION_SYSINFO (NXCTRL_VOID) {
 
 NXCTRL_VOID
 MENU_ACTION_HCSR04 (NXCTRL_VOID) {
+  int nRet;
   char rch[22];
+  tpruss_intc_initdata nINTC = PRUSS_INTC_INITDATA;
+  void *pPRUDataMem = NULL;
+  unsigned int *pnPRUData = NULL;
+
+  // initialize PRU
+  if ((nRet = prussdrv_init())) {
+    fprintf(stderr, "prussdrv_init() failed\n");
+    return;
+  }
+
+  // open the interrupt
+  if ((nRet = prussdrv_open(PRU_EVTOUT_0))) {
+    fprintf(stderr, "prussdrv_open() failed: %s\n", strerror(errno));
+    return;
+  }
+
+  // initialize interrupt
+  if ((nRet = prussdrv_pruintc_init(&nINTC))) {
+    fprintf(stderr, "prussdrv_pruintc_init() failed\n");
+    return;
+  }
+
+  prussdrv_map_prumem(PRUSS0_PRU0_DATARAM, &pPRUDataMem);
+  pnPRUData = (unsigned int *)pPRUDataMem;
+
+  // load and run the PRU program
+  if ((nRet = prussdrv_exec_program(PRU_NUM, PRU_PATH))) {
+    fprintf(stderr, "prussdrv_exec_program() failed\n");
+    exit(nRet);
+  }
+
   prussdrv_pru_wait_event(PRU_EVTOUT_0);
   if (prussdrv_pru_clear_event(PRU_EVTOUT_0, PRU0_ARM_INTERRUPT))
     fprintf(stderr, "prussdrv_pru_clear_event() failed\n");
   sprintf(rch, "DIST: %4.1f cm\n", (float)pnPRUData[0]/2.0/29.1);
+
+  // halt and disable the PRU
+  if (prussdrv_pru_disable(PRU_NUM))
+    fprintf(stderr, "prussdrv_pru_disable() failed\n");
+
+  // release the PRU clocks and disable prussdrv module
+  if (prussdrv_exit())
+    fprintf(stderr, "prussdrv_exit() failed\n");
+
   NXCTRLOLEDClearDisplay(&OLED);
   NXCTRLOLEDSetCursor(&OLED, 4*FONT_WIDTH, 3*FONT_HEIGHT);
   __WriteStringToOLED(rch);
@@ -313,14 +352,6 @@ INTC_HANDLER (NXCTRL_VOID) {
   NXCTRLOLEDClearDisplay(&OLED);
   NXCTRLOLEDUpdateDisplay(&OLED);
   close(nSPIFD);
-
-  // halt and disable the PRU
-  if (prussdrv_pru_disable(PRU_NUM))
-    fprintf(stderr, "prussdrv_pru_disable() failed\n");
-
-  // release the PRU clocks and disable prussdrv module
-  if (prussdrv_exit())
-    fprintf(stderr, "prussdrv_exit() failed\n");
 }
 
 NXCTRL_VOID
@@ -363,7 +394,6 @@ __DisplayMenu (NXCTRL_VOID) {
 
 NXCTRL_VOID
 NXCTRLSetup (NXCTRL_VOID) {
-  int nRet;
   uint8_t nLSB;
   uint32_t nSpeed, nSPIMode;
   
@@ -379,33 +409,6 @@ NXCTRLSetup (NXCTRL_VOID) {
   NXCTRLPinMux(OLED_BANK, SPI_D1, NXCTRL_MODE0, NXCTRL_PULLDN, NXCTRL_LOW);
   NXCTRLPinMux(OLED_BANK, SPI_D0, NXCTRL_MODE0, NXCTRL_PULLUP, NXCTRL_HIGH);
   NXCTRLPinMux(OLED_BANK, SPI_CLK, NXCTRL_MODE0, NXCTRL_PULLUP, NXCTRL_HIGH);
-
-  // initialize PRU
-  if ((nRet = prussdrv_init())) {
-    fprintf(stderr, "prussdrv_init() failed\n");
-    exit(nRet);
-  }
-
-  // open the interrupt
-  if ((nRet = prussdrv_open(PRU_EVTOUT_0))) {
-    fprintf(stderr, "prussdrv_open() failed: %s\n", strerror(errno));
-    exit(nRet);
-  }
-
-  // initialize interrupt
-  if ((nRet = prussdrv_pruintc_init(&nINTC))) {
-    fprintf(stderr, "prussdrv_pruintc_init() failed\n");
-    exit(nRet);
-  }
-
-  prussdrv_map_prumem(PRUSS0_PRU0_DATARAM, &pPRUDataMem);
-  pnPRUData = (unsigned int *)pPRUDataMem;
-
-  // load and run the PRU program
-  if ((nRet = prussdrv_exec_program(PRU_NUM, PRU_PATH))) {
-    fprintf(stderr, "prussdrv_exec_program() failed\n");
-    exit(nRet);
-  }
 
   nSPIFD = open("/dev/spidev1.0", O_RDWR);
 
