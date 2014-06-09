@@ -101,7 +101,7 @@
 
 int MENU_BUTTON_STATE = NXCTRL_LOW;
 int EXEC_BUTTON_STATE = NXCTRL_LOW;
-long long LAST_ACTION_TIME = 0;
+unsigned long long LAST_ACTION_TIME = 0;
 
 int DPY_STATE = NXCTRL_OFF;
 int DPY_IDLE_COUNT = 0;
@@ -146,7 +146,7 @@ __CPUTemp (NXCTRL_VOID) {
 NXCTRL_BOOL
 __NextActionOkay (NXCTRL_VOID) {
   struct timespec tm;
-  long long timeInMillis;
+  unsigned long long timeInMillis;
   extern int clock_gettime(int, struct timespec *);
   clock_gettime(_POSIX_CPUTIME, &tm);
   timeInMillis = tm.tv_sec * 1000 + tm.tv_nsec/1000000;
