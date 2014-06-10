@@ -232,7 +232,7 @@ __PingToDefaultGW (NXCTRL_VOID) {
     return;
 
   sscanf(rchGW, "%2x%2x%2x%2x", &i0, &i1, &i2, &i3);
-  sprintf(rch, "ping -c 1 %d.%d.%d.%d >& /dev/null", i3, i2, i1, i0);
+  sprintf(rch, "ping -c 1 -W 1 %d.%d.%d.%d >& /dev/null", i3, i2, i1, i0);
   system(rch);
 }
 
