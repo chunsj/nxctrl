@@ -28,6 +28,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <ctype.h>
 #include <NXCTRL.h>
 #include <NXCTRL_oled.h>
 #include <NXCTRL_bitArray.h>
@@ -209,6 +210,33 @@ MENU_ACTION_TURN_OFF_MENU (NXCTRL_VOID) {
 }
 
 NXCTRL_VOID
+__PingToDefaultGW (NXCTRL_VOID) {
+  FILE *pFile = fopen("/proc/net/route", "r");
+  char rch[1024];
+  char rchIFace[32], rchDest[32], rchGW[32];
+  NXCTRL_BOOL bFound = NXCTRL_OFF;
+  int i0, i1, i2, i3;
+  
+  if (!pFile)
+    return;
+  while (fgets(rch, 1023, pFile)) {
+    sscanf(rch, "%s %s %s", rchIFace, rchDest, rchGW);
+    if (!strcmp(rchDest, "00000000")) {
+      bFound = NXCTRL_ON;
+      break;
+    }
+  }
+  fclose(pFile);
+
+  if (!bFound)
+    return;
+
+  sscanf(rchGW, "%2x%2x%2x%2x", &i0, &i1, &i2, &i3);
+  sprintf(rch, "ping -c 1 %d.%d.%d.%d >& /dev/null", i3, i2, i1, i0);
+  system(rch);
+}
+
+NXCTRL_VOID
 MENU_ACTION_CONN_INFO (NXCTRL_VOID) {
   struct ifaddrs *ifaddr, *ifa;
   int n;
@@ -238,6 +266,7 @@ MENU_ACTION_CONN_INFO (NXCTRL_VOID) {
     }
   }
   NXCTRLOLEDUpdateDisplay(&OLED);
+  __PingToDefaultGW();
 }
 
 NXCTRL_VOID
