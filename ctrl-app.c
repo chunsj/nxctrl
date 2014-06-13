@@ -305,30 +305,30 @@ MENU_ACTION_SYSINFO (NXCTRL_VOID) {
   NXCTRLOLEDUpdateDisplay(&OLED);
 }
 
-NXCTRL_VOID
-MENU_ACTION_HCSR04 (NXCTRL_VOID) {
+float
+__FetchDistance (NXCTRL_VOID) {
   int nRet;
-  char rch[22];
   tpruss_intc_initdata nINTC = PRUSS_INTC_INITDATA;
   void *pPRUDataMem = NULL;
   unsigned int *pnPRUData = NULL;
+  float fDist = 0.0f;
 
   // initialize PRU
   if ((nRet = prussdrv_init())) {
     fprintf(stderr, "prussdrv_init() failed\n");
-    return;
+    return 0;
   }
 
   // open the interrupt
   if ((nRet = prussdrv_open(PRU_EVTOUT_0))) {
     fprintf(stderr, "prussdrv_open() failed: %s\n", strerror(errno));
-    return;
+    return 0;
   }
 
   // initialize interrupt
   if ((nRet = prussdrv_pruintc_init(&nINTC))) {
     fprintf(stderr, "prussdrv_pruintc_init() failed\n");
-    return;
+    return 0;
   }
 
   prussdrv_map_prumem(PRUSS0_PRU0_DATARAM, &pPRUDataMem);
@@ -337,13 +337,13 @@ MENU_ACTION_HCSR04 (NXCTRL_VOID) {
   // load and run the PRU program
   if ((nRet = prussdrv_exec_program(PRU_NUM, PRU_PATH))) {
     fprintf(stderr, "prussdrv_exec_program() failed\n");
-    exit(nRet);
+    return 0;
   }
 
   prussdrv_pru_wait_event(PRU_EVTOUT_0);
   if (prussdrv_pru_clear_event(PRU_EVTOUT_0, PRU0_ARM_INTERRUPT))
     fprintf(stderr, "prussdrv_pru_clear_event() failed\n");
-  sprintf(rch, "DIST: %4.1f cm\n", (float)pnPRUData[0]/2.0/29.1);
+  fDist = (float)pnPRUData[0]/2.0/29.1;
 
   // halt and disable the PRU
   if (prussdrv_pru_disable(PRU_NUM))
@@ -352,6 +352,14 @@ MENU_ACTION_HCSR04 (NXCTRL_VOID) {
   // release the PRU clocks and disable prussdrv module
   if (prussdrv_exit())
     fprintf(stderr, "prussdrv_exit() failed\n");
+
+  return fDist;
+}
+
+NXCTRL_VOID
+MENU_ACTION_HCSR04 (NXCTRL_VOID) {
+  char rch[22];
+  sprintf(rch, "DIST: %4.1f cm\n", (float)__FetchDistance());
 
   NXCTRLOLEDClearDisplay(&OLED);
   NXCTRLOLEDSetCursor(&OLED, 4*FONT_WIDTH, 3*FONT_HEIGHT);
