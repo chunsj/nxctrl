@@ -75,6 +75,8 @@
 #define REPORT_PATH                 "/usr/bin/ctrl-app-report"
 
 #define HCSR04_BANK                 NXCTRL_P8
+#define HCSR04_MAX_CNT              1
+#define HCSR04_MAX_DIST             100
 
 #define TRIGGER_PIN                 NXCTRL_PIN11
 #define ECHO_PIN                    NXCTRL_PIN15
@@ -358,8 +360,19 @@ __FetchDistance (NXCTRL_VOID) {
 
 NXCTRL_VOID
 MENU_ACTION_HCSR04 (NXCTRL_VOID) {
+  register int i, n = HCSR04_MAX_CNT;
+  float fs = 0;
   char rch[22];
-  sprintf(rch, "DIST: %4.1f cm\n", (float)__FetchDistance());
+
+  for (i = 0; i < n; i++) {
+    fs += (float)__FetchDistance();
+  }
+  fs /= n;
+  
+  if (fs > HCSR04_MAX_DIST)
+    sprintf(rch, "DIST: > %d cm\n", HCSR04_MAX_DIST);
+  else
+    sprintf(rch, "DIST: %4.1f cm\n", fs);
 
   NXCTRLOLEDClearDisplay(&OLED);
   NXCTRLOLEDSetCursor(&OLED, 4*FONT_WIDTH, 3*FONT_HEIGHT);
