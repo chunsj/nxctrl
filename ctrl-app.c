@@ -301,16 +301,16 @@ MENU_ACTION_SYSINFO (NXCTRL_VOID) {
           (int)(si.freeram/1024/1024));
   __WriteStringToOLED(rch);
 
-  sprintf(rch, " RUN: %3dD %02dH %02dM\n", d, h, m);
-  __WriteStringToOLED(rch);
-
-  sprintf(rch, " TMP: %3dC\n", t);
-  __WriteStringToOLED(rch);
-
   sprintf(rch, " DSK:  %1.1f %1.1f %1.1f\n",
           stvfs.f_blocks*stvfs.f_frsize/1024/1024/1024.0,
           (stvfs.f_blocks - stvfs.f_bavail)*stvfs.f_frsize/1024/1024/1024.0,
           stvfs.f_bavail*stvfs.f_frsize/1024/1024/1024.0);
+  __WriteStringToOLED(rch);
+
+  sprintf(rch, " RUN: %3dD %02dH %02dM\n", d, h, m);
+  __WriteStringToOLED(rch);
+
+  sprintf(rch, " TMP: %3dC\n", t);
   __WriteStringToOLED(rch);
 
   NXCTRLOLEDUpdateDisplay(&OLED);
