@@ -46,6 +46,7 @@
 
 #include <sys/reboot.h>
 #include <sys/sysinfo.h>
+#include <sys/statvfs.h>
 
 #include <errno.h>
 #include <prussdrv.h>
@@ -274,9 +275,11 @@ MENU_ACTION_CONN_INFO (NXCTRL_VOID) {
 NXCTRL_VOID
 MENU_ACTION_SYSINFO (NXCTRL_VOID) {
   struct sysinfo si;
+  struct statvfs stvfs;
   int d, h, m;
   int t;
   char rch[22];
+  statvfs("/", &stvfs);
   sysinfo(&si);
   t = __CPUTemp() / 1000;
   d = si.uptime/(3600*24);
@@ -302,6 +305,12 @@ MENU_ACTION_SYSINFO (NXCTRL_VOID) {
   __WriteStringToOLED(rch);
 
   sprintf(rch, " TMP: %3dC\n", t);
+  __WriteStringToOLED(rch);
+
+  sprintf(rch, " DSK:  %1.1f %1.1f %1.1f\n",
+          stvfs.f_blocks*stvfs.f_frsize/1024/1024/1024.0,
+          (stvfs.f_blocks - stvfs.f_bavail)*stvfs.f_frsize/1024/1024/1024.0,
+          stvfs.f_bavail*stvfs.f_frsize/1024/1024/1024.0);
   __WriteStringToOLED(rch);
 
   NXCTRLOLEDUpdateDisplay(&OLED);
