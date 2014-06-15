@@ -48,6 +48,9 @@
 #include <sys/sysinfo.h>
 #include <sys/statvfs.h>
 
+#include <dlfcn.h>
+#include <NXCTRL_app.h>
+
 #include <errno.h>
 #include <prussdrv.h>
 #include <pruss_intc_mapping.h>
@@ -316,6 +319,34 @@ MENU_ACTION_SYSINFO (NXCTRL_VOID) {
   NXCTRLOLEDUpdateDisplay(&OLED);
 }
 
+NXCTRL_VOID
+MENU_ACTION_RUN_APP (NXCTRL_VOID) {
+  const char *pszAppPath = "/usr/lib/app-test.so";
+  NXCTRLAPP app;
+
+  app.pHandle = dlopen(pszAppPath, RTLD_LAZY);
+  if (!app.pHandle) {
+    fprintf(stderr, "cannot load %s\n", pszAppPath);
+    return;
+  }
+
+  app.pfnInit = (APPINITFN)dlsym(app.pHandle, APPINITFUNCTIONNAME);
+  app.pfnRun = (APPRUNFN)dlsym(app.pHandle, APPRUNFUNCTIONNAME);
+  app.pfnClean = (APPCLEANFN)dlsym(app.pHandle, APPCLEANFUNCTIONNAME);
+
+  if (!app.pfnInit || !app.pfnRun || !app.pfnClean) {
+    fprintf(stderr, "cannot find required functions\n");
+    dlclose(app.pHandle);
+    return;
+  }
+
+  app.pfnInit(&app);
+  app.pfnRun(&app);
+  app.pfnClean(&app);
+  
+  dlclose(app.pHandle);
+}
+
 float
 __FetchDistance (NXCTRL_VOID) {
   int nRet;
@@ -372,6 +403,9 @@ MENU_ACTION_HCSR04 (NXCTRL_VOID) {
   register int i, n = HCSR04_MAX_CNT;
   float fs = 0;
   char rch[22];
+
+  // XXX test code
+  //MENU_ACTION_RUN_APP();
 
   for (i = 0; i < n; i++) {
     fs += (float)__FetchDistance();

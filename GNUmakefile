@@ -3,6 +3,7 @@ CC=gcc
 CFLAGS=-Wall -Os -fgnu89-inline -std=c99 -I.
 LDFLAGS=
 LIBS=
+DL_LIBS=-ldl
 PRU_LIBS=-lprussdrv -lpthread
 
 EXE01=gpio-test
@@ -53,6 +54,8 @@ EXE17=dpybmp-test
 SRC17=dpybmp-test.c NXCTRL.c NXCTRL_oled.c NXCTRL_bitArray.c
 EXE18=ctrl-app
 SRC18=ctrl-app.c NXCTRL.c NXCTRL_oled.c NXCTRL_bitArray.c
+APP18=app-test.so
+SRC18-APP=app-test.c NXCTRL.c
 EXE18-BIN=ctrl-app.bin
 SRC18-PRU=ctrl-app.p
 EXE19=pin-info
@@ -60,7 +63,8 @@ SRC19=pin-info.c NXCTRL.c
 
 ARTIFACTS=$(EXE01) $(EXE02) $(EXE03) $(EXE04) $(EXE04-BIN) $(EXE05) $(EXE06) $(EXE06-BIN) \
 	$(EXE07) $(EXE07-BIN) $(EXE08) $(EXE08-BIN) $(EXE09) $(EXE10) $(EXE10-BIN) \
-	$(EXE11) $(EXE11-BIN) $(EXE12) $(EXE13) $(EXE14) $(EXE15) $(EXE16) $(EXE19)
+	$(EXE11) $(EXE11-BIN) $(EXE12) $(EXE13) $(EXE14) $(EXE15) $(EXE16) $(EXE19) \
+	$(APP18)
 
 AUX_ARTIFACTS=$(EXE17) $(EXE18) $(EXE18-BIN)
 
@@ -136,7 +140,10 @@ $(EXE17): $(SRC17)
 	$(CC) $(CFLAGS) -o $@ $^ $(LDFLAGS) $(LIBS) -lnsbmp
 
 $(EXE18): $(SRC18)
-	$(CC) $(CFLAGS) -o $@ $^ $(LDFLAGS) $(LIBS) $(PRU_LIBS)
+	$(CC) $(CFLAGS) -o $@ $^ $(LDFLAGS) $(LIBS) $(DL_LIBS) $(PRU_LIBS)
+
+$(APP18): $(SRC18-APP)
+	$(CC) $(CFLAGS) -fPIC -DPIC -shared -o $@ $^
 
 $(EXE18-BIN): $(SRC18-PRU)
 	pasm -b $^
