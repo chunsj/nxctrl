@@ -55,10 +55,12 @@ EXE18=ctrl-app
 SRC18=ctrl-app.c NXCTRL.c NXCTRL_oled.c NXCTRL_bitArray.c
 EXE18-BIN=ctrl-app.bin
 SRC18-PRU=ctrl-app.p
+EXE19=pin-info
+SRC19=pin-info.c NXCTRL.c
 
 ARTIFACTS=$(EXE01) $(EXE02) $(EXE03) $(EXE04) $(EXE04-BIN) $(EXE05) $(EXE06) $(EXE06-BIN) \
 	$(EXE07) $(EXE07-BIN) $(EXE08) $(EXE08-BIN) $(EXE09) $(EXE10) $(EXE10-BIN) \
-	$(EXE11) $(EXE11-BIN) $(EXE12) $(EXE13) $(EXE14) $(EXE15) $(EXE16)
+	$(EXE11) $(EXE11-BIN) $(EXE12) $(EXE13) $(EXE14) $(EXE15) $(EXE16) $(EXE19)
 
 AUX_ARTIFACTS=$(EXE17) $(EXE18) $(EXE18-BIN)
 
@@ -138,6 +140,9 @@ $(EXE18): $(SRC18)
 
 $(EXE18-BIN): $(SRC18-PRU)
 	pasm -b $^
+
+$(EXE19): $(SRC19)
+	$(CC) $(CFLAGS) -o $@ $^ $(LDFLAGS) $(LIBS)
 
 clean:
 	rm -rf $(ARTIFACTS) $(AUX_ARTIFACTS)
