@@ -76,6 +76,7 @@
 #define PRU_NUM                     PRU0
 #define PRU_PATH                    "/usr/bin/ctrl-app.bin"
 
+#define USR_APP_PATH                "/usr/bin/ctrl-app.app"
 #define REPORT_PATH                 "/usr/bin/ctrl-app-report"
 
 #define HCSR04_BANK                 NXCTRL_P8
@@ -95,13 +96,14 @@
 #define CPUTEMP_SSG                 60.0
 #define SSG_DELTA                   0.00
 
-#define MENU_IDX_CNT                5
+#define MENU_IDX_CNT                6
 
 #define MENU_IDX_TURN_OFF_MENU      0
 #define MENU_IDX_CONN_INFO          1
 #define MENU_IDX_SYSINFO            2
 #define MENU_IDX_HCSR04             3
-#define MENU_IDX_ESHUTDOWN          4
+#define MENU_IDX_USERAPP            4
+#define MENU_IDX_ESHUTDOWN          5
 
 #define FONT_WIDTH                  6
 #define FONT_HEIGHT                 8
@@ -320,8 +322,23 @@ MENU_ACTION_SYSINFO (NXCTRL_VOID) {
 }
 
 NXCTRL_VOID
+__ClearDisplay (NXCTRL_VOID) {
+  NXCTRLOLEDClearDisplay(&OLED);
+}
+
+NXCTRL_VOID
+__UpdateDisplay (NXCTRL_VOID) {
+  NXCTRLOLEDUpdateDisplay(&OLED);
+}
+
+NXCTRL_VOID
+__SetCursor (NXCTRL_UINT8 nX, NXCTRL_UINT8 nY) {
+  NXCTRLOLEDSetCursor(&OLED, nX, nY);
+}
+
+NXCTRL_VOID
 MENU_ACTION_RUN_APP (NXCTRL_VOID) {
-  const char *pszAppPath = "/usr/lib/app-test.so";
+  const char *pszAppPath = USR_APP_PATH;
   NXCTRLAPP app;
 
   app.pHandle = dlopen(pszAppPath, RTLD_LAZY);
@@ -333,6 +350,20 @@ MENU_ACTION_RUN_APP (NXCTRL_VOID) {
   app.pfnInit = (APPINITFN)dlsym(app.pHandle, APPINITFUNCTIONNAME);
   app.pfnRun = (APPRUNFN)dlsym(app.pHandle, APPRUNFUNCTIONNAME);
   app.pfnClean = (APPCLEANFN)dlsym(app.pHandle, APPCLEANFUNCTIONNAME);
+
+  app.pfnPinMux = (APPPINMUX)NXCTRLPinMux;
+  app.pfnPinMode = (APPPINMODE)NXCTRLPinMode;
+  app.pfnSleep = (APPSLEEP)NXCTRLSleep;
+  app.pfnDigitalRead = (APPDIGITALREAD)NXCTRLDigitalRead;
+  app.pfnDigitalWrite = (APPDIGITALWRITE)NXCTRLDigitalWrite;
+  app.pfnAnalogRead = (APPANALOGREAD)NXCTRLAnalogRead;
+  app.pfnAnalogWrite = (APPANALOGWRITE)NXCTRLAnalogWrite;
+  app.pfnServoWrite = (APPSERVOWRITE)NXCTRLServoWrite;
+  
+  app.pfnClearDisplay = (APPCLEARDPY)__ClearDisplay;
+  app.pfnUpdateDisplay = (APPUPDATEDPY)__UpdateDisplay;
+  app.pfnSetCursor = (APPSETCURSOR)__SetCursor;
+  app.pfnWriteSTR = (APPWRITESTR)__WriteStringToOLED;
 
   if (!app.pfnInit || !app.pfnRun || !app.pfnClean) {
     fprintf(stderr, "cannot find required functions\n");
@@ -404,9 +435,6 @@ MENU_ACTION_HCSR04 (NXCTRL_VOID) {
   float fs = 0;
   char rch[22];
 
-  // XXX test code
-  //MENU_ACTION_RUN_APP();
-
   for (i = 0; i < n; i++) {
     fs += (float)__FetchDistance();
   }
@@ -477,6 +505,12 @@ __DisplayMenu (NXCTRL_VOID) {
     __WriteStringToOLED(" HCSR04 DISTANCE\n");
   } else
     __WriteStringToOLED("  HCSR04 DISTANCE\n");
+
+  if (MENU_IDX == MENU_IDX_USERAPP) {
+    NXCTRLOLEDWrite(&OLED, chSel);
+    __WriteStringToOLED(" USER APPLICATION\n");
+  } else
+    __WriteStringToOLED("  USER APPLICATION\n");
 
   if (MENU_IDX == MENU_IDX_ESHUTDOWN) {
     NXCTRLOLEDWrite(&OLED, chSel);
@@ -595,6 +629,9 @@ NXCTRLLoop (NXCTRL_VOID) {
               break;
             case MENU_IDX_HCSR04:
               MENU_ACTION_HCSR04();
+              break;
+            case MENU_IDX_USERAPP:
+              MENU_ACTION_RUN_APP();
               break;
             case MENU_IDX_ESHUTDOWN:
               MENU_ACTION_ESHUTDOWN();

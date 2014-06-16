@@ -22,21 +22,34 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 #include <signal.h>
 #include <NXCTRL.h>
 #include <NXCTRL_app.h>
 
+#define FONT_WIDTH                  6
+#define FONT_HEIGHT                 8
+
 NXCTRL_VOID
 NXCTRLAPP_init (LPNXCTRLAPP pApp) {
-  printf("AppInit\n");
+  pApp->pfnClearDisplay();
+  pApp->pfnSetCursor(FONT_WIDTH*3, FONT_HEIGHT*1);
+  pApp->pfnWriteSTR("AppInit\n");
+  pApp->pfnUpdateDisplay();
 }
 
 NXCTRL_VOID
 NXCTRLAPP_clean (LPNXCTRLAPP pApp) {
-  printf("AppClean\n");
+  pApp->pfnSetCursor(FONT_WIDTH*3, FONT_HEIGHT*3);
+  pApp->pfnWriteSTR("AppClean\n");
+  pApp->pfnUpdateDisplay();
 }
 
 NXCTRL_VOID
 NXCTRLAPP_run (LPNXCTRLAPP pApp) {
-  printf("AppRun\n");
+  char rch[BUFSIZ];
+  pApp->pfnSetCursor(FONT_WIDTH*3, FONT_HEIGHT*5);
+  sprintf(rch, "AppRun: %d\n", pApp->pfnAnalogRead(NXCTRL_A0));
+  pApp->pfnWriteSTR(rch);
+  pApp->pfnUpdateDisplay();
 }
