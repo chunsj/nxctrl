@@ -21,6 +21,8 @@
 #ifndef __NXCTRL_APP_HEADER__
 #define __NXCTRL_APP_HEADER__
 
+#include <NXCTRL_types.h>
+
 #define APPINITFUNCTIONNAME  "NXCTRLAPP_init"
 #define APPRUNFUNCTIONNAME   "NXCTRLAPP_run"
 #define APPCLEANFUNCTIONNAME "NXCTRLAPP_clean"
@@ -52,24 +54,21 @@ typedef NXCTRL_VOID (*APPSETCURSOR) (NXCTRL_UINT8 nX, NXCTRL_UINT8 nY);
 typedef NXCTRL_VOID (*APPWRITESTR) (const char *psz);
 
 typedef struct __tagNXCTRLAPP {
-  NXCTRL_VOID *pHandle;
-  APPINITFN pfnInit;
-  APPRUNFN pfnRun;
-  APPCLEANFN pfnClean;
+  NXCTRL_VOID *pData;
 
-  APPPINMUX pfnPinMux;
-  APPPINMODE pfnPinMode;
-  APPSLEEP pfnSleep;
-  APPDIGITALREAD pfnDigitalRead;
-  APPDIGITALWRITE pfnDigitalWrite;
-  APPANALOGREAD pfnAnalogRead;
-  APPANALOGWRITE pfnAnalogWrite;
-  APPSERVOWRITE pfnServoWrite;
+  APPPINMUX pinMux;
+  APPPINMODE pinMode;
+  APPSLEEP sleep;
+  APPDIGITALREAD digitalRead;
+  APPDIGITALWRITE digitalWrite;
+  APPANALOGREAD analogRead;
+  APPANALOGWRITE analogWrite;
+  APPSERVOWRITE servoWrite;
 
-  APPCLEARDPY pfnClearDisplay;
-  APPUPDATEDPY pfnUpdateDisplay;
-  APPSETCURSOR pfnSetCursor;
-  APPWRITESTR pfnWriteSTR;
+  APPCLEARDPY clearDisplay;
+  APPUPDATEDPY updateDisplay;
+  APPSETCURSOR setCursor;
+  APPWRITESTR writeSTR;
 } NXCTRLAPP;
 
 #endif /* __NXCTRL_APP_HEADER__ */

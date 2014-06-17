@@ -339,43 +339,48 @@ __SetCursor (NXCTRL_UINT8 nX, NXCTRL_UINT8 nY) {
 NXCTRL_VOID
 MENU_ACTION_RUN_APP (NXCTRL_VOID) {
   const char *pszAppPath = USR_APP_PATH;
+  NXCTRL_VOID *pHandle = NULL;
   NXCTRLAPP app;
+  APPINITFN pfnInit;
+  APPRUNFN pfnRun;
+  APPCLEANFN pfnClean;
 
-  app.pHandle = dlopen(pszAppPath, RTLD_LAZY);
-  if (!app.pHandle) {
+  pHandle = dlopen(pszAppPath, RTLD_LAZY);
+  if (!pHandle) {
     fprintf(stderr, "cannot load %s\n", pszAppPath);
     return;
   }
 
-  app.pfnInit = (APPINITFN)dlsym(app.pHandle, APPINITFUNCTIONNAME);
-  app.pfnRun = (APPRUNFN)dlsym(app.pHandle, APPRUNFUNCTIONNAME);
-  app.pfnClean = (APPCLEANFN)dlsym(app.pHandle, APPCLEANFUNCTIONNAME);
+  pfnInit = (APPINITFN)dlsym(pHandle, APPINITFUNCTIONNAME);
+  pfnRun = (APPRUNFN)dlsym(pHandle, APPRUNFUNCTIONNAME);
+  pfnClean = (APPCLEANFN)dlsym(pHandle, APPCLEANFUNCTIONNAME);
 
-  app.pfnPinMux = (APPPINMUX)NXCTRLPinMux;
-  app.pfnPinMode = (APPPINMODE)NXCTRLPinMode;
-  app.pfnSleep = (APPSLEEP)NXCTRLSleep;
-  app.pfnDigitalRead = (APPDIGITALREAD)NXCTRLDigitalRead;
-  app.pfnDigitalWrite = (APPDIGITALWRITE)NXCTRLDigitalWrite;
-  app.pfnAnalogRead = (APPANALOGREAD)NXCTRLAnalogRead;
-  app.pfnAnalogWrite = (APPANALOGWRITE)NXCTRLAnalogWrite;
-  app.pfnServoWrite = (APPSERVOWRITE)NXCTRLServoWrite;
+  app.pData = NULL;
+  app.pinMux = (APPPINMUX)NXCTRLPinMux;
+  app.pinMode = (APPPINMODE)NXCTRLPinMode;
+  app.sleep = (APPSLEEP)NXCTRLSleep;
+  app.digitalRead = (APPDIGITALREAD)NXCTRLDigitalRead;
+  app.digitalWrite = (APPDIGITALWRITE)NXCTRLDigitalWrite;
+  app.analogRead = (APPANALOGREAD)NXCTRLAnalogRead;
+  app.analogWrite = (APPANALOGWRITE)NXCTRLAnalogWrite;
+  app.servoWrite = (APPSERVOWRITE)NXCTRLServoWrite;
   
-  app.pfnClearDisplay = (APPCLEARDPY)__ClearDisplay;
-  app.pfnUpdateDisplay = (APPUPDATEDPY)__UpdateDisplay;
-  app.pfnSetCursor = (APPSETCURSOR)__SetCursor;
-  app.pfnWriteSTR = (APPWRITESTR)__WriteStringToOLED;
+  app.clearDisplay = (APPCLEARDPY)__ClearDisplay;
+  app.updateDisplay = (APPUPDATEDPY)__UpdateDisplay;
+  app.setCursor = (APPSETCURSOR)__SetCursor;
+  app.writeSTR = (APPWRITESTR)__WriteStringToOLED;
 
-  if (!app.pfnInit || !app.pfnRun || !app.pfnClean) {
+  if (!pfnInit || !pfnRun || !pfnClean) {
     fprintf(stderr, "cannot find required functions\n");
-    dlclose(app.pHandle);
+    dlclose(pHandle);
     return;
   }
 
-  app.pfnInit(&app);
-  app.pfnRun(&app);
-  app.pfnClean(&app);
+  pfnInit(&app);
+  pfnRun(&app);
+  pfnClean(&app);
   
-  dlclose(app.pHandle);
+  dlclose(pHandle);
 }
 
 float

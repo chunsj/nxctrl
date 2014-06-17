@@ -24,7 +24,6 @@
 #include <stdlib.h>
 #include <string.h>
 #include <signal.h>
-#include <NXCTRL.h>
 #include <NXCTRL_app.h>
 
 #define FONT_WIDTH                  6
@@ -32,24 +31,24 @@
 
 NXCTRL_VOID
 NXCTRLAPP_init (LPNXCTRLAPP pApp) {
-  pApp->pfnClearDisplay();
-  pApp->pfnSetCursor(FONT_WIDTH*3, FONT_HEIGHT*1);
-  pApp->pfnWriteSTR("AppInit\n");
-  pApp->pfnUpdateDisplay();
+  pApp->clearDisplay();
+  pApp->setCursor(FONT_WIDTH*3, FONT_HEIGHT*1);
+  pApp->writeSTR("AppInit\n");
+  pApp->updateDisplay();
 }
 
 NXCTRL_VOID
 NXCTRLAPP_clean (LPNXCTRLAPP pApp) {
-  pApp->pfnSetCursor(FONT_WIDTH*3, FONT_HEIGHT*3);
-  pApp->pfnWriteSTR("AppClean\n");
-  pApp->pfnUpdateDisplay();
+  pApp->setCursor(FONT_WIDTH*3, FONT_HEIGHT*3);
+  pApp->writeSTR("AppClean\n");
+  pApp->updateDisplay();
 }
 
 NXCTRL_VOID
 NXCTRLAPP_run (LPNXCTRLAPP pApp) {
   char rch[BUFSIZ];
-  pApp->pfnSetCursor(FONT_WIDTH*3, FONT_HEIGHT*5);
-  sprintf(rch, "AppRun: %d\n", pApp->pfnAnalogRead(NXCTRL_A0));
-  pApp->pfnWriteSTR(rch);
-  pApp->pfnUpdateDisplay();
+  pApp->setCursor(FONT_WIDTH*3, FONT_HEIGHT*5);
+  sprintf(rch, "AppRun: %d\n", pApp->analogRead(NXCTRL_A0));
+  pApp->writeSTR(rch);
+  pApp->updateDisplay();
 }
