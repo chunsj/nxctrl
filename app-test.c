@@ -29,8 +29,16 @@
 #define FONT_WIDTH                  6
 #define FONT_HEIGHT                 8
 
+typedef struct __tagAPPDATA {
+  int nProperty;
+} APPDATA;
+
+APPDATA myAppData;
+
 NXCTRL_VOID
 NXCTRLAPP_init (LPNXCTRLAPP pApp) {
+  myAppData.nProperty = 1234;
+  pApp->pData = (NXCTRL_VOID *)(&myAppData);
   pApp->clearDisplay();
   pApp->setCursor(FONT_WIDTH*3, FONT_HEIGHT*1);
   pApp->writeSTR("AppInit\n");
@@ -47,8 +55,11 @@ NXCTRLAPP_clean (LPNXCTRLAPP pApp) {
 NXCTRL_VOID
 NXCTRLAPP_run (LPNXCTRLAPP pApp) {
   char rch[BUFSIZ];
+  APPDATA *pAppData = (APPDATA *)pApp->pData;
   pApp->setCursor(FONT_WIDTH*3, FONT_HEIGHT*5);
-  sprintf(rch, "AppRun: %d\n", pApp->analogRead(NXCTRL_A0));
+  sprintf(rch, "AppRun: %d %d\n",
+          pApp->analogRead(NXCTRL_A0),
+          pAppData->nProperty);
   pApp->writeSTR(rch);
   pApp->updateDisplay();
 }
