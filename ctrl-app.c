@@ -337,6 +337,25 @@ __SetCursor (NXCTRL_UINT8 nX, NXCTRL_UINT8 nY) {
 }
 
 NXCTRL_VOID
+__DrawPixel (NXCTRL_UINT8 nX, NXCTRL_UINT8 nY, NXCTRL_BOOL onOff) {
+  NXCTRLOLEDDrawPixel(&OLED, nX, nY, onOff);
+}
+
+NXCTRL_VOID
+__DrawLine (NXCTRL_UINT8 nX0, NXCTRL_UINT8 nY0,
+            NXCTRL_UINT8 nX1, NXCTRL_UINT8 nY1, NXCTRL_BOOL onOff) {
+  NXCTRLOLEDDrawLine(&OLED, nX0, nY0, nX1, nY1, onOff);
+}
+
+NXCTRL_VOID
+__DrawBitmap (NXCTRL_UINT8 nX, NXCTRL_UINT8 nY,
+              NXCTRL_UINT8 *pBitmap,
+              NXCTRL_UINT8 nW, NXCTRL_UINT8 nH,
+              NXCTRL_BOOL onOff) {
+  NXCTRLOLEDDrawBitmap(&OLED, nX, nY, pBitmap, nW, nH, onOff);
+}
+
+NXCTRL_VOID
 MENU_ACTION_RUN_APP (NXCTRL_VOID) {
   const char *pszAppPath = USR_APP_PATH;
   NXCTRL_VOID *pHandle = NULL;
@@ -369,6 +388,10 @@ MENU_ACTION_RUN_APP (NXCTRL_VOID) {
   app.updateDisplay = (APPUPDATEDPY)__UpdateDisplay;
   app.setCursor = (APPSETCURSOR)__SetCursor;
   app.writeSTR = (APPWRITESTR)__WriteStringToOLED;
+
+  app.drawPixel = (APPDRAWPIXEL)__DrawPixel;
+  app.drawLine = (APPDRAWLINE)__DrawLine;
+  app.drawBitmap = (APPDRAWBITMAP)__DrawBitmap;
 
   if (!pfnInit || !pfnRun || !pfnClean) {
     fprintf(stderr, "cannot find required functions\n");

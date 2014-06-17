@@ -43,6 +43,7 @@ NXCTRLAPP_init (LPNXCTRLAPP pApp) {
   pApp->setCursor(FONT_WIDTH*3, FONT_HEIGHT*1);
   pApp->writeSTR("AppInit\n");
   pApp->updateDisplay();
+  pApp->sleep(250, 0);
 }
 
 NXCTRL_VOID
@@ -56,10 +57,12 @@ NXCTRL_VOID
 NXCTRLAPP_run (LPNXCTRLAPP pApp) {
   char rch[BUFSIZ];
   APPDATA *pAppData = (APPDATA *)pApp->pData;
+  pApp->drawLine(0, 0, 127, 0, NXCTRL_ON);
   pApp->setCursor(FONT_WIDTH*3, FONT_HEIGHT*5);
   sprintf(rch, "AppRun: %d %d\n",
           pApp->analogRead(NXCTRL_A0),
           pAppData->nProperty);
   pApp->writeSTR(rch);
   pApp->updateDisplay();
+  pApp->sleep(250, 0);
 }

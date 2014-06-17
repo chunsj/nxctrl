@@ -52,6 +52,15 @@ typedef NXCTRL_VOID (*APPCLEARDPY) (NXCTRL_VOID);
 typedef NXCTRL_VOID (*APPUPDATEDPY) (NXCTRL_VOID);
 typedef NXCTRL_VOID (*APPSETCURSOR) (NXCTRL_UINT8 nX, NXCTRL_UINT8 nY);
 typedef NXCTRL_VOID (*APPWRITESTR) (const char *psz);
+typedef NXCTRL_VOID (*APPDRAWPIXEL) (NXCTRL_UINT8 nX, NXCTRL_UINT8 nY,
+                                     NXCTRL_BOOL onOff);
+typedef NXCTRL_VOID (*APPDRAWLINE) (NXCTRL_UINT8 nX0, NXCTRL_UINT8 nY0,
+                                    NXCTRL_UINT8 nX1, NXCTRL_UINT8 nY1,
+                                    NXCTRL_BOOL onOff);
+typedef NXCTRL_VOID (*APPDRAWBITMAP) (NXCTRL_UINT8 nX, NXCTRL_UINT8 nY,
+                                      NXCTRL_UINT8 *pBitmap,
+                                      NXCTRL_UINT16 w, NXCTRL_UINT16 h,
+                                      NXCTRL_BOOL onOff);
 
 typedef struct __tagNXCTRLAPP {
   NXCTRL_VOID *pData;
@@ -69,6 +78,9 @@ typedef struct __tagNXCTRLAPP {
   APPUPDATEDPY updateDisplay;
   APPSETCURSOR setCursor;
   APPWRITESTR writeSTR;
+  APPDRAWPIXEL drawPixel;
+  APPDRAWLINE drawLine;
+  APPDRAWBITMAP drawBitmap;
 } NXCTRLAPP;
 
 #endif /* __NXCTRL_APP_HEADER__ */
