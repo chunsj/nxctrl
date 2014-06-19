@@ -61,6 +61,7 @@ typedef NXCTRL_VOID (*APPDRAWBITMAP) (NXCTRL_UINT8 nX, NXCTRL_UINT8 nY,
                                       NXCTRL_UINT8 *pBitmap,
                                       NXCTRL_UINT16 w, NXCTRL_UINT16 h,
                                       NXCTRL_BOOL onOff);
+typedef NXCTRL_VOID (*APPDRAWBANNER) (NXCTRL_VOID);
 
 typedef struct __tagNXCTRLAPP {
   NXCTRL_VOID *pData;
@@ -81,6 +82,7 @@ typedef struct __tagNXCTRLAPP {
   APPDRAWPIXEL drawPixel;
   APPDRAWLINE drawLine;
   APPDRAWBITMAP drawBitmap;
+  APPDRAWBANNER drawBanner;
 } NXCTRLAPP;
 
 #endif /* __NXCTRL_APP_HEADER__ */

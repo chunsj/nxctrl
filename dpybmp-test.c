@@ -47,8 +47,8 @@
 #define SPI_D1            18
 #define SPI_CLK           22
 
-#define OLED_DC           13
-#define OLED_RST          15
+#define OLED_DC           15
+#define OLED_RST          13
 #define OLED_CS           SPI_CS0
 #define OLED_DATA         SPI_D1
 #define OLED_CLK          SPI_CLK

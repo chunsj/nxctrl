@@ -26,6 +26,13 @@
 #include <signal.h>
 #include <NXCTRL_app.h>
 
+static NXCTRL_UINT8 logoBitmap[] = {
+#include "./bitmap/logo.h"
+};
+
+#define LOGO_WIDTH                  128
+#define LOGO_HEIGHT                 64
+
 #define FONT_WIDTH                  6
 #define FONT_HEIGHT                 8
 
@@ -39,6 +46,11 @@ NXCTRL_VOID
 NXCTRLAPP_init (LPNXCTRLAPP pApp) {
   myAppData.nProperty = 1234;
   pApp->pData = (NXCTRL_VOID *)(&myAppData);
+  pApp->clearDisplay();
+  //pApp->drawBanner();
+  pApp->drawBitmap(0, 0, logoBitmap, LOGO_WIDTH, LOGO_HEIGHT, NXCTRL_ON);
+  pApp->updateDisplay();
+  pApp->sleep(1000, 0);
   pApp->clearDisplay();
   pApp->setCursor(FONT_WIDTH*3, FONT_HEIGHT*1);
   pApp->writeSTR("AppInit\n");

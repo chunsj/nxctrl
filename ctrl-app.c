@@ -217,8 +217,8 @@ MENU_ACTION_TURN_OFF_MENU (NXCTRL_VOID) {
   LAST_ACTION_TIME = 0;
 }
 
-NXCTRL_VOID
-__PingToDefaultGW (NXCTRL_VOID) {
+NXCTRL_BOOL
+__GetDefaultGW (char *pszGW) {
   FILE *pFile = fopen("/proc/net/route", "r");
   char rch[1024];
   char rchIFace[32], rchDest[32], rchGW[32];
@@ -226,7 +226,8 @@ __PingToDefaultGW (NXCTRL_VOID) {
   int i0, i1, i2, i3;
   
   if (!pFile)
-    return;
+    return NXCTRL_FALSE;
+  
   while (fgets(rch, 1023, pFile)) {
     sscanf(rch, "%s %s %s", rchIFace, rchDest, rchGW);
     if (!strcmp(rchDest, "00000000")) {
@@ -237,11 +238,21 @@ __PingToDefaultGW (NXCTRL_VOID) {
   fclose(pFile);
 
   if (!bFound)
-    return;
+    return NXCTRL_FALSE;
 
   sscanf(rchGW, "%2x%2x%2x%2x", &i0, &i1, &i2, &i3);
-  sprintf(rch, "ping -c 1 -W 1 %d.%d.%d.%d >& /dev/null", i3, i2, i1, i0);
-  system(rch);
+  sprintf(pszGW, "%d.%d.%d.%d", i3, i2, i1, i0);
+
+  return NXCTRL_TRUE;
+}
+
+NXCTRL_VOID
+__PingToDefaultGW (NXCTRL_VOID) {
+  char rch[1024], rchGW[32];
+  if (__GetDefaultGW(rchGW)) {
+    sprintf(rch, "ping -c 1 -W 1 %s >& /dev/null", rchGW);
+    system(rch);
+  }
 }
 
 NXCTRL_VOID
@@ -250,6 +261,7 @@ MENU_ACTION_CONN_INFO (NXCTRL_VOID) {
   int n;
   char rchHost[NI_MAXHOST];
   char rchBuffer[1024];
+  char rchGW[32];
 
   NXCTRLOLEDClearDisplay(&OLED);
   NXCTRLOLEDSetCursor(&OLED, 0, 0);
@@ -272,6 +284,10 @@ MENU_ACTION_CONN_INFO (NXCTRL_VOID) {
       sprintf(rchBuffer, "%5s: %s\n", ifa->ifa_name, rchHost);
       __WriteStringToOLED(rchBuffer);
     }
+  }
+  if (__GetDefaultGW(rchGW)) {
+    sprintf(rchBuffer, "%5s: %s\n", "gw", rchGW);
+    __WriteStringToOLED(rchBuffer);
   }
   NXCTRLOLEDUpdateDisplay(&OLED);
   __PingToDefaultGW();
@@ -352,7 +368,24 @@ __DrawBitmap (NXCTRL_UINT8 nX, NXCTRL_UINT8 nY,
               NXCTRL_UINT8 *pBitmap,
               NXCTRL_UINT8 nW, NXCTRL_UINT8 nH,
               NXCTRL_BOOL onOff) {
-  NXCTRLOLEDDrawBitmap(&OLED, nX, nY, pBitmap, nW, nH, onOff);
+  //NXCTRLOLEDDrawBitmap(&OLED, nX, nY, pBitmap, nW, nH, onOff);
+  NXCTRLBITARRAY arrBits;
+  int i, j;
+  arrBits.arr = pBitmap;
+  arrBits.nBits = nW * nH;
+  for (i = nX; i < (nX + nW); i++) {
+    for (j = nY; j < (nY + nH); j++) {
+      if (NXCTRLBITARRAYGet(&arrBits, i + j * nW))
+        NXCTRLOLEDDrawPixel(&OLED, i, j, NXCTRL_ON);
+      else
+        NXCTRLOLEDDrawPixel(&OLED, i, j, NXCTRL_OFF);
+    }
+  }
+}
+
+NXCTRL_VOID
+__DrawBanner (NXCTRL_VOID) {
+  NXCTRLOLEDSetBanner(&OLED);
 }
 
 NXCTRL_VOID
@@ -392,6 +425,7 @@ MENU_ACTION_RUN_APP (NXCTRL_VOID) {
   app.drawPixel = (APPDRAWPIXEL)__DrawPixel;
   app.drawLine = (APPDRAWLINE)__DrawLine;
   app.drawBitmap = (APPDRAWBITMAP)__DrawBitmap;
+  app.drawBanner = (APPDRAWBANNER)__DrawBanner;
 
   if (!pfnInit || !pfnRun || !pfnClean) {
     fprintf(stderr, "cannot find required functions\n");
