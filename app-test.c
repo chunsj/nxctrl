@@ -24,6 +24,8 @@
 #include <stdlib.h>
 #include <string.h>
 #include <signal.h>
+#include <sys/time.h>
+#include <time.h>
 #include <NXCTRL_app.h>
 
 static NXCTRL_UINT8 logoBitmap[] = {
@@ -37,14 +39,14 @@ static NXCTRL_UINT8 logoBitmap[] = {
 #define FONT_HEIGHT                 8
 
 typedef struct __tagAPPDATA {
-  int nProperty;
+  long int nProperty;
 } APPDATA;
 
 APPDATA myAppData;
 
 NXCTRL_VOID
 NXCTRLAPP_init (LPNXCTRLAPP pApp) {
-  myAppData.nProperty = 1234;
+  myAppData.nProperty = time(NULL);
   pApp->pData = (NXCTRL_VOID *)(&myAppData);
   pApp->clearDisplay();
   //pApp->drawBanner();
@@ -73,7 +75,7 @@ NXCTRLAPP_run (LPNXCTRLAPP pApp) {
   pApp->setCursor(FONT_WIDTH*3, FONT_HEIGHT*5);
   sprintf(rch, "AppRun: %d %d\n",
           pApp->analogRead(NXCTRL_A0),
-          pAppData->nProperty);
+          (int)(time(NULL) - pAppData->nProperty));
   pApp->writeSTR(rch);
   pApp->updateDisplay();
   pApp->sleep(250, 0);
