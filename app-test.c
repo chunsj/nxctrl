@@ -38,6 +38,8 @@ static NXCTRL_UINT8 logoBitmap[] = {
 #define FONT_WIDTH                  6
 #define FONT_HEIGHT                 8
 
+#define BANNER_TIME_SECS            3
+
 typedef struct __tagAPPDATA {
   long int nProperty;
 } APPDATA;
@@ -49,10 +51,9 @@ NXCTRLAPP_init (LPNXCTRLAPP pApp) {
   myAppData.nProperty = time(NULL);
   pApp->pData = (NXCTRL_VOID *)(&myAppData);
   pApp->clearDisplay();
-  //pApp->drawBanner();
   pApp->drawBitmap(0, 0, logoBitmap, LOGO_WIDTH, LOGO_HEIGHT, NXCTRL_ON);
   pApp->updateDisplay();
-  pApp->sleep(1000, 0);
+  pApp->sleep(BANNER_TIME_SECS * 1000, 0);
   pApp->clearDisplay();
   pApp->setCursor(FONT_WIDTH*3, FONT_HEIGHT*1);
   pApp->writeSTR("AppInit\n");
