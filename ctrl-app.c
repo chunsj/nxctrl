@@ -218,6 +218,24 @@ MENU_ACTION_TURN_OFF_MENU (NXCTRL_VOID) {
 }
 
 NXCTRL_BOOL
+__GetMacAddress (char *pszIFName, char *pszMacIP) {
+  char rchIFName[BUFSIZ];
+  FILE *pFile;
+  int i;
+
+  sprintf(rchIFName, "/sys/class/net/%s/address", pszIFName);
+  pFile = fopen(rchIFName, "r");
+  if (!pFile)
+    return NXCTRL_FALSE;
+
+  fscanf(pFile, "%s", pszMacIP);
+  fclose(pFile);
+  for (i = 0; i < strlen(pszMacIP); i++)
+    pszMacIP[i] = toupper(pszMacIP[i]);
+  return NXCTRL_TRUE;
+}
+
+NXCTRL_BOOL
 __GetDefaultGW (char *pszGW) {
   FILE *pFile = fopen("/proc/net/route", "r");
   char rch[1024];
@@ -300,6 +318,7 @@ MENU_ACTION_SYSINFO (NXCTRL_VOID) {
   int d, h, m;
   int t;
   char rch[22];
+  char rchMacIP[20];
   statvfs("/", &stvfs);
   sysinfo(&si);
   t = __CPUTemp() / 1000;
@@ -333,6 +352,11 @@ MENU_ACTION_SYSINFO (NXCTRL_VOID) {
 
   sprintf(rch, " TMP: %3dC\n", t);
   __WriteStringToOLED(rch);
+
+  if (__GetMacAddress("wlan0", rchMacIP)) {
+    sprintf(rch, " %s", rchMacIP);
+    __WriteStringToOLED(rch);
+  }
 
   NXCTRLOLEDUpdateDisplay(&OLED);
 }
