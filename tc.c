@@ -767,6 +767,15 @@ __UpdateTMP (NXCTRL_VOID) {
 // exec button executes given menu item
 // every menu should have default items; turn off menu/go next app/turn off(?)
 // every app should be shared object like ctrl-app.app
+// it seems that every app should act cooperatively
+// every app should check idle time and turn off screen if it can
+// every app should provide menu which displays default action like apple
+// menu in a Mac; default action/menu could be an app, I think
+//
+// app 1: displays clock and temperature
+// app 2: displays system status
+// app 3: displays network/wireless status/quality
+// app 4, …: other sensor, custom apps
 
 NXCTRL_VOID
 NXCTRLLoop (NXCTRL_VOID) {
