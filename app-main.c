@@ -38,6 +38,7 @@
 
 NXCTRL_VOID
 NXCTRLAPP_init (LPNXCTRLAPP pApp) {
+  pApp->clearDisplay();
 }
 
 NXCTRL_VOID
@@ -51,7 +52,8 @@ NXCTRLAPP_run (LPNXCTRLAPP pApp) {
   time_t t = time(NULL);
   struct tm tm = *localtime(&t);
   sprintf(rch,
-          "  %s%d/%s%d %s%d:%s%d:%s%d",
+          " %d/%s%d/%s%d %s%d:%s%d:%s%d",
+          (tm.tm_year + 1900),
           (tm.tm_mon + 1) > 9 ? "" : "0", tm.tm_mon + 1,
           tm.tm_mday > 9 ? "" : "0", tm.tm_mday,
           tm.tm_hour > 9 ? "" : "0", tm.tm_hour,
@@ -61,7 +63,7 @@ NXCTRLAPP_run (LPNXCTRLAPP pApp) {
     rch[i] = ' ';
   rch[21] = 0;
   pApp->clearDisplay();
-  pApp->setCursor(0, 0);
+  pApp->setCursor(0, FONT_HEIGHT*3);
   pApp->writeSTR(rch);
   pApp->updateDisplay();
   pApp->sleep(100, 0);

@@ -76,6 +76,12 @@
 NXCTRLOLED OLED;
 int nSPIFD;
 
+NXCTRL_VOID *pActiveAppHandle = NULL;
+NXCTRLAPP activeApp;
+APPINITFN appInit = NULL;
+APPRUNFN appRun = NULL;
+APPCLEANFN appClean = NULL;
+
 NXCTRL_VOID
 __ClearDisplay (NXCTRL_VOID) {
   NXCTRLOLEDClearDisplay(&OLED);
@@ -136,6 +142,52 @@ __DrawBanner (NXCTRL_VOID) {
 }
 
 NXCTRL_VOID
+__loadApp (const char *pszAppPath) {
+  if (pActiveAppHandle != NULL) {
+    appClean(&activeApp);
+  }
+  
+  pActiveAppHandle = dlopen(pszAppPath, RTLD_LAZY);
+  if (!pActiveAppHandle) {
+    fprintf(stderr, "cannot load %s\n", pszAppPath);
+    return;
+  }
+
+  appInit = (APPINITFN)dlsym(pActiveAppHandle, APPINITFUNCTIONNAME);
+  appRun = (APPRUNFN)dlsym(pActiveAppHandle, APPRUNFUNCTIONNAME);
+  appClean = (APPCLEANFN)dlsym(pActiveAppHandle, APPCLEANFUNCTIONNAME);
+
+  activeApp.pData = NULL;
+  activeApp.pinMux = (APPPINMUX)NXCTRLPinMux;
+  activeApp.pinMode = (APPPINMODE)NXCTRLPinMode;
+  activeApp.sleep = (APPSLEEP)NXCTRLSleep;
+  activeApp.digitalRead = (APPDIGITALREAD)NXCTRLDigitalRead;
+  activeApp.digitalWrite = (APPDIGITALWRITE)NXCTRLDigitalWrite;
+  activeApp.analogRead = (APPANALOGREAD)NXCTRLAnalogRead;
+  activeApp.analogWrite = (APPANALOGWRITE)NXCTRLAnalogWrite;
+  activeApp.servoWrite = (APPSERVOWRITE)NXCTRLServoWrite;
+  
+  activeApp.clearDisplay = (APPCLEARDPY)__ClearDisplay;
+  activeApp.updateDisplay = (APPUPDATEDPY)__UpdateDisplay;
+  activeApp.setCursor = (APPSETCURSOR)__SetCursor;
+  activeApp.writeSTR = (APPWRITESTR)__WriteStringToOLED;
+
+  activeApp.drawPixel = (APPDRAWPIXEL)__DrawPixel;
+  activeApp.drawLine = (APPDRAWLINE)__DrawLine;
+  activeApp.drawBitmap = (APPDRAWBITMAP)__DrawBitmap;
+  activeApp.drawBanner = (APPDRAWBANNER)__DrawBanner;
+
+  if (!appInit || !appRun || !appClean) {
+    fprintf(stderr, "cannot find required functions\n");
+    dlclose(pActiveAppHandle);
+    pActiveAppHandle = NULL;
+    return;
+  }
+
+  appInit(&activeApp);
+}
+
+NXCTRL_VOID
 INTC_HANDLER (NXCTRL_VOID) {
   NXCTRLOLEDClearDisplay(&OLED);
   NXCTRLOLEDUpdateDisplay(&OLED);
@@ -175,58 +227,9 @@ NXCTRLSetup (NXCTRL_VOID) {
 
   NXCTRLOLEDDisplayNormal(&OLED);
   NXCTRLOLEDUpdateDisplay(&OLED);
+
+  __loadApp("./app-main.app");
 }
-
-NXCTRL_VOID *pActiveAppHandle = NULL;
-NXCTRLAPP activeApp;
-APPINITFN appInit = NULL;
-APPRUNFN appRun = NULL;
-APPCLEANFN appClean = NULL;
-
-NXCTRL_VOID
-__loadApp (const char *pszAppPath) {
-  pActiveAppHandle = dlopen(pszAppPath, RTLD_LAZY);
-  if (!pActiveAppHandle) {
-    fprintf(stderr, "cannot load %s\n", pszAppPath);
-    return;
-  }
-
-  appInit = (APPINITFN)dlsym(pActiveAppHandle, APPINITFUNCTIONNAME);
-  appRun = (APPRUNFN)dlsym(pActiveAppHandle, APPRUNFUNCTIONNAME);
-  appClean = (APPCLEANFN)dlsym(pActiveAppHandle, APPCLEANFUNCTIONNAME);
-
-  activeApp.pData = NULL;
-  activeApp.pinMux = (APPPINMUX)NXCTRLPinMux;
-  activeApp.pinMode = (APPPINMODE)NXCTRLPinMode;
-  activeApp.sleep = (APPSLEEP)NXCTRLSleep;
-  activeApp.digitalRead = (APPDIGITALREAD)NXCTRLDigitalRead;
-  activeApp.digitalWrite = (APPDIGITALWRITE)NXCTRLDigitalWrite;
-  activeApp.analogRead = (APPANALOGREAD)NXCTRLAnalogRead;
-  activeApp.analogWrite = (APPANALOGWRITE)NXCTRLAnalogWrite;
-  activeApp.servoWrite = (APPSERVOWRITE)NXCTRLServoWrite;
-  
-  activeApp.clearDisplay = (APPCLEARDPY)__ClearDisplay;
-  activeApp.updateDisplay = (APPUPDATEDPY)__UpdateDisplay;
-  activeApp.setCursor = (APPSETCURSOR)__SetCursor;
-  activeApp.writeSTR = (APPWRITESTR)__WriteStringToOLED;
-
-  activeApp.drawPixel = (APPDRAWPIXEL)__DrawPixel;
-  activeApp.drawLine = (APPDRAWLINE)__DrawLine;
-  activeApp.drawBitmap = (APPDRAWBITMAP)__DrawBitmap;
-  activeApp.drawBanner = (APPDRAWBANNER)__DrawBanner;
-
-  if (!appInit || !appRun || !appClean) {
-    fprintf(stderr, "cannot find required functions\n");
-    dlclose(pActiveAppHandle);
-    pActiveAppHandle = NULL;
-    return;
-  }
-}
-
-#define MENU_ACTIVE (MENU_BUTTON_STATE == NXCTRL_HIGH)
-#define EXEC_ACTIVE (EXEC_BUTTON_STATE == NXCTRL_HIGH)
-#define BTN_ACTIVE  (MENU_ACTIVE || EXEC_ACTIVE)
-#define DPY_OFF     (DPY_STATE == NXCTRL_OFF)
 
 // XXX ideas
 // should have list/table of apps
@@ -247,11 +250,7 @@ __loadApp (const char *pszAppPath) {
 
 NXCTRL_VOID
 NXCTRLLoop (NXCTRL_VOID) {
-  if (!pActiveAppHandle) {
-    __loadApp("./app-main.app");
-  } else {
-    appRun(&activeApp);
-  }
+  appRun(&activeApp);
 }
 
 int
