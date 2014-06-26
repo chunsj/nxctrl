@@ -277,6 +277,7 @@ MENU_ACTION_CONN_INFO (NXCTRL_VOID) {
   char rchHost[NI_MAXHOST];
   char rchBuffer[1024];
   char rchGW[32];
+  char rchMacIP[20];
 
   NXCTRLOLEDClearDisplay(&OLED);
   NXCTRLOLEDSetCursor(&OLED, 0, 0);
@@ -304,6 +305,13 @@ MENU_ACTION_CONN_INFO (NXCTRL_VOID) {
     sprintf(rchBuffer, "%5s: %s\n", "gw", rchGW);
     __WriteStringToOLED(rchBuffer);
   }
+
+  NXCTRLOLEDSetCursor(&OLED, 0, 55);
+  if (__GetMacAddress("wlan0", rchMacIP)) {
+    sprintf(rchBuffer, "  %s", rchMacIP);
+    __WriteStringToOLED(rchBuffer);
+  }
+
   NXCTRLOLEDUpdateDisplay(&OLED);
   __PingToDefaultGW();
 }
@@ -315,7 +323,6 @@ MENU_ACTION_SYSINFO (NXCTRL_VOID) {
   int d, h, m;
   int t;
   char rch[22];
-  //char rchMacIP[20];
   
   statvfs("/", &stvfs);
   sysinfo(&si);
@@ -352,13 +359,6 @@ MENU_ACTION_SYSINFO (NXCTRL_VOID) {
 
   sprintf(rch, " TMP: %3dC\n", t);
   __WriteStringToOLED(rch);
-
-#if 0
-  if (__GetMacAddress("wlan0", rchMacIP)) {
-    sprintf(rch, " %s", rchMacIP);
-    __WriteStringToOLED(rch);
-  }
-#endif
 
   NXCTRLOLEDUpdateDisplay(&OLED);
 }
