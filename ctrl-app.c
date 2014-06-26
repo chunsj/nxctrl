@@ -96,14 +96,14 @@
 #define CPUTEMP_SSG                 60.0
 #define SSG_DELTA                   0.00
 
-#define MENU_IDX_CNT                6
+#define MENU_IDX_CNT                5
 
 #define MENU_IDX_TURN_OFF_MENU      0
 #define MENU_IDX_CONN_INFO          1
 #define MENU_IDX_SYSINFO            2
 #define MENU_IDX_HCSR04             3
-#define MENU_IDX_USERAPP            4
-#define MENU_IDX_ESHUTDOWN          5
+//#define MENU_IDX_USERAPP            4
+#define MENU_IDX_ESHUTDOWN          4
 
 #define FONT_WIDTH                  6
 #define FONT_HEIGHT                 8
@@ -315,7 +315,8 @@ MENU_ACTION_SYSINFO (NXCTRL_VOID) {
   int d, h, m;
   int t;
   char rch[22];
-  char rchMacIP[20];
+  //char rchMacIP[20];
+  
   statvfs("/", &stvfs);
   sysinfo(&si);
   t = __CPUTemp() / 1000;
@@ -324,8 +325,10 @@ MENU_ACTION_SYSINFO (NXCTRL_VOID) {
   m = (si.uptime - (d*3600*24) - (h*3600))/60;
   NXCTRLOLEDClearDisplay(&OLED);
   NXCTRLOLEDSetCursor(&OLED, 4*FONT_WIDTH, 0);
-  __WriteStringToOLED("SYSTEM STATUS\n\n");
+  __WriteStringToOLED("SYSTEM STATUS\n");
 
+  NXCTRLOLEDSetCursor(&OLED, 0, FONT_HEIGHT + 8);
+  
   sprintf(rch, " LDA:  %2.1f %2.1f %2.1f\n",
           si.loads[0]/65536.0,
           si.loads[1]/65536.0,
@@ -350,10 +353,12 @@ MENU_ACTION_SYSINFO (NXCTRL_VOID) {
   sprintf(rch, " TMP: %3dC\n", t);
   __WriteStringToOLED(rch);
 
+#if 0
   if (__GetMacAddress("wlan0", rchMacIP)) {
     sprintf(rch, " %s", rchMacIP);
     __WriteStringToOLED(rch);
   }
+#endif
 
   NXCTRLOLEDUpdateDisplay(&OLED);
 }
@@ -563,6 +568,7 @@ __DisplayMenu (NXCTRL_VOID) {
   unsigned char chSel = 16;
   NXCTRLOLEDClearDisplay(&OLED);
   __WriteDateTime();
+  NXCTRLOLEDDrawLine(&OLED, 4, 10, 123, 10, NXCTRL_ON);
   NXCTRLOLEDSetCursor(&OLED, 0, 2*FONT_HEIGHT);
 
   if (MENU_IDX == MENU_IDX_TURN_OFF_MENU) {
@@ -589,11 +595,13 @@ __DisplayMenu (NXCTRL_VOID) {
   } else
     __WriteStringToOLED("  HCSR04 DISTANCE\n");
 
+#if 0
   if (MENU_IDX == MENU_IDX_USERAPP) {
     NXCTRLOLEDWrite(&OLED, chSel);
     __WriteStringToOLED(" USER APPLICATION\n");
   } else
     __WriteStringToOLED("  USER APPLICATION\n");
+#endif
 
   if (MENU_IDX == MENU_IDX_ESHUTDOWN) {
     NXCTRLOLEDWrite(&OLED, chSel);
@@ -713,9 +721,11 @@ NXCTRLLoop (NXCTRL_VOID) {
             case MENU_IDX_HCSR04:
               MENU_ACTION_HCSR04();
               break;
+#if 0
             case MENU_IDX_USERAPP:
               MENU_ACTION_RUN_APP();
               break;
+#endif
             case MENU_IDX_ESHUTDOWN:
               MENU_ACTION_ESHUTDOWN();
               break;

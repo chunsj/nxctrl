@@ -238,7 +238,7 @@ NXCTRLOLEDSetCursor (NXCTRLOLED *pOLED,
 NXCTRL_VOID
 NXCTRLOLEDWriteEx (NXCTRLOLED *pOLED, NXCTRL_UINT8 ch, NXCTRL_BOOL bWrap) {
   if (ch == '\n') {
-    pOLED->nCursorY += 8;
+    pOLED->nCursorY += 8+2;
     pOLED->nCursorX = 0;
   } else if (ch == '\r') {
   } else {

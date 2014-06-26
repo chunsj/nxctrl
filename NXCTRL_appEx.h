@@ -85,4 +85,9 @@ typedef struct __tagNXCTRLAPP {
   APPDRAWBANNER drawBanner;
 } NXCTRLAPP;
 
+#define MENU_BUTTON_BANK            NXCTRL_P8
+#define MENU_BUTTON_PIN             NXCTRL_PIN29
+#define EXEC_BUTTON_BANK            NXCTRL_P8
+#define EXEC_BUTTON_PIN             NXCTRL_PIN31
+
 #endif /* __NXCTRL_APP_HEADER__ */

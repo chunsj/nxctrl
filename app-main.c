@@ -20,6 +20,7 @@
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
+#include <unistd.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -33,20 +34,43 @@
 
 #define FONT_WIDTH                  6
 #define FONT_HEIGHT                 8
+#define MENU_SEL_CHAR               ((unsigned char)16)
 
-#define BANNER_TIME_SECS            3
+#define DPY_IDLE_COUNT_MAX          300
+#define MIN_ACTION_DURATION         200
 
-NXCTRL_VOID
-NXCTRLAPP_init (LPNXCTRLAPP pApp) {
-  pApp->clearDisplay();
+#define MENU_IDX_COUNT              6
+
+#define MENU_IDX_NEXT_APP           0
+#define MENU_IDX_SYSTEM_MENU        1
+#define MENU_IDX_APPMENU01          2
+#define MENU_IDX_APPMENU02          3
+#define MENU_IDX_APPMENU03          4
+#define MENU_IDX_EXIT_MENU          5
+
+static NXCTRL_BOOL                  MENU_BUTTON_STATE = NXCTRL_LOW;
+static NXCTRL_BOOL                  EXEC_BUTTON_STATE = NXCTRL_LOW;
+static unsigned char                DPY_IDLE_COUNT = 0;
+static unsigned char                MENU_IDX = MENU_IDX_SYSTEM_MENU;
+static NXCTRL_BOOL                  IN_MENU = NXCTRL_FALSE;
+static unsigned long long           LAST_ACTION_TIME = 0;
+
+static NXCTRL_BOOL
+canAction (NXCTRL_VOID) {
+  struct timespec tm;
+  unsigned long long timeInMillis;
+  extern int clock_gettime(int, struct timespec *);
+  clock_gettime(_POSIX_CPUTIME, &tm);
+  timeInMillis = tm.tv_sec * 1000 + tm.tv_nsec/1000000;
+  if ((timeInMillis - LAST_ACTION_TIME) > MIN_ACTION_DURATION) {
+    LAST_ACTION_TIME = timeInMillis;
+    return NXCTRL_TRUE;
+  } else
+    return NXCTRL_FALSE;
 }
 
-NXCTRL_VOID
-NXCTRLAPP_clean (LPNXCTRLAPP pApp) {
-}
-
-NXCTRL_VOID
-NXCTRLAPP_run (LPNXCTRLAPP pApp) {
+static NXCTRL_VOID
+displayTime (LPNXCTRLAPP pApp) {
   register int i;
   char rch[22];
   time_t t = time(NULL);
@@ -66,5 +90,117 @@ NXCTRLAPP_run (LPNXCTRLAPP pApp) {
   pApp->setCursor(0, FONT_HEIGHT*3);
   pApp->writeSTR(rch);
   pApp->updateDisplay();
+}
+
+static NXCTRL_VOID
+updateMenuButtonState (LPNXCTRLAPP pApp) {
+  if (MENU_BUTTON_STATE == NXCTRL_LOW) {
+    if (pApp->digitalRead(MENU_BUTTON_BANK, MENU_BUTTON_PIN) == NXCTRL_HIGH) {
+      MENU_BUTTON_STATE = NXCTRL_HIGH;
+      DPY_IDLE_COUNT = 0;
+    }
+  } else {
+    if (pApp->digitalRead(MENU_BUTTON_BANK, MENU_BUTTON_PIN) == NXCTRL_LOW) {
+      MENU_BUTTON_STATE = NXCTRL_LOW;
+      DPY_IDLE_COUNT = 0;
+    }
+  }
+}
+
+static NXCTRL_VOID
+updateExecButtonState (LPNXCTRLAPP pApp) {
+  if (EXEC_BUTTON_STATE == NXCTRL_LOW) {
+    if (pApp->digitalRead(EXEC_BUTTON_BANK, EXEC_BUTTON_PIN) == NXCTRL_HIGH) {
+      EXEC_BUTTON_STATE = NXCTRL_HIGH;
+      DPY_IDLE_COUNT = 0;
+    }
+  } else {
+    if (pApp->digitalRead(EXEC_BUTTON_BANK, EXEC_BUTTON_PIN) == NXCTRL_LOW) {
+      EXEC_BUTTON_STATE = NXCTRL_LOW;
+      DPY_IDLE_COUNT = 0;
+    }
+  }
+}
+
+static char *
+mkMenuSTR (char *rch, const char *pszName, int nMenu) {
+  sprintf(rch, "%c %s\n",
+          (MENU_IDX == nMenu ? MENU_SEL_CHAR : ' '),
+          pszName);
+  return rch;
+}
+
+static NXCTRL_VOID
+displayMenu (LPNXCTRLAPP pApp) {
+  char rch[21];
+
+  pApp->clearDisplay();
+
+  pApp->drawLine(0, 0, 127, 0, NXCTRL_ON);
+  pApp->setCursor(0, 5);
+
+  pApp->writeSTR(mkMenuSTR(rch, "NEXT APP", MENU_IDX_NEXT_APP));
+  pApp->writeSTR(mkMenuSTR(rch, "SYSTEM UTILS", MENU_IDX_SYSTEM_MENU));
+  pApp->writeSTR(mkMenuSTR(rch, "MENU 01", MENU_IDX_APPMENU01));
+  pApp->writeSTR(mkMenuSTR(rch, "MENU 02", MENU_IDX_APPMENU02));
+  pApp->writeSTR(mkMenuSTR(rch, "MENU 03", MENU_IDX_APPMENU03));
+  pApp->writeSTR(mkMenuSTR(rch, "EXIT MENU", MENU_IDX_EXIT_MENU));
+
+  pApp->updateDisplay();
+}
+
+NXCTRL_VOID
+NXCTRLAPP_init (LPNXCTRLAPP pApp) {
+  MENU_BUTTON_STATE = NXCTRL_LOW;
+  EXEC_BUTTON_STATE = NXCTRL_LOW;
+  DPY_IDLE_COUNT = 0;
+  MENU_IDX = MENU_IDX_NEXT_APP;
+  IN_MENU = NXCTRL_FALSE;
+  LAST_ACTION_TIME = 0;
+  
+  pApp->clearDisplay();
+}
+
+NXCTRL_VOID
+NXCTRLAPP_clean (LPNXCTRLAPP pApp) {
+}
+
+NXCTRL_VOID
+NXCTRLAPP_run (LPNXCTRLAPP pApp) {
+  updateMenuButtonState(pApp);
+  updateExecButtonState(pApp);
+  if (!IN_MENU)
+    displayTime(pApp);
+  
+  if (MENU_BUTTON_STATE == NXCTRL_ON) {
+    if (IN_MENU) {
+      if (canAction()) {
+        MENU_IDX++;
+        if (MENU_IDX >= MENU_IDX_COUNT)
+          MENU_IDX = MENU_IDX_NEXT_APP;
+        displayMenu(pApp);
+      }
+    } else {
+      IN_MENU = NXCTRL_TRUE;
+      displayMenu(pApp);
+      canAction();
+    }
+  }
+
+  if (EXEC_BUTTON_STATE == NXCTRL_ON) {
+    if (IN_MENU) {
+      if (canAction()) {
+        switch (MENU_IDX) {
+        case MENU_IDX_EXIT_MENU:
+          IN_MENU = NXCTRL_FALSE;
+          displayTime(pApp);
+          break;
+        default:
+          break;
+        }
+      }
+    }
+  }
+  
   pApp->sleep(100, 0);
 }
