@@ -127,29 +127,26 @@ int nSPIFD;
 unsigned int
 __CPUTemp (NXCTRL_VOID) {
   const char *psz = "/sys/class/hwmon/hwmon0/device/temp1_input";
-  unsigned int n;
-  FILE *pFile = fopen(psz, "r");
-  if (!pFile) {
+  //const char *psz = "/sys/devices/ocp.3/44e10448.bandgap/temp1_input";
+  int nFD = open(psz, O_RDONLY);
+  if (nFD < 0) {
     system("rmmod am335x_bandgap");
     system("modprobe am335x_bandgap");
-  }
-  pFile = fopen(psz, "r");
-  if (!pFile) {
     return 0;
+  } else {
+    char rch[8];
+    int n = read(nFD, rch, 7);
+    rch[n] = 0;
+    n = atoi(rch);
+    close(nFD);
+    if (n > 120000) {
+      system("rmmod am335x_bandgap");
+      system("modprobe am335x_bandgap");
+      return 0;
+    }
+    return n;
   }
-  fscanf(pFile, "%d", &n);
-  fclose(pFile);
-  if (n > 120) {
-    system("rmmod am335x_bandgap");
-    system("modprobe am335x_bandgap");
-  }
-  pFile = fopen(psz, "r");
-  if (!pFile) {
-    return 0;
-  }
-  fscanf(pFile, "%d", &n);
-  fclose(pFile);
-  return n;
+  return 0;
 }
 
 NXCTRL_BOOL
