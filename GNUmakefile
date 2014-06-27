@@ -64,13 +64,17 @@ EXE20=tc
 SRC20=tc.c NXCTRL.c NXCTRL_oled.c NXCTRL_bitArray.c
 APP21=app-main.app
 SRC21-APP=app-main.c NXCTRL.c
+APP22=app-sysutil.app
+SRC22-APP=app-sysutil.c NXCTRL.c
+APP23=app-blank.app
+SRC23-APP=app-blank.c NXCTRL.c
 
 ARTIFACTS=$(EXE01) $(EXE02) $(EXE03) $(EXE04) $(EXE04-BIN) $(EXE05) $(EXE06) $(EXE06-BIN) \
 	$(EXE07) $(EXE07-BIN) $(EXE08) $(EXE08-BIN) $(EXE09) $(EXE10) $(EXE10-BIN) \
 	$(EXE11) $(EXE11-BIN) $(EXE12) $(EXE13) $(EXE14) $(EXE15) $(EXE16) $(EXE19) \
-	$(APP18) $(APP21)
+	$(APP18)
 
-AUX_ARTIFACTS=$(EXE17) $(EXE18) $(EXE18-BIN) $(EXE20)
+AUX_ARTIFACTS=$(EXE17) $(EXE18) $(EXE18-BIN) $(EXE20) $(APP21) $(APP22) $(APP23)
 
 all: $(ARTIFACTS)
 
@@ -159,6 +163,12 @@ $(EXE20): $(SRC20)
 	$(CC) $(CFLAGS) -o $@ $^ $(LDFLAGS) $(LIBS) $(DL_LIBS) $(PRU_LIBS)
 
 $(APP21): $(SRC21-APP)
+	$(CC) $(CFLAGS) -fPIC -DPIC -shared -o $@ $^
+
+$(APP22): $(SRC22-APP)
+	$(CC) $(CFLAGS) -fPIC -DPIC -shared -o $@ $^
+
+$(APP23): $(SRC23-APP)
 	$(CC) $(CFLAGS) -fPIC -DPIC -shared -o $@ $^
 
 clean:

@@ -76,6 +76,14 @@
 NXCTRLOLED OLED;
 int nSPIFD;
 
+const char *rpszApps[] = {
+  "./app-main.app",
+  "./app-sysutil.app",
+  "./app-blank.app"
+};
+
+int nCurrentAppIdx = 0;
+int nPrevAppIdx = 0;
 NXCTRL_VOID *pActiveAppHandle = NULL;
 NXCTRLAPP activeApp;
 APPINITFN appInit = NULL;
@@ -142,17 +150,20 @@ __DrawBanner (NXCTRL_VOID) {
 }
 
 NXCTRL_VOID
-__loadApp (const char *pszAppPath) {
+__loadApp (int nCmd) {
   if (pActiveAppHandle != NULL) {
     appClean(&activeApp);
+    if (pActiveAppHandle)
+      dlclose(pActiveAppHandle);
   }
-  
-  pActiveAppHandle = dlopen(pszAppPath, RTLD_LAZY);
+
+  pActiveAppHandle = dlopen(rpszApps[nCmd], RTLD_LAZY);
   if (!pActiveAppHandle) {
-    fprintf(stderr, "cannot load %s\n", pszAppPath);
+    fprintf(stderr, "cannot load %s\n", rpszApps[nCmd]);
     return;
   }
 
+  nCurrentAppIdx = nCmd;
   appInit = (APPINITFN)dlsym(pActiveAppHandle, APPINITFUNCTIONNAME);
   appRun = (APPRUNFN)dlsym(pActiveAppHandle, APPRUNFUNCTIONNAME);
   appClean = (APPCLEANFN)dlsym(pActiveAppHandle, APPCLEANFUNCTIONNAME);
@@ -228,7 +239,7 @@ NXCTRLSetup (NXCTRL_VOID) {
   NXCTRLOLEDDisplayNormal(&OLED);
   NXCTRLOLEDUpdateDisplay(&OLED);
 
-  __loadApp("./app-main.app");
+  __loadApp(0);
 }
 
 // XXX ideas
@@ -250,7 +261,23 @@ NXCTRLSetup (NXCTRL_VOID) {
 
 NXCTRL_VOID
 NXCTRLLoop (NXCTRL_VOID) {
+  activeApp.nCmd = -1;
   appRun(&activeApp);
+  if (activeApp.nCmd != -1) {
+    if (nCurrentAppIdx == 1) {
+      if (activeApp.nCmd == 2) {
+        nPrevAppIdx = 0;
+        __loadApp(activeApp.nCmd);
+        activeApp.nCmd = -1;
+      } else
+        __loadApp(nPrevAppIdx);
+    } else {
+      nPrevAppIdx = nCurrentAppIdx;
+      __loadApp(activeApp.nCmd);
+      activeApp.nCmd = -1;
+    }
+  }
+  NXCTRLSleep(100, 0);
 }
 
 int

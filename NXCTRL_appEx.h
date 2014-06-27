@@ -65,6 +65,7 @@ typedef NXCTRL_VOID (*APPDRAWBANNER) (NXCTRL_VOID);
 
 typedef struct __tagNXCTRLAPP {
   NXCTRL_VOID *pData;
+  unsigned int nCmd;
 
   APPPINMUX pinMux;
   APPPINMODE pinMode;
