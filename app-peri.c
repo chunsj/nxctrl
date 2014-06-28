@@ -135,9 +135,9 @@ displayPeriInfo (LPNXCTRLAPP pApp) {
   fs /= n;
   
   if (fs > HCSR04_MAX_DIST)
-    sprintf(rch, "DIST(HCSR04): > %d cm\n", HCSR04_MAX_DIST);
+    sprintf(rch, "DIST(HCSR04): >%1.1fm\n", (HCSR04_MAX_DIST/100.0));
   else
-    sprintf(rch, "DIST(HCSR04): %2.1f cm\n", fs);
+    sprintf(rch, "DIST(HCSR04): %2.1fcm\n", fs);
   pApp->writeSTR(rch);
 
   sprintf(rch, "A0: %04d/4095\n", pApp->analogRead(NXCTRL_A0));
