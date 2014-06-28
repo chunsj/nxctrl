@@ -1,0 +1,9 @@
+[Unit]
+Description=BBB Control Application Enhanced
+
+[Service]
+ExecStart=/usr/bin/tc
+
+[Install]
+WantedBy=multi-user.target
+

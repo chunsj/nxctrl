@@ -77,9 +77,12 @@ NXCTRLOLED OLED;
 int nSPIFD;
 
 const char *rpszApps[] = {
-  "./app-main.app",
-  "./app-sysutil.app",
-  "./app-blank.app"
+  "/usr/bin/app-main.app",
+  "/usr/bin/app-sysutil.app",
+  "/usr/bin/app-blank.app",
+  "/usr/bin/app-conninfo.app",
+  "/usr/bin/app-sysinfo.app",
+  "/usr/bin/app-peri.app"
 };
 
 int nCurrentAppIdx = 0;

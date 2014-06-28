@@ -1,7 +1,7 @@
 /*
  * NXCTRL BeagleBone Black Control Library
  *
- * System Control Utilities App Program
+ * System Information App Program
  *
  * Copyright (C) 2014 Sungjin Chun <chunsj@gmail.com>
  *
@@ -20,18 +20,17 @@
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-#define _GNU_SOURCE
-
 #include <unistd.h>
+#include <fcntl.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include <signal.h>
-#include <sys/reboot.h>
+#include <sys/time.h>
+#include <time.h>
+#include <sys/sysinfo.h>
+#include <sys/statvfs.h>
 #include <NXCTRL_appEx.h>
-
-#define LOGO_WIDTH                  128
-#define LOGO_HEIGHT                 64
 
 #define FONT_WIDTH                  6
 #define FONT_HEIGHT                 8
@@ -40,18 +39,93 @@
 #define DPY_IDLE_COUNT_MAX          300
 #define MIN_ACTION_DURATION         200
 
-#define MENU_IDX_COUNT              3
+#define MENU_IDX_COUNT              4
 
-#define MENU_IDX_MENU_OFF           0
-#define MENU_IDX_TURN_OFF           1
-#define MENU_IDX_EXIT_MENU          2
+#define MENU_IDX_NEXT_APP           0
+#define MENU_IDX_SYSTEM_MENU        1
+#define MENU_IDX_UPDATE_MENU        2
+#define MENU_IDX_EXIT_MENU          3
+
+#define NEXT_APP_IDX                5 // from tc.c
 
 static NXCTRL_BOOL                  MENU_BUTTON_STATE = NXCTRL_LOW;
 static NXCTRL_BOOL                  EXEC_BUTTON_STATE = NXCTRL_LOW;
-static unsigned char                DPY_IDLE_COUNT = 0;
-static unsigned char                MENU_IDX = MENU_IDX_MENU_OFF;
+static unsigned int                 DPY_IDLE_COUNT = 0;
+static unsigned char                MENU_IDX = MENU_IDX_SYSTEM_MENU;
 static NXCTRL_BOOL                  IN_MENU = NXCTRL_FALSE;
 static unsigned long long           LAST_ACTION_TIME = 0;
+
+static unsigned int
+getCPUTemp (NXCTRL_VOID) {
+  const char *psz = "/sys/class/hwmon/hwmon0/device/temp1_input";
+  //const char *psz = "/sys/devices/ocp.3/44e10448.bandgap/temp1_input";
+  int nFD = open(psz, O_RDONLY);
+  if (nFD < 0) {
+    system("rmmod am335x_bandgap");
+    system("modprobe am335x_bandgap");
+    return 0;
+  } else {
+    char rch[8];
+    int n = read(nFD, rch, 7);
+    rch[n] = 0;
+    n = atoi(rch);
+    close(nFD);
+    if (n > 120000) {
+      system("rmmod am335x_bandgap");
+      system("modprobe am335x_bandgap");
+      return 0;
+    }
+    return n;
+  }
+  return 0;
+}
+
+static NXCTRL_VOID
+displaySysInfo (LPNXCTRLAPP pApp) {
+  struct sysinfo si;
+  struct statvfs stvfs;
+  int d, h, m;
+  int t;
+  char rch[22];
+  
+  statvfs("/", &stvfs);
+  sysinfo(&si);
+  t = getCPUTemp() / 1000;
+  d = si.uptime/(3600*24);
+  h = (si.uptime - (d*3600*24))/3600;
+  m = (si.uptime - (d*3600*24) - (h*3600))/60;
+  pApp->clearDisplay();
+  pApp->setCursor(4*FONT_WIDTH, 0);
+  pApp->writeSTR("SYSTEM STATUS\n");
+
+  pApp->setCursor(0, FONT_HEIGHT + 8);
+  
+  sprintf(rch, " LDA:  %2.1f %2.1f %2.1f\n",
+          si.loads[0]/65536.0,
+          si.loads[1]/65536.0,
+          si.loads[2]/65536.0);
+  pApp->writeSTR(rch);
+
+  sprintf(rch, " RAM:  %03d %03d %03d\n",
+          (int)(si.totalram/1024/1024),
+          (int)(si.bufferram/1024/1024),
+          (int)(si.freeram/1024/1024));
+  pApp->writeSTR(rch);
+
+  sprintf(rch, " DSK:  %1.1f %1.1f %1.1f\n",
+          stvfs.f_blocks*stvfs.f_frsize/1024/1024/1024.0,
+          (stvfs.f_blocks - stvfs.f_bavail)*stvfs.f_frsize/1024/1024/1024.0,
+          stvfs.f_bavail*stvfs.f_frsize/1024/1024/1024.0);
+  pApp->writeSTR(rch);
+
+  sprintf(rch, " RUN: %3dD %02dH %02dM\n", d, h, m);
+  pApp->writeSTR(rch);
+
+  sprintf(rch, " TMP: %3dC\n", t);
+  pApp->writeSTR(rch);
+
+  pApp->updateDisplay();
+}
 
 static NXCTRL_BOOL
 canAction (NXCTRL_VOID) {
@@ -111,11 +185,14 @@ displayMenu (LPNXCTRLAPP pApp) {
 
   pApp->clearDisplay();
 
-  pApp->drawLine(0, 0, 127, 0, NXCTRL_ON);
-  pApp->setCursor(0, 5);
+  pApp->setCursor(0, 0);
+  pApp->writeSTR("SYS INFO");
+  pApp->drawLine(49, 6, 127, 6, NXCTRL_ON);
+  pApp->setCursor(0, 16);
 
-  pApp->writeSTR(mkMenuSTR(rch, "SCREEN OFF", MENU_IDX_MENU_OFF));
-  pApp->writeSTR(mkMenuSTR(rch, "POWER OFF", MENU_IDX_TURN_OFF));
+  pApp->writeSTR(mkMenuSTR(rch, "PERI.DRV APP", MENU_IDX_NEXT_APP));
+  pApp->writeSTR(mkMenuSTR(rch, "SYSTEM UTILS", MENU_IDX_SYSTEM_MENU));
+  pApp->writeSTR(mkMenuSTR(rch, "UPDATE INFO", MENU_IDX_UPDATE_MENU));
   pApp->writeSTR(mkMenuSTR(rch, "EXIT MENU", MENU_IDX_EXIT_MENU));
 
   pApp->updateDisplay();
@@ -126,18 +203,16 @@ NXCTRLAPP_init (LPNXCTRLAPP pApp) {
   MENU_BUTTON_STATE = pApp->digitalRead(MENU_BUTTON_BANK, MENU_BUTTON_PIN);
   EXEC_BUTTON_STATE = pApp->digitalRead(EXEC_BUTTON_BANK, EXEC_BUTTON_PIN);
   DPY_IDLE_COUNT = 0;
-  MENU_IDX = MENU_IDX_MENU_OFF;
+  MENU_IDX = MENU_IDX_NEXT_APP;
   IN_MENU = NXCTRL_FALSE;
   LAST_ACTION_TIME = 0;
-  IN_MENU = NXCTRL_TRUE;
 
-  while (EXEC_BUTTON_STATE == NXCTRL_HIGH) {
+  while (MENU_BUTTON_STATE == NXCTRL_HIGH) {
     pApp->sleep(100, 0);
-    EXEC_BUTTON_STATE = pApp->digitalRead(EXEC_BUTTON_BANK, EXEC_BUTTON_PIN);
+    MENU_BUTTON_STATE = pApp->digitalRead(MENU_BUTTON_BANK, MENU_BUTTON_PIN);
   }
-  
-  pApp->clearDisplay();
-  pApp->updateDisplay();
+
+  displaySysInfo(pApp);
 }
 
 NXCTRL_VOID
@@ -149,14 +224,21 @@ NXCTRLAPP_run (LPNXCTRLAPP pApp) {
   updateMenuButtonState(pApp);
   updateExecButtonState(pApp);
 
-  displayMenu(pApp);
-  
+  if (MENU_BUTTON_STATE != NXCTRL_HIGH && EXEC_BUTTON_STATE != NXCTRL_HIGH) {
+    DPY_IDLE_COUNT++;
+    if (DPY_IDLE_COUNT > DPY_IDLE_COUNT_MAX) {
+      pApp->nCmd = 2;
+      return;
+    }
+    return;
+  }
+
   if (MENU_BUTTON_STATE == NXCTRL_ON) {
     if (IN_MENU) {
       if (canAction()) {
         MENU_IDX++;
         if (MENU_IDX >= MENU_IDX_COUNT)
-          MENU_IDX = MENU_IDX_MENU_OFF;
+          MENU_IDX = MENU_IDX_NEXT_APP;
         displayMenu(pApp);
       }
     } else {
@@ -171,27 +253,19 @@ NXCTRLAPP_run (LPNXCTRLAPP pApp) {
       if (canAction()) {
         switch (MENU_IDX) {
         case MENU_IDX_EXIT_MENU:
+          IN_MENU = NXCTRL_FALSE;
+          displaySysInfo(pApp);
+          break;
+        case MENU_IDX_SYSTEM_MENU:
           pApp->nCmd = 1;
           return;
-        case MENU_IDX_TURN_OFF:
-          pApp->clearDisplay();
-          pApp->setCursor(3*FONT_WIDTH, 3*FONT_HEIGHT);
-          pApp->writeSTR("TURNING OFF...");
-          pApp->updateDisplay();
-          sync();
-          sync();
-          sync();
-          pApp->sleep(500, 0);
-          pApp->clearDisplay();
-          pApp->updateDisplay();
-          sync();
-          sync();
-          sync();
-          reboot(RB_POWER_OFF);
-          break;
-        case MENU_IDX_MENU_OFF:
-          pApp->nCmd = 2;
+        case MENU_IDX_NEXT_APP:
+          pApp->nCmd = NEXT_APP_IDX;
           return;
+        case MENU_IDX_UPDATE_MENU:
+          IN_MENU = NXCTRL_FALSE;
+          displaySysInfo(pApp);
+          break;
         default:
           break;
         }

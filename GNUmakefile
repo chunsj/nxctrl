@@ -68,13 +68,20 @@ APP22=app-sysutil.app
 SRC22-APP=app-sysutil.c NXCTRL.c
 APP23=app-blank.app
 SRC23-APP=app-blank.c NXCTRL.c
+APP24=app-conninfo.app
+SRC24-APP=app-conninfo.c NXCTRL.c
+APP25=app-sysinfo.app
+SRC25-APP=app-sysinfo.c NXCTRL.c
+APP26=app-peri.app
+SRC26-APP=app-peri.c NXCTRL.c
 
 ARTIFACTS=$(EXE01) $(EXE02) $(EXE03) $(EXE04) $(EXE04-BIN) $(EXE05) $(EXE06) $(EXE06-BIN) \
 	$(EXE07) $(EXE07-BIN) $(EXE08) $(EXE08-BIN) $(EXE09) $(EXE10) $(EXE10-BIN) \
 	$(EXE11) $(EXE11-BIN) $(EXE12) $(EXE13) $(EXE14) $(EXE15) $(EXE16) $(EXE19) \
 	$(APP18)
 
-AUX_ARTIFACTS=$(EXE17) $(EXE18) $(EXE18-BIN) $(EXE20) $(APP21) $(APP22) $(APP23)
+AUX_ARTIFACTS=$(EXE17) $(EXE18) $(EXE18-BIN) $(EXE20) $(APP21) $(APP22) $(APP23) $(APP24) \
+	$(APP25) $(APP26)
 
 all: $(ARTIFACTS)
 
@@ -171,5 +178,19 @@ $(APP22): $(SRC22-APP)
 $(APP23): $(SRC23-APP)
 	$(CC) $(CFLAGS) -fPIC -DPIC -shared -o $@ $^
 
+$(APP24): $(SRC24-APP)
+	$(CC) $(CFLAGS) -fPIC -DPIC -shared -o $@ $^
+
+$(APP25): $(SRC25-APP)
+	$(CC) $(CFLAGS) -fPIC -DPIC -shared -o $@ $^
+
+$(APP26): $(SRC26-APP)
+	$(CC) $(CFLAGS) -fPIC -DPIC -shared -o $@ $^
+
 clean:
 	rm -rf $(ARTIFACTS) $(AUX_ARTIFACTS)
+
+install-tc: tc app-main.app app-sysutil.app app-blank.app app-conninfo.app app-sysinfo.app app-peri.app
+	strip tc
+	cp tc /usr/bin
+	cp app-main.app app-sysutil.app app-blank.app app-conninfo.app app-sysinfo.app app-peri.app /usr/bin

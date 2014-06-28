@@ -1,7 +1,7 @@
 /*
  * NXCTRL BeagleBone Black Control Library
  *
- * Default Control App Program
+ * Connection Information App Program
  *
  * Copyright (C) 2014 Sungjin Chun <chunsj@gmail.com>
  *
@@ -20,6 +20,8 @@
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
+#define _GNU_SOURCE
+
 #include <unistd.h>
 #include <fcntl.h>
 #include <stdio.h>
@@ -28,19 +30,13 @@
 #include <signal.h>
 #include <sys/time.h>
 #include <time.h>
+#include <sys/ioctl.h>
+#include <arpa/inet.h>
+#include <sys/socket.h>
+#include <netdb.h>
+#include <ifaddrs.h>
+#include <ctype.h>
 #include <NXCTRL_appEx.h>
-
-#define TMP36_PIN                   NXCTRL_A1
-
-#define TMP36_DELTA                 0.00
-#define CPUTEMP_BASE                56.0
-#define CPUTEMP_SSG                 60.0
-#define SSG_DELTA                   0.00
-
-#define TEMP_UPDATE_COUNT           20
-
-#define LOGO_WIDTH                  128
-#define LOGO_HEIGHT                 64
 
 #define FONT_WIDTH                  6
 #define FONT_HEIGHT                 8
@@ -49,14 +45,15 @@
 #define DPY_IDLE_COUNT_MAX          300
 #define MIN_ACTION_DURATION         200
 
-#define MENU_IDX_COUNT              4
+#define MENU_IDX_COUNT              5
 
 #define MENU_IDX_NEXT_APP           0
 #define MENU_IDX_SYSTEM_MENU        1
-#define MENU_IDX_UPDATE_TIME        2
-#define MENU_IDX_EXIT_MENU          3
+#define MENU_IDX_RELOAD_MENU        2
+#define MENU_IDX_PING_GW_MENU       3
+#define MENU_IDX_EXIT_MENU          4
 
-#define NEXT_APP_IDX                3 // from tc.c
+#define NEXT_APP_IDX                4 // from tc.c
 
 static NXCTRL_BOOL                  MENU_BUTTON_STATE = NXCTRL_LOW;
 static NXCTRL_BOOL                  EXEC_BUTTON_STATE = NXCTRL_LOW;
@@ -64,62 +61,6 @@ static unsigned int                 DPY_IDLE_COUNT = 0;
 static unsigned char                MENU_IDX = MENU_IDX_SYSTEM_MENU;
 static NXCTRL_BOOL                  IN_MENU = NXCTRL_FALSE;
 static unsigned long long           LAST_ACTION_TIME = 0;
-static unsigned int                 DPY_UPDATE_TIME = 10000;
-
-static unsigned int
-getCPUTemp (NXCTRL_VOID) {
-  const char *psz = "/sys/class/hwmon/hwmon0/device/temp1_input";
-  //const char *psz = "/sys/devices/ocp.3/44e10448.bandgap/temp1_input";
-  int nFD = open(psz, O_RDONLY);
-  if (nFD < 0) {
-    system("rmmod am335x_bandgap");
-    system("modprobe am335x_bandgap");
-    return 0;
-  } else {
-    char rch[8];
-    int n = read(nFD, rch, 7);
-    rch[n] = 0;
-    n = atoi(rch);
-    close(nFD);
-    if (n > 120000) {
-      system("rmmod am335x_bandgap");
-      system("modprobe am335x_bandgap");
-      return 0;
-    }
-    return n;
-  }
-  return 0;
-}
-
-static float
-getTMP36Value (LPNXCTRLAPP pApp) {
-  return pApp->analogRead(TMP36_PIN)*1.8/4096.0;
-}
-
-static float
-getTemperature (LPNXCTRLAPP pApp) {
-  static int nUpdate = -1;
-  static float fTemp = 0.0;
-
-  if (nUpdate < 0 || nUpdate > TEMP_UPDATE_COUNT) {
-    float fTmp = (getTMP36Value(pApp) + TMP36_DELTA - 0.5) * 100;
-    float fCPUTemp = getCPUTemp()/1000.0;
-    
-    fCPUTemp = (fCPUTemp > 120) ? (fCPUTemp - 74) : fCPUTemp;
-    if (fCPUTemp < CPUTEMP_SSG)
-      fTmp -= (fCPUTemp > CPUTEMP_BASE) ? (fCPUTemp - CPUTEMP_BASE) : 0;
-    else
-      fTmp -= (fCPUTemp > CPUTEMP_BASE) ? (fCPUTemp - CPUTEMP_BASE + SSG_DELTA) : 0;
-    
-    if (fTmp < -30 || fTmp > 50) fTmp = 0;
-
-    fTemp = fTmp;
-    nUpdate = 0;
-  } else
-    nUpdate++;
-
-  return fTemp;
-}
 
 static NXCTRL_BOOL
 canAction (NXCTRL_VOID) {
@@ -135,34 +76,105 @@ canAction (NXCTRL_VOID) {
     return NXCTRL_FALSE;
 }
 
-static NXCTRL_VOID
-displayTime (LPNXCTRLAPP pApp) {
-  if (DPY_UPDATE_TIME < 9)
-    return;
-  else {
-    register int i;
-    char rch[22];
-    time_t t = time(NULL);
-    struct tm tm = *localtime(&t);
-    sprintf(rch,
-            " %d/%s%d/%s%d %s%d:%s%d:%s%d",
-            (tm.tm_year + 1900),
-            (tm.tm_mon + 1) > 9 ? "" : "0", tm.tm_mon + 1,
-            tm.tm_mday > 9 ? "" : "0", tm.tm_mday,
-            tm.tm_hour > 9 ? "" : "0", tm.tm_hour,
-            tm.tm_min > 9 ? "" : "0", tm.tm_min,
-            tm.tm_sec > 9 ? "" : "0", tm.tm_sec);
-    for (i = strlen(rch); i < 21; i++)
-      rch[i] = ' ';
-    rch[21] = 0;
-    pApp->clearDisplay();
-    pApp->setCursor(0, FONT_HEIGHT*3);
-    pApp->writeSTR(rch);
-    pApp->setCursor(2*FONT_WIDTH, FONT_HEIGHT*5);
-    sprintf(rch, "TEMPERATURE: %2.0fC", getTemperature(pApp));
-    pApp->writeSTR(rch);
-    pApp->updateDisplay();
+static NXCTRL_BOOL
+getMacAddress (char *pszIFName, char *pszMacIP) {
+  char rchIFName[BUFSIZ];
+  FILE *pFile;
+  int i;
+
+  sprintf(rchIFName, "/sys/class/net/%s/address", pszIFName);
+  pFile = fopen(rchIFName, "r");
+  if (!pFile)
+    return NXCTRL_FALSE;
+
+  fscanf(pFile, "%s", pszMacIP);
+  fclose(pFile);
+  for (i = 0; i < strlen(pszMacIP); i++)
+    pszMacIP[i] = toupper(pszMacIP[i]);
+  return NXCTRL_TRUE;
+}
+
+static NXCTRL_BOOL
+getDefaultGW (char *pszGW) {
+  FILE *pFile = fopen("/proc/net/route", "r");
+  char rch[1024];
+  char rchIFace[32], rchDest[32], rchGW[32];
+  NXCTRL_BOOL bFound = NXCTRL_OFF;
+  int i0, i1, i2, i3;
+  
+  if (!pFile)
+    return NXCTRL_FALSE;
+  
+  while (fgets(rch, 1023, pFile)) {
+    sscanf(rch, "%s %s %s", rchIFace, rchDest, rchGW);
+    if (!strcmp(rchDest, "00000000")) {
+      bFound = NXCTRL_ON;
+      break;
+    }
   }
+  fclose(pFile);
+
+  if (!bFound)
+    return NXCTRL_FALSE;
+
+  sscanf(rchGW, "%2x%2x%2x%2x", &i0, &i1, &i2, &i3);
+  sprintf(pszGW, "%d.%d.%d.%d", i3, i2, i1, i0);
+
+  return NXCTRL_TRUE;
+}
+
+static NXCTRL_VOID
+pingToDefaultGW (NXCTRL_VOID) {
+  char rch[1024], rchGW[32];
+  if (getDefaultGW(rchGW)) {
+    sprintf(rch, "ping -c 1 -W 1 %s >& /dev/null", rchGW);
+    system(rch);
+  }
+}
+
+static NXCTRL_VOID
+displayConnInfo (LPNXCTRLAPP pApp) {
+  struct ifaddrs *ifaddr, *ifa;
+  int n;
+  char rchHost[NI_MAXHOST];
+  char rchBuffer[1024];
+  char rchGW[32];
+  char rchMacIP[20];
+
+  pApp->clearDisplay();
+  pApp->setCursor(0, 0);
+
+  if (getifaddrs(&ifaddr) == -1) {
+    pApp->writeSTR("ERROR IN CONN INFO");
+    pApp->updateDisplay();
+    return;
+  }
+
+  pApp->setCursor(FONT_WIDTH*3, 0);
+  pApp->writeSTR("CONNECTION INFO\n\n");
+
+  for (ifa = ifaddr; ifa != NULL; ifa = ifa->ifa_next) {
+    if (ifa->ifa_addr == NULL) continue;
+    n = getnameinfo(ifa->ifa_addr, sizeof(struct sockaddr_in),
+                    rchHost, NI_MAXHOST, NULL, 0, NI_NUMERICHOST);
+    if (n == 0) {
+      memset(rchBuffer, 0, 1024);
+      sprintf(rchBuffer, "%5s: %s\n", ifa->ifa_name, rchHost);
+      pApp->writeSTR(rchBuffer);
+    }
+  }
+  if (getDefaultGW(rchGW)) {
+    sprintf(rchBuffer, "%5s: %s\n", "gw", rchGW);
+    pApp->writeSTR(rchBuffer);
+  }
+
+  pApp->setCursor(0, 55);
+  if (getMacAddress("wlan0", rchMacIP)) {
+    sprintf(rchBuffer, "  %s", rchMacIP);
+    pApp->writeSTR(rchBuffer);
+  }
+
+  pApp->updateDisplay();
 }
 
 static NXCTRL_VOID
@@ -210,13 +222,14 @@ displayMenu (LPNXCTRLAPP pApp) {
   pApp->clearDisplay();
 
   pApp->setCursor(0, 0);
-  pApp->writeSTR("MAIN");
-  pApp->drawLine(25, 6, 127, 6, NXCTRL_ON);
+  pApp->writeSTR("CONN INFO");
+  pApp->drawLine(55, 6, 127, 6, NXCTRL_ON);
   pApp->setCursor(0, 16);
 
-  pApp->writeSTR(mkMenuSTR(rch, "CONN INFO APP", MENU_IDX_NEXT_APP));
+  pApp->writeSTR(mkMenuSTR(rch, "SYS INFO APP", MENU_IDX_NEXT_APP));
   pApp->writeSTR(mkMenuSTR(rch, "SYSTEM UTILS", MENU_IDX_SYSTEM_MENU));
-  pApp->writeSTR(mkMenuSTR(rch, "UPDATE TIME", MENU_IDX_UPDATE_TIME));
+  pApp->writeSTR(mkMenuSTR(rch, "RELOAD INFO", MENU_IDX_RELOAD_MENU));
+  pApp->writeSTR(mkMenuSTR(rch, "PING TO GW", MENU_IDX_PING_GW_MENU));
   pApp->writeSTR(mkMenuSTR(rch, "EXIT MENU", MENU_IDX_EXIT_MENU));
 
   pApp->updateDisplay();
@@ -238,6 +251,7 @@ NXCTRLAPP_init (LPNXCTRLAPP pApp) {
 
   pApp->clearDisplay();
   pApp->updateDisplay();
+  displayConnInfo(pApp);
 }
 
 NXCTRL_VOID
@@ -248,9 +262,6 @@ NXCTRL_VOID
 NXCTRLAPP_run (LPNXCTRLAPP pApp) {
   updateMenuButtonState(pApp);
   updateExecButtonState(pApp);
-
-  if (!IN_MENU)
-    displayTime(pApp);
 
   if (MENU_BUTTON_STATE != NXCTRL_HIGH && EXEC_BUTTON_STATE != NXCTRL_HIGH) {
     DPY_IDLE_COUNT++;
@@ -282,7 +293,7 @@ NXCTRLAPP_run (LPNXCTRLAPP pApp) {
         switch (MENU_IDX) {
         case MENU_IDX_EXIT_MENU:
           IN_MENU = NXCTRL_FALSE;
-          displayTime(pApp);
+          displayConnInfo(pApp);
           break;
         case MENU_IDX_SYSTEM_MENU:
           pApp->nCmd = 1;
@@ -290,14 +301,18 @@ NXCTRLAPP_run (LPNXCTRLAPP pApp) {
         case MENU_IDX_NEXT_APP:
           pApp->nCmd = NEXT_APP_IDX;
           return;
-        case MENU_IDX_UPDATE_TIME:
+        case MENU_IDX_RELOAD_MENU:
+          IN_MENU = NXCTRL_FALSE;
+          displayConnInfo(pApp);
+          break;
+        case MENU_IDX_PING_GW_MENU:
           pApp->clearDisplay();
           pApp->setCursor(FONT_WIDTH*5, FONT_HEIGHT*3);
-          pApp->writeSTR("UPDATING...");
+          pApp->writeSTR("PING TO GW...");
           pApp->updateDisplay();
-          system("/usr/bin/ntpd -gq");
+          pingToDefaultGW();
           IN_MENU = NXCTRL_FALSE;
-          displayTime(pApp);
+          displayConnInfo(pApp);
           break;
         default:
           break;
