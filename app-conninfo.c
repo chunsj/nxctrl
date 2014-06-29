@@ -95,6 +95,27 @@ getMacAddress (char *pszIFName, char *pszMacIP) {
 }
 
 static NXCTRL_BOOL
+getWIFIInfo (int *pnLink, int *pnLevel, int *pnNoise) {
+  FILE *pFile = fopen("/proc/net/wireless", "r");
+  char rch[1024];
+  char rchLabel[8];
+  
+  if (!pFile)
+    return NXCTRL_FALSE;
+
+  while (fgets(rch, 1023, pFile)) {
+    sscanf(rch, "%s", rchLabel);
+    if (!strcmp(rchLabel, "wlan0:")) {
+      //fprintf(stderr, "%s", rch);
+      sscanf(rch, "%s %s %d. %d. %d.", rchLabel, rchLabel, pnLink, pnLevel, pnNoise);
+    }
+  }
+  fclose(pFile);
+  
+  return NXCTRL_TRUE;
+}
+
+static NXCTRL_BOOL
 getDefaultGW (char *pszGW) {
   FILE *pFile = fopen("/proc/net/route", "r");
   char rch[1024];
@@ -140,6 +161,7 @@ displayConnInfo (LPNXCTRLAPP pApp) {
   char rchBuffer[1024];
   char rchGW[32];
   char rchMacIP[20];
+  int nLink, nLevel, nNoise;
 
   pApp->clearDisplay();
   pApp->setCursor(0, 0);
@@ -151,13 +173,15 @@ displayConnInfo (LPNXCTRLAPP pApp) {
   }
 
   pApp->setCursor(FONT_WIDTH*3, 0);
-  pApp->writeSTR("CONNECTION INFO\n\n");
+  pApp->writeSTR("CONNECTION INFO");
+
+  pApp->setCursor(0, FONT_HEIGHT + 8);
 
   for (ifa = ifaddr; ifa != NULL; ifa = ifa->ifa_next) {
     if (ifa->ifa_addr == NULL) continue;
     n = getnameinfo(ifa->ifa_addr, sizeof(struct sockaddr_in),
                     rchHost, NI_MAXHOST, NULL, 0, NI_NUMERICHOST);
-    if (n == 0) {
+    if (n == 0 && strcmp("lo", ifa->ifa_name)) {
       memset(rchBuffer, 0, 1024);
       sprintf(rchBuffer, "%5s: %s\n", ifa->ifa_name, rchHost);
       pApp->writeSTR(rchBuffer);
@@ -168,7 +192,16 @@ displayConnInfo (LPNXCTRLAPP pApp) {
     pApp->writeSTR(rchBuffer);
   }
 
-  pApp->setCursor(0, 55);
+  if (getWIFIInfo(&nLink, &nLevel, &nNoise)) {
+    int nCount;
+    sprintf(rchBuffer, "%d/%d/%d", nLink, nLevel, nNoise);
+    nCount = (21 - strlen(rchBuffer))/2;
+    nCount = nCount < 0 ? 0 : nCount;
+    pApp->setCursor(nCount*FONT_WIDTH, 47);
+    pApp->writeSTR(rchBuffer);
+  }
+
+  pApp->setCursor(0, 57);
   if (getMacAddress("wlan0", rchMacIP)) {
     sprintf(rchBuffer, "  %s", rchMacIP);
     pApp->writeSTR(rchBuffer);
