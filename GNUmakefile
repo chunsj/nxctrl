@@ -74,6 +74,8 @@ APP25=app-sysinfo.app
 SRC25-APP=app-sysinfo.c NXCTRL.c
 APP26=app-peri.app
 SRC26-APP=app-peri.c NXCTRL.c
+APP27=app-spark.app
+SRC27-APP=app-spark.c NXCTRL.c
 
 ARTIFACTS=$(EXE01) $(EXE02) $(EXE03) $(EXE04) $(EXE04-BIN) $(EXE05) $(EXE06) $(EXE06-BIN) \
 	$(EXE07) $(EXE07-BIN) $(EXE08) $(EXE08-BIN) $(EXE09) $(EXE10) $(EXE10-BIN) \
@@ -81,7 +83,7 @@ ARTIFACTS=$(EXE01) $(EXE02) $(EXE03) $(EXE04) $(EXE04-BIN) $(EXE05) $(EXE06) $(E
 	$(APP18)
 
 AUX_ARTIFACTS=$(EXE17) $(EXE18) $(EXE18-BIN) $(EXE20) $(APP21) $(APP22) $(APP23) $(APP24) \
-	$(APP25) $(APP26)
+	$(APP25) $(APP26) $(APP27)
 
 all: $(ARTIFACTS)
 
@@ -187,10 +189,15 @@ $(APP25): $(SRC25-APP)
 $(APP26): $(SRC26-APP)
 	$(CC) $(CFLAGS) -fPIC -DPIC -shared -o $@ $^
 
+$(APP27): $(SRC27-APP)
+	$(CC) $(CFLAGS) -fPIC -DPIC -shared -o $@ $^
+
 clean:
 	rm -rf $(ARTIFACTS) $(AUX_ARTIFACTS)
 
-install-tc: tc app-main.app app-sysutil.app app-blank.app app-conninfo.app app-sysinfo.app app-peri.app
+install-tc: tc app-main.app app-sysutil.app app-blank.app app-conninfo.app app-sysinfo.app app-peri.app \
+	app-spark.app
 	strip tc
 	cp tc /usr/bin
 	cp app-main.app app-sysutil.app app-blank.app app-conninfo.app app-sysinfo.app app-peri.app /usr/bin
+	cp app-spark.app /usr/bin

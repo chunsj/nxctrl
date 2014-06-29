@@ -1,7 +1,7 @@
 /*
  * NXCTRL BeagleBone Black Control Library
  *
- * Peripheral Driving App Program
+ * Spark Core Management App Program
  *
  * Copyright (C) 2014 Sungjin Chun <chunsj@gmail.com>
  *
@@ -40,24 +40,15 @@
 #define DPY_IDLE_COUNT_MAX          300
 #define MIN_ACTION_DURATION         200
 
-#define MENU_IDX_COUNT              4
+#define MENU_IDX_COUNT              5
 
 #define MENU_IDX_NEXT_APP           0
 #define MENU_IDX_SYSTEM_MENU        1
-#define MENU_IDX_UPDATE_MENU        2
-#define MENU_IDX_EXIT_MENU          3
+#define MENU_IDX_FLASH_MENU         2
+#define MENU_IDX_D7_ONOFF_MENU      3
+#define MENU_IDX_EXIT_MENU          4
 
-#define NEXT_APP_IDX                6 // from tc.c
-
-#define PRU_NUM                     PRU0
-#define PRU_PATH                    "/usr/bin/ctrl-app.bin"
-
-#define HCSR04_BANK                 NXCTRL_P8
-#define HCSR04_MAX_CNT              1
-#define HCSR04_MAX_DIST             100
-
-#define TRIGGER_PIN                 NXCTRL_PIN11
-#define ECHO_PIN                    NXCTRL_PIN15
+#define NEXT_APP_IDX                0 // from tc.c
 
 static NXCTRL_BOOL                  MENU_BUTTON_STATE = NXCTRL_LOW;
 static NXCTRL_BOOL                  EXEC_BUTTON_STATE = NXCTRL_LOW;
@@ -65,89 +56,45 @@ static unsigned int                 DPY_IDLE_COUNT = 0;
 static unsigned char                MENU_IDX = MENU_IDX_SYSTEM_MENU;
 static NXCTRL_BOOL                  IN_MENU = NXCTRL_FALSE;
 static unsigned long long           LAST_ACTION_TIME = 0;
-
-static float
-getFetchDistance (NXCTRL_VOID) {
-  int nRet;
-  tpruss_intc_initdata nINTC = PRUSS_INTC_INITDATA;
-  void *pPRUDataMem = NULL;
-  unsigned int *pnPRUData = NULL;
-  float fDist = 0.0f;
-
-  // initialize PRU
-  if ((nRet = prussdrv_init())) {
-    fprintf(stderr, "prussdrv_init() failed\n");
-    return 0;
-  }
-
-  // open the interrupt
-  if ((nRet = prussdrv_open(PRU_EVTOUT_0))) {
-    fprintf(stderr, "prussdrv_open() failed: %s\n", strerror(errno));
-    return 0;
-  }
-
-  // initialize interrupt
-  if ((nRet = prussdrv_pruintc_init(&nINTC))) {
-    fprintf(stderr, "prussdrv_pruintc_init() failed\n");
-    return 0;
-  }
-
-  prussdrv_map_prumem(PRUSS0_PRU0_DATARAM, &pPRUDataMem);
-  pnPRUData = (unsigned int *)pPRUDataMem;
-
-  // load and run the PRU program
-  if ((nRet = prussdrv_exec_program(PRU_NUM, PRU_PATH))) {
-    fprintf(stderr, "prussdrv_exec_program() failed\n");
-    return 0;
-  }
-
-  prussdrv_pru_wait_event(PRU_EVTOUT_0);
-  if (prussdrv_pru_clear_event(PRU_EVTOUT_0, PRU0_ARM_INTERRUPT))
-    fprintf(stderr, "prussdrv_pru_clear_event() failed\n");
-  fDist = (float)pnPRUData[0]/2.0/29.1;
-
-  // halt and disable the PRU
-  if (prussdrv_pru_disable(PRU_NUM))
-    fprintf(stderr, "prussdrv_pru_disable() failed\n");
-
-  // release the PRU clocks and disable prussdrv module
-  if (prussdrv_exit())
-    fprintf(stderr, "prussdrv_exit() failed\n");
-
-  return fDist;
-}
+static NXCTRL_BOOL                  TOGGLE = NXCTRL_ON;
 
 static NXCTRL_VOID
-displayPeriInfo (LPNXCTRLAPP pApp) {
-  register int i, n = HCSR04_MAX_CNT;
-  float fs = 0;
-  char rch[22];
+displayCoreInfo (LPNXCTRLAPP pApp) {
+  char rchName[22], rchStatus[16], rchLine[1024], rchDummy[80];
+  FILE *pFile;
 
   pApp->clearDisplay();
-  pApp->setCursor(3*FONT_WIDTH, 0);
-  pApp->writeSTR("PERIPHERAL DRV.\n");
+  pApp->setCursor(4*FONT_WIDTH, 0);
+  pApp->writeSTR("SPARK CORE\n");
+
+  pApp->setCursor(0, FONT_HEIGHT*3);
+  pApp->writeSTR("    SEARCHING...");
+  pApp->updateDisplay();
 
   pApp->setCursor(0, FONT_HEIGHT + 8);
+  system("/usr/bin/spark-list > /tmp/sparkcoreinfo.txt");
 
-  for (i = 0; i < n; i++) {
-    fs += getFetchDistance();
+  rchLine[0] = 0;
+  pFile = fopen("/tmp/sparkcoreinfo.txt", "r");
+  if (pFile) {
+    fgets(rchLine, 1023, pFile);
+    fclose(pFile);
+    //fprintf(stderr, "%s\n", rchLine);
   }
-  fs /= n;
-  
-  if (fs > HCSR04_MAX_DIST)
-    sprintf(rch, "DIST(HCSR04): >%1.1fm\n", (HCSR04_MAX_DIST/100.0));
-  else
-    sprintf(rch, "DIST(HCSR04): %2.1fcm\n", fs);
-  pApp->writeSTR(rch);
 
-  sprintf(rch, "A0: %04d/4095\n", pApp->analogRead(NXCTRL_A0));
-  pApp->writeSTR(rch);
-  sprintf(rch, "A1: %04d/4095 (T)\n", pApp->analogRead(NXCTRL_A1));
-  pApp->writeSTR(rch);
-  sprintf(rch, "A2: %04d/4095\n", pApp->analogRead(NXCTRL_A2));
-  pApp->writeSTR(rch);
-  sprintf(rch, "A3: %04d/4095\n", pApp->analogRead(NXCTRL_A3));
-  pApp->writeSTR(rch);
+  pApp->clearDisplay();
+  pApp->setCursor(4*FONT_WIDTH, 0);
+  pApp->writeSTR("SPARK CORE\n");
+
+  if (strlen(rchLine) != 0) {
+    sscanf(rchLine, "%s %s %s %s", rchName, rchDummy, rchDummy, rchStatus);
+    sprintf(rchDummy, "%s: %s", rchName, rchStatus);
+    pApp->setCursor(3*FONT_WIDTH, FONT_HEIGHT*3);
+    pApp->writeSTR(rchDummy);
+  } else {
+    pApp->setCursor(0, FONT_HEIGHT*3);
+    pApp->writeSTR("      NOT FOUND");
+  }
 
   pApp->updateDisplay();
 }
@@ -211,13 +158,14 @@ displayMenu (LPNXCTRLAPP pApp) {
   pApp->clearDisplay();
 
   pApp->setCursor(0, 0);
-  pApp->writeSTR("PERI.DRV");
-  pApp->drawLine(49, 6, 127, 6, NXCTRL_ON);
+  pApp->writeSTR("SPARK CORE");
+  pApp->drawLine(61, 6, 127, 6, NXCTRL_ON);
   pApp->setCursor(0, 16);
 
-  pApp->writeSTR(mkMenuSTR(rch, "SPARK CORE APP", MENU_IDX_NEXT_APP));
+  pApp->writeSTR(mkMenuSTR(rch, "MAIN APP", MENU_IDX_NEXT_APP));
   pApp->writeSTR(mkMenuSTR(rch, "SYSTEM UTILS", MENU_IDX_SYSTEM_MENU));
-  pApp->writeSTR(mkMenuSTR(rch, "UPDATE INFO", MENU_IDX_UPDATE_MENU));
+  pApp->writeSTR(mkMenuSTR(rch, "FLASH TINKER", MENU_IDX_FLASH_MENU));
+  pApp->writeSTR(mkMenuSTR(rch, "TOGGLE D7", MENU_IDX_D7_ONOFF_MENU));
   pApp->writeSTR(mkMenuSTR(rch, "EXIT MENU", MENU_IDX_EXIT_MENU));
 
   pApp->updateDisplay();
@@ -237,7 +185,7 @@ NXCTRLAPP_init (LPNXCTRLAPP pApp) {
     MENU_BUTTON_STATE = pApp->digitalRead(MENU_BUTTON_BANK, MENU_BUTTON_PIN);
   }
 
-  displayPeriInfo(pApp);
+  displayCoreInfo(pApp);
 }
 
 NXCTRL_VOID
@@ -279,7 +227,7 @@ NXCTRLAPP_run (LPNXCTRLAPP pApp) {
         switch (MENU_IDX) {
         case MENU_IDX_EXIT_MENU:
           IN_MENU = NXCTRL_FALSE;
-          displayPeriInfo(pApp);
+          displayCoreInfo(pApp);
           break;
         case MENU_IDX_SYSTEM_MENU:
           pApp->nCmd = 1;
@@ -287,9 +235,27 @@ NXCTRLAPP_run (LPNXCTRLAPP pApp) {
         case MENU_IDX_NEXT_APP:
           pApp->nCmd = NEXT_APP_IDX;
           return;
-        case MENU_IDX_UPDATE_MENU:
+        case MENU_IDX_FLASH_MENU:
+          pApp->clearDisplay();
+          pApp->setCursor(0, 3*FONT_HEIGHT);
+          pApp->writeSTR("     FLASHING...");
+          pApp->updateDisplay();
+          system("/usr/bin/spark-flash-tinker");
           IN_MENU = NXCTRL_FALSE;
-          displayPeriInfo(pApp);
+          displayCoreInfo(pApp);
+          break;
+        case MENU_IDX_D7_ONOFF_MENU:
+          pApp->clearDisplay();
+          pApp->setCursor(0, 3*FONT_HEIGHT);
+          pApp->writeSTR("    TOGGLE D7...");
+          pApp->updateDisplay();
+          if (TOGGLE)
+            system("/usr/bin/spark-off-d7");
+          else
+            system("/usr/bin/spark-on-d7");
+          TOGGLE = TOGGLE ? NXCTRL_OFF : NXCTRL_ON;
+          IN_MENU = NXCTRL_FALSE;
+          displayCoreInfo(pApp);
           break;
         default:
           break;

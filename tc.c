@@ -82,7 +82,8 @@ const char *rpszApps[] = {
   "/usr/bin/app-blank.app",
   "/usr/bin/app-conninfo.app",
   "/usr/bin/app-sysinfo.app",
-  "/usr/bin/app-peri.app"
+  "/usr/bin/app-peri.app",
+  "/usr/bin/app-spark.app"
 };
 
 int nCurrentAppIdx = 0;
