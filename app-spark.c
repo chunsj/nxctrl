@@ -72,13 +72,14 @@ displayCoreInfo (LPNXCTRLAPP pApp) {
   pApp->updateDisplay();
 
   pApp->setCursor(0, FONT_HEIGHT + 8);
-  system("/usr/bin/spark-list > /tmp/sparkcoreinfo.txt");
+  system("sudo /usr/bin/spark-list");
 
   rchLine[0] = 0;
   pFile = fopen("/tmp/sparkcoreinfo.txt", "r");
   if (pFile) {
     fgets(rchLine, 1023, pFile);
     fclose(pFile);
+    unlink("/tmp/sparkcoreinfo.txt");
     //fprintf(stderr, "%s\n", rchLine);
   }
 
@@ -240,7 +241,7 @@ NXCTRLAPP_run (LPNXCTRLAPP pApp) {
           pApp->setCursor(0, 3*FONT_HEIGHT);
           pApp->writeSTR("     FLASHING...");
           pApp->updateDisplay();
-          system("/usr/bin/spark-flash-tinker");
+          system("sudo /usr/bin/spark-flash-tinker");
           IN_MENU = NXCTRL_FALSE;
           displayCoreInfo(pApp);
           break;
@@ -250,9 +251,9 @@ NXCTRLAPP_run (LPNXCTRLAPP pApp) {
           pApp->writeSTR("    TOGGLE D7...");
           pApp->updateDisplay();
           if (TOGGLE)
-            system("/usr/bin/spark-off-d7");
+            system("sudo /usr/bin/spark-off-d7");
           else
-            system("/usr/bin/spark-on-d7");
+            system("sudo /usr/bin/spark-on-d7");
           TOGGLE = TOGGLE ? NXCTRL_OFF : NXCTRL_ON;
           IN_MENU = NXCTRL_FALSE;
           displayCoreInfo(pApp);
