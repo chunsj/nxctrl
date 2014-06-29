@@ -56,7 +56,7 @@ static unsigned int                 DPY_IDLE_COUNT = 0;
 static unsigned char                MENU_IDX = MENU_IDX_SYSTEM_MENU;
 static NXCTRL_BOOL                  IN_MENU = NXCTRL_FALSE;
 static unsigned long long           LAST_ACTION_TIME = 0;
-static NXCTRL_BOOL                  TOGGLE = NXCTRL_ON;
+static NXCTRL_BOOL                  TOGGLE = NXCTRL_OFF;
 
 static NXCTRL_VOID
 displayCoreInfo (LPNXCTRLAPP pApp) {
@@ -166,7 +166,10 @@ displayMenu (LPNXCTRLAPP pApp) {
   pApp->writeSTR(mkMenuSTR(rch, "MAIN APP", MENU_IDX_NEXT_APP));
   pApp->writeSTR(mkMenuSTR(rch, "SYSTEM UTILS", MENU_IDX_SYSTEM_MENU));
   pApp->writeSTR(mkMenuSTR(rch, "FLASH TINKER", MENU_IDX_FLASH_MENU));
-  pApp->writeSTR(mkMenuSTR(rch, "TOGGLE D7", MENU_IDX_D7_ONOFF_MENU));
+  if (TOGGLE)
+    pApp->writeSTR(mkMenuSTR(rch, "D7 OFF", MENU_IDX_D7_ONOFF_MENU));
+  else
+    pApp->writeSTR(mkMenuSTR(rch, "D7 ON", MENU_IDX_D7_ONOFF_MENU));
   pApp->writeSTR(mkMenuSTR(rch, "EXIT MENU", MENU_IDX_EXIT_MENU));
 
   pApp->updateDisplay();
@@ -248,7 +251,10 @@ NXCTRLAPP_run (LPNXCTRLAPP pApp) {
         case MENU_IDX_D7_ONOFF_MENU:
           pApp->clearDisplay();
           pApp->setCursor(0, 3*FONT_HEIGHT);
-          pApp->writeSTR("    TOGGLE D7...");
+          if (TOGGLE)
+            pApp->writeSTR("      OFF D7...");
+          else
+            pApp->writeSTR("      ON D7...");
           pApp->updateDisplay();
           if (TOGGLE)
             system("sudo /usr/bin/spark-off-d7");
