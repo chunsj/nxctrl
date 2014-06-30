@@ -40,16 +40,13 @@
 #define DPY_IDLE_COUNT_MAX          300
 #define MIN_ACTION_DURATION         200
 
-#define MENU_IDX_COUNT              6
+#define MENU_IDX_COUNT              5
 
-#define MENU_IDX_NEXT_APP           0
-#define MENU_IDX_SYSTEM_MENU        1
-#define MENU_IDX_UPDATE_MENU        2
-#define MENU_IDX_P8_13_PWM_MENU     3
-#define MENU_IDX_P8_19_PWM_MENU     4
-#define MENU_IDX_EXIT_MENU          5
-
-#define NEXT_APP_IDX                6 // from tc.c
+#define MENU_IDX_SYSTEM_MENU        0
+#define MENU_IDX_UPDATE_MENU        1
+#define MENU_IDX_P8_13_PWM_MENU     2
+#define MENU_IDX_P8_19_PWM_MENU     3
+#define MENU_IDX_EXIT_MENU          4
 
 #define PRU_NUM                     PRU0
 #define PRU_PATH                    "/usr/bin/ctrl-app.bin"
@@ -289,14 +286,11 @@ displayMenu (LPNXCTRLAPP pApp) {
   pApp->drawLine(49, 6, 127, 6, NXCTRL_ON);
   pApp->setCursor(0, 16);
 
-  if (MENU_IDX < 5)
-    pApp->writeSTR(mkMenuSTR(rch, "SPARK CORE APP>>", MENU_IDX_NEXT_APP));
-  pApp->writeSTR(mkMenuSTR(rch, "SYSTEM UTILS", MENU_IDX_SYSTEM_MENU));
+  pApp->writeSTR(mkMenuSTR(rch, "SYSTEM>>", MENU_IDX_SYSTEM_MENU));
   pApp->writeSTR(mkMenuSTR(rch, "UPDATE INFO", MENU_IDX_UPDATE_MENU));
   pApp->writeSTR(mkMenuSTR(rch, "P8:13 PWM(LED)", MENU_IDX_P8_13_PWM_MENU));
   pApp->writeSTR(mkMenuSTR(rch, "P8:19 PWM(SERVO)", MENU_IDX_P8_19_PWM_MENU));
-  if (MENU_IDX >= 5)
-    pApp->writeSTR(mkMenuSTR(rch, "EXIT MENU", MENU_IDX_EXIT_MENU));
+  pApp->writeSTR(mkMenuSTR(rch, "EXIT MENU", MENU_IDX_EXIT_MENU));
 
   pApp->updateDisplay();
 }
@@ -309,7 +303,7 @@ NXCTRLAPP_init (LPNXCTRLAPP pApp) {
   MENU_BUTTON_STATE = pApp->digitalRead(MENU_BUTTON_BANK, MENU_BUTTON_PIN);
   EXEC_BUTTON_STATE = pApp->digitalRead(EXEC_BUTTON_BANK, EXEC_BUTTON_PIN);
   DPY_IDLE_COUNT = 0;
-  MENU_IDX = MENU_IDX_NEXT_APP;
+  MENU_IDX = MENU_IDX_SYSTEM_MENU;
   IN_MENU = NXCTRL_FALSE;
   LAST_ACTION_TIME = 0;
 
@@ -344,7 +338,7 @@ NXCTRLAPP_run (LPNXCTRLAPP pApp) {
       if (canAction()) {
         MENU_IDX++;
         if (MENU_IDX >= MENU_IDX_COUNT)
-          MENU_IDX = MENU_IDX_NEXT_APP;
+          MENU_IDX = MENU_IDX_SYSTEM_MENU;
         displayMenu(pApp);
       }
     } else {
@@ -364,9 +358,6 @@ NXCTRLAPP_run (LPNXCTRLAPP pApp) {
           break;
         case MENU_IDX_SYSTEM_MENU:
           pApp->nCmd = 1;
-          return;
-        case MENU_IDX_NEXT_APP:
-          pApp->nCmd = NEXT_APP_IDX;
           return;
         case MENU_IDX_UPDATE_MENU:
           IN_MENU = NXCTRL_FALSE;

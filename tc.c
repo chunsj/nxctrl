@@ -273,9 +273,9 @@ NXCTRLLoop (NXCTRL_VOID) {
         nPrevAppIdx = 0;
         __loadApp(activeApp.nCmd);
         activeApp.nCmd = -1;
-      } else if (activeApp.nCmd == 1234) {
+      } else if (activeApp.nCmd >= 1234) {
         nPrevAppIdx = 0;
-        __loadApp(0);
+        __loadApp(activeApp.nCmd - 1234);
         activeApp.nCmd = -1;
       } else
         __loadApp(nPrevAppIdx);

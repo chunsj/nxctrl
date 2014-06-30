@@ -45,15 +45,12 @@
 #define DPY_IDLE_COUNT_MAX          300
 #define MIN_ACTION_DURATION         200
 
-#define MENU_IDX_COUNT              5
+#define MENU_IDX_COUNT              4
 
-#define MENU_IDX_NEXT_APP           0
-#define MENU_IDX_SYSTEM_MENU        1
-#define MENU_IDX_RELOAD_MENU        2
-#define MENU_IDX_PING_GW_MENU       3
-#define MENU_IDX_EXIT_MENU          4
-
-#define NEXT_APP_IDX                4 // from tc.c
+#define MENU_IDX_SYSTEM_MENU        0
+#define MENU_IDX_RELOAD_MENU        1
+#define MENU_IDX_PING_GW_MENU       2
+#define MENU_IDX_EXIT_MENU          3
 
 static NXCTRL_BOOL                  MENU_BUTTON_STATE = NXCTRL_LOW;
 static NXCTRL_BOOL                  EXEC_BUTTON_STATE = NXCTRL_LOW;
@@ -259,8 +256,7 @@ displayMenu (LPNXCTRLAPP pApp) {
   pApp->drawLine(55, 6, 127, 6, NXCTRL_ON);
   pApp->setCursor(0, 16);
 
-  pApp->writeSTR(mkMenuSTR(rch, "SYS INFO APP>>", MENU_IDX_NEXT_APP));
-  pApp->writeSTR(mkMenuSTR(rch, "SYSTEM UTILS", MENU_IDX_SYSTEM_MENU));
+  pApp->writeSTR(mkMenuSTR(rch, "SYSTEM>>", MENU_IDX_SYSTEM_MENU));
   pApp->writeSTR(mkMenuSTR(rch, "RELOAD INFO", MENU_IDX_RELOAD_MENU));
   pApp->writeSTR(mkMenuSTR(rch, "PING TO GW", MENU_IDX_PING_GW_MENU));
   pApp->writeSTR(mkMenuSTR(rch, "EXIT MENU", MENU_IDX_EXIT_MENU));
@@ -273,7 +269,7 @@ NXCTRLAPP_init (LPNXCTRLAPP pApp) {
   MENU_BUTTON_STATE = pApp->digitalRead(MENU_BUTTON_BANK, MENU_BUTTON_PIN);
   EXEC_BUTTON_STATE = pApp->digitalRead(EXEC_BUTTON_BANK, EXEC_BUTTON_PIN);
   DPY_IDLE_COUNT = 0;
-  MENU_IDX = MENU_IDX_NEXT_APP;
+  MENU_IDX = MENU_IDX_SYSTEM_MENU;
   IN_MENU = NXCTRL_FALSE;
   LAST_ACTION_TIME = 0;
 
@@ -310,7 +306,7 @@ NXCTRLAPP_run (LPNXCTRLAPP pApp) {
       if (canAction()) {
         MENU_IDX++;
         if (MENU_IDX >= MENU_IDX_COUNT)
-          MENU_IDX = MENU_IDX_NEXT_APP;
+          MENU_IDX = MENU_IDX_SYSTEM_MENU;
         displayMenu(pApp);
       }
     } else {
@@ -330,9 +326,6 @@ NXCTRLAPP_run (LPNXCTRLAPP pApp) {
           break;
         case MENU_IDX_SYSTEM_MENU:
           pApp->nCmd = 1;
-          return;
-        case MENU_IDX_NEXT_APP:
-          pApp->nCmd = NEXT_APP_IDX;
           return;
         case MENU_IDX_RELOAD_MENU:
           IN_MENU = NXCTRL_FALSE;

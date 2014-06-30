@@ -40,12 +40,16 @@
 #define DPY_IDLE_COUNT_MAX          300
 #define MIN_ACTION_DURATION         200
 
-#define MENU_IDX_COUNT              4
+#define MENU_IDX_COUNT              8
 
 #define MENU_IDX_GO_MAIN            0
-#define MENU_IDX_MENU_OFF           1
-#define MENU_IDX_TURN_OFF           2
-#define MENU_IDX_EXIT_MENU          3
+#define MENU_IDX_GO_CONNINFO        1
+#define MENU_IDX_GO_SYSINFO         2
+#define MENU_IDX_GO_PERI            3
+#define MENU_IDX_GO_SPARK           4
+#define MENU_IDX_MENU_OFF           5
+#define MENU_IDX_TURN_OFF           6
+#define MENU_IDX_EXIT_MENU          7
 
 static NXCTRL_BOOL                  MENU_BUTTON_STATE = NXCTRL_LOW;
 static NXCTRL_BOOL                  EXEC_BUTTON_STATE = NXCTRL_LOW;
@@ -100,8 +104,17 @@ updateExecButtonState (LPNXCTRLAPP pApp) {
 
 static char *
 mkMenuSTR (char *rch, const char *pszName, int nMenu) {
-  sprintf(rch, "%c %s\n",
+  sprintf(rch, "%c  %s\n",
           (MENU_IDX == nMenu ? MENU_SEL_CHAR : ' '),
+          pszName);
+  return rch;
+}
+
+static char *
+mkAppMenuSTR (char *rch, const char *pszName, int nMenu) {
+  sprintf(rch, "%c %c%s\n",
+          (MENU_IDX == nMenu ? MENU_SEL_CHAR : ' '),
+          MENU_SEL_CHAR-9,
           pszName);
   return rch;
 }
@@ -113,14 +126,24 @@ displayMenu (LPNXCTRLAPP pApp) {
   pApp->clearDisplay();
 
   pApp->setCursor(0, 0);
-  pApp->writeSTR("SYS UTIL");
-  pApp->drawLine(49, 6, 127, 6, NXCTRL_ON);
+  pApp->writeSTR("SYSTEM");
+  pApp->drawLine(37, 6, 127, 6, NXCTRL_ON);
   pApp->setCursor(0, 16);
 
-  pApp->writeSTR(mkMenuSTR(rch, "MAIN APP>>", MENU_IDX_GO_MAIN));
-  pApp->writeSTR(mkMenuSTR(rch, "SCREEN OFF", MENU_IDX_MENU_OFF));
-  pApp->writeSTR(mkMenuSTR(rch, "POWER OFF", MENU_IDX_TURN_OFF));
-  pApp->writeSTR(mkMenuSTR(rch, "EXIT MENU", MENU_IDX_EXIT_MENU));
+  if (MENU_IDX < 5)
+    pApp->writeSTR(mkAppMenuSTR(rch, "MAIN", MENU_IDX_GO_MAIN));
+  if (MENU_IDX < 6)
+    pApp->writeSTR(mkAppMenuSTR(rch, "CONN INFO", MENU_IDX_GO_CONNINFO));
+  if (MENU_IDX < 7)
+    pApp->writeSTR(mkAppMenuSTR(rch, "SYS INFO", MENU_IDX_GO_SYSINFO));
+  pApp->writeSTR(mkAppMenuSTR(rch, "PERI DRV", MENU_IDX_GO_PERI));
+  pApp->writeSTR(mkAppMenuSTR(rch, "SPARK CORE", MENU_IDX_GO_SPARK));
+  if (MENU_IDX >= 5)
+    pApp->writeSTR(mkMenuSTR(rch, "SCREEN OFF", MENU_IDX_MENU_OFF));
+  if (MENU_IDX >= 6)
+    pApp->writeSTR(mkMenuSTR(rch, "POWER OFF", MENU_IDX_TURN_OFF));
+  if (MENU_IDX >= 7)
+    pApp->writeSTR(mkMenuSTR(rch, "EXIT MENU", MENU_IDX_EXIT_MENU));
 
   pApp->updateDisplay();
 }
@@ -176,6 +199,18 @@ NXCTRLAPP_run (LPNXCTRLAPP pApp) {
         switch (MENU_IDX) {
         case MENU_IDX_GO_MAIN:
           pApp->nCmd = 1234;
+          return;
+        case MENU_IDX_GO_CONNINFO:
+          pApp->nCmd = 1234+3;
+          return;
+        case MENU_IDX_GO_SYSINFO:
+          pApp->nCmd = 1234+4;
+          return;
+        case MENU_IDX_GO_PERI:
+          pApp->nCmd = 1234+5;
+          return;
+        case MENU_IDX_GO_SPARK:
+          pApp->nCmd = 1234+6;
           return;
         case MENU_IDX_EXIT_MENU:
           pApp->nCmd = 1;
