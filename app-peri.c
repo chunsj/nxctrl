@@ -194,7 +194,7 @@ runPWM2 (LPNXCTRLAPP pApp) {
   pApp->setCursor(0, 3*FONT_HEIGHT);
   pApp->writeSTR("    PWM ON P8:19");
   pApp->setCursor(0, 4*FONT_HEIGHT + 2);
-  pApp->writeSTR("    SERVO CONTRL");
+  pApp->writeSTR("    SERVO CONTROL");
   pApp->updateDisplay();
 
   pApp->servoWrite(PWM2_BANK, PWM2_PIN, 82);
