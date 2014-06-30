@@ -141,6 +141,8 @@ displayTime (LPNXCTRLAPP pApp) {
     char rch[22];
     time_t t = time(NULL);
     struct tm tm = *localtime(&t);
+    float fTmp = getTemperature(pApp);
+    int nWidth = 0;
     sprintf(rch,
             " %d/%s%d/%s%d %s%d:%s%d:%s%d",
             (tm.tm_year + 1900),
@@ -153,11 +155,26 @@ displayTime (LPNXCTRLAPP pApp) {
       rch[i] = ' ';
     rch[21] = 0;
     pApp->clearDisplay();
-    pApp->setCursor(0, FONT_HEIGHT*3);
+    pApp->setCursor(0, FONT_HEIGHT*2);
     pApp->writeSTR(rch);
-    pApp->setCursor(2*FONT_WIDTH, FONT_HEIGHT*5);
-    sprintf(rch, "TEMPERATURE: %2.0fC", getTemperature(pApp));
+    pApp->setCursor(2*FONT_WIDTH+4, FONT_HEIGHT*4);
+    sprintf(rch, "TEMPERATURE: %2.0fC", fTmp);
     pApp->writeSTR(rch);
+
+    pApp->drawLine(2*FONT_WIDTH, FONT_HEIGHT*5+5, 127-2*FONT_WIDTH, FONT_HEIGHT*5+5, NXCTRL_ON);
+    pApp->drawLine(2*FONT_WIDTH, FONT_HEIGHT*5+5, 2*FONT_WIDTH, FONT_HEIGHT*5+5+4, NXCTRL_ON);
+    pApp->drawLine(127-2*FONT_WIDTH, FONT_HEIGHT*5+5, 127-2*FONT_WIDTH, FONT_HEIGHT*5+5+4, NXCTRL_ON);
+    pApp->drawLine(2*FONT_WIDTH, FONT_HEIGHT*5+5+4, 127-2*FONT_WIDTH, FONT_HEIGHT*5+5+4, NXCTRL_ON);
+    nWidth = (int)((0.0+20.0) / (50.0+20.0) * (127 - 4*FONT_WIDTH));
+    pApp->drawPixel(2*FONT_WIDTH+nWidth, FONT_HEIGHT*5+6, NXCTRL_ON);
+    nWidth = (int)((20.0+20.0) / (50.0+20.0) * (127 - 4*FONT_WIDTH));
+    pApp->drawPixel(2*FONT_WIDTH+nWidth, FONT_HEIGHT*5+6, NXCTRL_ON);
+    nWidth = (int)((40.0+20.0) / (50.0+20.0) * (127 - 4*FONT_WIDTH));
+    pApp->drawPixel(2*FONT_WIDTH+nWidth, FONT_HEIGHT*5+6, NXCTRL_ON);
+    nWidth = (int)((fTmp+20.0) / (50.0+20.0) * (127 - 4*FONT_WIDTH));
+    pApp->drawLine(2*FONT_WIDTH, FONT_HEIGHT*5+7, 2*FONT_WIDTH+nWidth, FONT_HEIGHT*5+7, NXCTRL_ON);
+    pApp->drawLine(2*FONT_WIDTH, FONT_HEIGHT*5+8, 2*FONT_WIDTH+nWidth, FONT_HEIGHT*5+8, NXCTRL_ON);
+
     pApp->updateDisplay();
   }
 }
