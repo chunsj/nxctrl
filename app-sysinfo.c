@@ -190,7 +190,7 @@ displayMenu (LPNXCTRLAPP pApp) {
   pApp->drawLine(49, 6, 127, 6, NXCTRL_ON);
   pApp->setCursor(0, 16);
 
-  pApp->writeSTR(mkMenuSTR(rch, "PERI.DRV APP", MENU_IDX_NEXT_APP));
+  pApp->writeSTR(mkMenuSTR(rch, "PERI.DRV APP>>", MENU_IDX_NEXT_APP));
   pApp->writeSTR(mkMenuSTR(rch, "SYSTEM UTILS", MENU_IDX_SYSTEM_MENU));
   pApp->writeSTR(mkMenuSTR(rch, "UPDATE INFO", MENU_IDX_UPDATE_MENU));
   pApp->writeSTR(mkMenuSTR(rch, "EXIT MENU", MENU_IDX_EXIT_MENU));

@@ -290,7 +290,7 @@ displayMenu (LPNXCTRLAPP pApp) {
   pApp->setCursor(0, 16);
 
   if (MENU_IDX < 5)
-    pApp->writeSTR(mkMenuSTR(rch, "SPARK CORE APP", MENU_IDX_NEXT_APP));
+    pApp->writeSTR(mkMenuSTR(rch, "SPARK CORE APP>>", MENU_IDX_NEXT_APP));
   pApp->writeSTR(mkMenuSTR(rch, "SYSTEM UTILS", MENU_IDX_SYSTEM_MENU));
   pApp->writeSTR(mkMenuSTR(rch, "UPDATE INFO", MENU_IDX_UPDATE_MENU));
   pApp->writeSTR(mkMenuSTR(rch, "P8:13 PWM(LED)", MENU_IDX_P8_13_PWM_MENU));

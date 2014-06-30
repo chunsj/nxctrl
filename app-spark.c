@@ -178,7 +178,7 @@ displayMenu (LPNXCTRLAPP pApp) {
   pApp->setCursor(0, 16);
 
   if (MENU_IDX < 5)
-    pApp->writeSTR(mkMenuSTR(rch, "MAIN APP", MENU_IDX_NEXT_APP));
+    pApp->writeSTR(mkMenuSTR(rch, "MAIN APP>>", MENU_IDX_NEXT_APP));
   pApp->writeSTR(mkMenuSTR(rch, "SYSTEM UTILS", MENU_IDX_SYSTEM_MENU));
   pApp->writeSTR(mkMenuSTR(rch, "UPDATE STAT", MENU_IDX_UPDATE_MENU));
   pApp->writeSTR(mkMenuSTR(rch, "FLASH TINKER", MENU_IDX_FLASH_MENU));

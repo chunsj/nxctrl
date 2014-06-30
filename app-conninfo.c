@@ -259,7 +259,7 @@ displayMenu (LPNXCTRLAPP pApp) {
   pApp->drawLine(55, 6, 127, 6, NXCTRL_ON);
   pApp->setCursor(0, 16);
 
-  pApp->writeSTR(mkMenuSTR(rch, "SYS INFO APP", MENU_IDX_NEXT_APP));
+  pApp->writeSTR(mkMenuSTR(rch, "SYS INFO APP>>", MENU_IDX_NEXT_APP));
   pApp->writeSTR(mkMenuSTR(rch, "SYSTEM UTILS", MENU_IDX_SYSTEM_MENU));
   pApp->writeSTR(mkMenuSTR(rch, "RELOAD INFO", MENU_IDX_RELOAD_MENU));
   pApp->writeSTR(mkMenuSTR(rch, "PING TO GW", MENU_IDX_PING_GW_MENU));

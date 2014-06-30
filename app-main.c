@@ -200,6 +200,8 @@ mkMenuSTR (char *rch, const char *pszName, int nMenu) {
   sprintf(rch, "%c %s\n",
           (MENU_IDX == nMenu ? MENU_SEL_CHAR : ' '),
           pszName);
+  if (nMenu == MENU_IDX_NEXT_APP)
+    rch[19] = MENU_SEL_CHAR;
   return rch;
 }
 
@@ -214,7 +216,7 @@ displayMenu (LPNXCTRLAPP pApp) {
   pApp->drawLine(25, 6, 127, 6, NXCTRL_ON);
   pApp->setCursor(0, 16);
 
-  pApp->writeSTR(mkMenuSTR(rch, "CONN INFO APP", MENU_IDX_NEXT_APP));
+  pApp->writeSTR(mkMenuSTR(rch, "CONN INFO APP>>", MENU_IDX_NEXT_APP));
   pApp->writeSTR(mkMenuSTR(rch, "SYSTEM UTILS", MENU_IDX_SYSTEM_MENU));
   pApp->writeSTR(mkMenuSTR(rch, "UPDATE TIME", MENU_IDX_UPDATE_TIME));
   pApp->writeSTR(mkMenuSTR(rch, "EXIT MENU", MENU_IDX_EXIT_MENU));
