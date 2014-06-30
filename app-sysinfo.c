@@ -92,8 +92,8 @@ displaySysInfo (LPNXCTRLAPP pApp) {
   h = (si.uptime - (d*3600*24))/3600;
   m = (si.uptime - (d*3600*24) - (h*3600))/60;
   pApp->clearDisplay();
-  pApp->setCursor(4*FONT_WIDTH, 0);
-  pApp->writeSTR("SYSTEM STATUS\n");
+  pApp->setCursor(5*FONT_WIDTH, 0);
+  pApp->writeSTR("SYSTEM INFO\n");
 
   pApp->setCursor(0, FONT_HEIGHT + 8);
   
@@ -183,7 +183,7 @@ displayMenu (LPNXCTRLAPP pApp) {
   pApp->clearDisplay();
 
   pApp->setCursor(0, 0);
-  pApp->writeSTR("SYS INFO");
+  pApp->writeSTR("SYS.INFO");
   pApp->drawLine(49, 6, 127, 6, NXCTRL_ON);
   pApp->setCursor(0, 16);
 

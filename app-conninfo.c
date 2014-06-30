@@ -252,7 +252,7 @@ displayMenu (LPNXCTRLAPP pApp) {
   pApp->clearDisplay();
 
   pApp->setCursor(0, 0);
-  pApp->writeSTR("CONN INFO");
+  pApp->writeSTR("CONN.INFO");
   pApp->drawLine(55, 6, 127, 6, NXCTRL_ON);
   pApp->setCursor(0, 16);
 
