@@ -40,13 +40,14 @@
 #define DPY_IDLE_COUNT_MAX          300
 #define MIN_ACTION_DURATION         200
 
-#define MENU_IDX_COUNT              5
+#define MENU_IDX_COUNT              6
 
 #define MENU_IDX_NEXT_APP           0
 #define MENU_IDX_SYSTEM_MENU        1
-#define MENU_IDX_FLASH_MENU         2
-#define MENU_IDX_D7_ONOFF_MENU      3
-#define MENU_IDX_EXIT_MENU          4
+#define MENU_IDX_UPDATE_MENU        2
+#define MENU_IDX_FLASH_MENU         3
+#define MENU_IDX_D7_ONOFF_MENU      4
+#define MENU_IDX_EXIT_MENU          5
 
 #define NEXT_APP_IDX                0 // from tc.c
 
@@ -57,21 +58,13 @@ static unsigned char                MENU_IDX = MENU_IDX_SYSTEM_MENU;
 static NXCTRL_BOOL                  IN_MENU = NXCTRL_FALSE;
 static unsigned long long           LAST_ACTION_TIME = 0;
 static NXCTRL_BOOL                  TOGGLE = NXCTRL_OFF;
+static char                         SPARK_STAT[32];
 
 static NXCTRL_VOID
-displayCoreInfo (LPNXCTRLAPP pApp) {
+updateCoreStatus () {
   char rchName[22], rchStatus[16], rchLine[1024], rchDummy[80];
   FILE *pFile;
 
-  pApp->clearDisplay();
-  pApp->setCursor(4*FONT_WIDTH, 0);
-  pApp->writeSTR("SPARK CORE\n");
-
-  pApp->setCursor(0, FONT_HEIGHT*3);
-  pApp->writeSTR("    SEARCHING...");
-  pApp->updateDisplay();
-
-  pApp->setCursor(0, FONT_HEIGHT + 8);
   system("sudo /usr/bin/spark-list");
 
   rchLine[0] = 0;
@@ -83,18 +76,39 @@ displayCoreInfo (LPNXCTRLAPP pApp) {
     //fprintf(stderr, "%s\n", rchLine);
   }
 
+  if (strlen(rchLine) != 0) {
+    sscanf(rchLine, "%s %s %s %s", rchName, rchDummy, rchDummy, rchStatus);
+    sprintf(rchDummy, "%s: %s", rchName, rchStatus);
+    sprintf(SPARK_STAT, "%s: %s", rchName, rchStatus);
+  } else {
+    SPARK_STAT[0] = 0;
+  }
+}
+
+static NXCTRL_VOID
+executeUpdate (LPNXCTRLAPP pApp) {
   pApp->clearDisplay();
   pApp->setCursor(4*FONT_WIDTH, 0);
   pApp->writeSTR("SPARK CORE\n");
 
-  if (strlen(rchLine) != 0) {
-    sscanf(rchLine, "%s %s %s %s", rchName, rchDummy, rchDummy, rchStatus);
-    sprintf(rchDummy, "%s: %s", rchName, rchStatus);
-    pApp->setCursor(3*FONT_WIDTH, FONT_HEIGHT*3);
-    pApp->writeSTR(rchDummy);
-  } else {
+  pApp->setCursor(0, FONT_HEIGHT*3);
+  pApp->writeSTR("    SEARCHING...");
+  pApp->updateDisplay();
+  updateCoreStatus();
+}
+
+static NXCTRL_VOID
+displayCoreInfo (LPNXCTRLAPP pApp) {
+  pApp->clearDisplay();
+  pApp->setCursor(4*FONT_WIDTH, 0);
+  pApp->writeSTR("SPARK CORE\n");
+
+  if (strlen(SPARK_STAT) == 0) {
     pApp->setCursor(0, FONT_HEIGHT*3);
     pApp->writeSTR("      NOT FOUND");
+  } else {
+    pApp->setCursor(3*FONT_WIDTH, FONT_HEIGHT*3);
+    pApp->writeSTR(SPARK_STAT);
   }
 
   pApp->updateDisplay();
@@ -163,14 +177,17 @@ displayMenu (LPNXCTRLAPP pApp) {
   pApp->drawLine(61, 6, 127, 6, NXCTRL_ON);
   pApp->setCursor(0, 16);
 
-  pApp->writeSTR(mkMenuSTR(rch, "MAIN APP", MENU_IDX_NEXT_APP));
+  if (MENU_IDX < 5)
+    pApp->writeSTR(mkMenuSTR(rch, "MAIN APP", MENU_IDX_NEXT_APP));
   pApp->writeSTR(mkMenuSTR(rch, "SYSTEM UTILS", MENU_IDX_SYSTEM_MENU));
+  pApp->writeSTR(mkMenuSTR(rch, "UPDATE STAT", MENU_IDX_UPDATE_MENU));
   pApp->writeSTR(mkMenuSTR(rch, "FLASH TINKER", MENU_IDX_FLASH_MENU));
   if (TOGGLE)
     pApp->writeSTR(mkMenuSTR(rch, "D7 OFF", MENU_IDX_D7_ONOFF_MENU));
   else
     pApp->writeSTR(mkMenuSTR(rch, "D7 ON", MENU_IDX_D7_ONOFF_MENU));
-  pApp->writeSTR(mkMenuSTR(rch, "EXIT MENU", MENU_IDX_EXIT_MENU));
+  if (MENU_IDX >= 5)
+    pApp->writeSTR(mkMenuSTR(rch, "EXIT MENU", MENU_IDX_EXIT_MENU));
 
   pApp->updateDisplay();
 }
@@ -189,6 +206,7 @@ NXCTRLAPP_init (LPNXCTRLAPP pApp) {
     MENU_BUTTON_STATE = pApp->digitalRead(MENU_BUTTON_BANK, MENU_BUTTON_PIN);
   }
 
+  executeUpdate(pApp);
   displayCoreInfo(pApp);
 }
 
@@ -239,6 +257,11 @@ NXCTRLAPP_run (LPNXCTRLAPP pApp) {
         case MENU_IDX_NEXT_APP:
           pApp->nCmd = NEXT_APP_IDX;
           return;
+        case MENU_IDX_UPDATE_MENU:
+          IN_MENU = NXCTRL_FALSE;
+          executeUpdate(pApp);
+          displayCoreInfo(pApp);
+          break;
         case MENU_IDX_FLASH_MENU:
           pApp->clearDisplay();
           pApp->setCursor(0, 3*FONT_HEIGHT);
