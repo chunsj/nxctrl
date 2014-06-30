@@ -40,16 +40,17 @@
 #define DPY_IDLE_COUNT_MAX          300
 #define MIN_ACTION_DURATION         200
 
-#define MENU_IDX_COUNT              3
+#define MENU_IDX_COUNT              4
 
-#define MENU_IDX_MENU_OFF           0
-#define MENU_IDX_TURN_OFF           1
-#define MENU_IDX_EXIT_MENU          2
+#define MENU_IDX_GO_MAIN            0
+#define MENU_IDX_MENU_OFF           1
+#define MENU_IDX_TURN_OFF           2
+#define MENU_IDX_EXIT_MENU          3
 
 static NXCTRL_BOOL                  MENU_BUTTON_STATE = NXCTRL_LOW;
 static NXCTRL_BOOL                  EXEC_BUTTON_STATE = NXCTRL_LOW;
 static unsigned char                DPY_IDLE_COUNT = 0;
-static unsigned char                MENU_IDX = MENU_IDX_MENU_OFF;
+static unsigned char                MENU_IDX = MENU_IDX_GO_MAIN;
 static NXCTRL_BOOL                  IN_MENU = NXCTRL_FALSE;
 static unsigned long long           LAST_ACTION_TIME = 0;
 
@@ -111,9 +112,12 @@ displayMenu (LPNXCTRLAPP pApp) {
 
   pApp->clearDisplay();
 
-  pApp->drawLine(0, 0, 127, 0, NXCTRL_ON);
-  pApp->setCursor(0, 5);
+  pApp->setCursor(0, 0);
+  pApp->writeSTR("SYS UTIL");
+  pApp->drawLine(49, 6, 127, 6, NXCTRL_ON);
+  pApp->setCursor(0, 16);
 
+  pApp->writeSTR(mkMenuSTR(rch, "MAIN APP>>", MENU_IDX_GO_MAIN));
   pApp->writeSTR(mkMenuSTR(rch, "SCREEN OFF", MENU_IDX_MENU_OFF));
   pApp->writeSTR(mkMenuSTR(rch, "POWER OFF", MENU_IDX_TURN_OFF));
   pApp->writeSTR(mkMenuSTR(rch, "EXIT MENU", MENU_IDX_EXIT_MENU));
@@ -126,7 +130,7 @@ NXCTRLAPP_init (LPNXCTRLAPP pApp) {
   MENU_BUTTON_STATE = pApp->digitalRead(MENU_BUTTON_BANK, MENU_BUTTON_PIN);
   EXEC_BUTTON_STATE = pApp->digitalRead(EXEC_BUTTON_BANK, EXEC_BUTTON_PIN);
   DPY_IDLE_COUNT = 0;
-  MENU_IDX = MENU_IDX_MENU_OFF;
+  MENU_IDX = MENU_IDX_GO_MAIN;
   IN_MENU = NXCTRL_FALSE;
   LAST_ACTION_TIME = 0;
   IN_MENU = NXCTRL_TRUE;
@@ -156,7 +160,7 @@ NXCTRLAPP_run (LPNXCTRLAPP pApp) {
       if (canAction()) {
         MENU_IDX++;
         if (MENU_IDX >= MENU_IDX_COUNT)
-          MENU_IDX = MENU_IDX_MENU_OFF;
+          MENU_IDX = MENU_IDX_GO_MAIN;
         displayMenu(pApp);
       }
     } else {
@@ -170,6 +174,9 @@ NXCTRLAPP_run (LPNXCTRLAPP pApp) {
     if (IN_MENU) {
       if (canAction()) {
         switch (MENU_IDX) {
+        case MENU_IDX_GO_MAIN:
+          pApp->nCmd = 1234;
+          return;
         case MENU_IDX_EXIT_MENU:
           pApp->nCmd = 1;
           return;

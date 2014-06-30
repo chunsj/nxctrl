@@ -268,10 +268,14 @@ NXCTRLLoop (NXCTRL_VOID) {
   activeApp.nCmd = -1;
   appRun(&activeApp);
   if (activeApp.nCmd != -1) {
-    if (nCurrentAppIdx == 1) {
+    if (nCurrentAppIdx == 1) { // special sysutil case
       if (activeApp.nCmd == 2) {
         nPrevAppIdx = 0;
         __loadApp(activeApp.nCmd);
+        activeApp.nCmd = -1;
+      } else if (activeApp.nCmd == 1234) {
+        nPrevAppIdx = 0;
+        __loadApp(0);
         activeApp.nCmd = -1;
       } else
         __loadApp(nPrevAppIdx);
@@ -281,6 +285,7 @@ NXCTRLLoop (NXCTRL_VOID) {
       activeApp.nCmd = -1;
     }
   }
+  
   NXCTRLSleep(100, 0);
 }
 
