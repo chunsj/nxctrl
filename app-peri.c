@@ -40,12 +40,14 @@
 #define DPY_IDLE_COUNT_MAX          300
 #define MIN_ACTION_DURATION         200
 
-#define MENU_IDX_COUNT              4
+#define MENU_IDX_COUNT              6
 
 #define MENU_IDX_NEXT_APP           0
 #define MENU_IDX_SYSTEM_MENU        1
 #define MENU_IDX_UPDATE_MENU        2
-#define MENU_IDX_EXIT_MENU          3
+#define MENU_IDX_P8_13_PWM_MENU     3
+#define MENU_IDX_P8_19_PWM_MENU     4
+#define MENU_IDX_EXIT_MENU          5
 
 #define NEXT_APP_IDX                6 // from tc.c
 
@@ -58,6 +60,11 @@
 
 #define TRIGGER_PIN                 NXCTRL_PIN11
 #define ECHO_PIN                    NXCTRL_PIN15
+
+#define PWM1_BANK                   NXCTRL_P8
+#define PWM2_BANK                   NXCTRL_P8
+#define PWM1_PIN                    NXCTRL_PIN13
+#define PWM2_PIN                    NXCTRL_PIN19
 
 static NXCTRL_BOOL                  MENU_BUTTON_STATE = NXCTRL_LOW;
 static NXCTRL_BOOL                  EXEC_BUTTON_STATE = NXCTRL_LOW;
@@ -152,6 +159,73 @@ displayPeriInfo (LPNXCTRLAPP pApp) {
   pApp->updateDisplay();
 }
 
+static NXCTRL_VOID
+runPWM1 (LPNXCTRLAPP pApp) {
+  int i, j;
+  int PWM_RES = 1000;
+  int PULSE_CNT = 10;
+  int PULSE_RES = 10;
+  int PULSE_TM = 80;
+  int nDelta = PWM_RES / PULSE_RES;
+  
+  pApp->clearDisplay();
+  pApp->setCursor(0, 3*FONT_HEIGHT);
+  pApp->writeSTR("    PWM ON P8:13");
+  pApp->setCursor(0, 4*FONT_HEIGHT + 2);
+  pApp->writeSTR("    PULSING LED");
+  pApp->updateDisplay();
+
+  for (j = 0; j < PULSE_CNT; j++) {
+    for (i = 0; i < PULSE_RES; i++) {
+      pApp->analogWrite(PWM1_BANK, PWM1_PIN, nDelta*(i+1));
+      pApp->sleep(PULSE_TM, 0);
+    }
+    for (i = 0; i < PULSE_RES; i++) {
+      pApp->analogWrite(PWM1_BANK, PWM1_PIN, PWM_RES - nDelta*(i+1));
+      pApp->sleep(PULSE_TM, 0);
+    }
+  }
+  pApp->analogWrite(PWM1_BANK, PWM1_PIN, 0);
+  pApp->sleep(100, 0);
+}
+
+static NXCTRL_VOID
+runPWM2 (LPNXCTRLAPP pApp) {
+  int i;
+  
+  pApp->clearDisplay();
+  pApp->setCursor(0, 3*FONT_HEIGHT);
+  pApp->writeSTR("    PWM ON P8:19");
+  pApp->setCursor(0, 4*FONT_HEIGHT + 2);
+  pApp->writeSTR("    SERVO CONTRL");
+  pApp->updateDisplay();
+
+  pApp->servoWrite(PWM2_BANK, PWM2_PIN, 82);
+  pApp->sleep(800, 0);
+  pApp->servoWrite(PWM2_BANK, PWM2_PIN, 30);
+  pApp->sleep(800, 0);
+  pApp->servoWrite(PWM2_BANK, PWM2_PIN, 150);
+  pApp->sleep(800, 0);
+  
+  pApp->servoWrite(PWM2_BANK, PWM2_PIN, 0);
+  pApp->sleep(500, 0);
+
+  for (i = 0; i <= 180; i += 2) {
+    pApp->servoWrite(PWM2_BANK, PWM2_PIN, i);
+    pApp->sleep(20, 0);
+  }
+
+  pApp->servoWrite(PWM2_BANK, PWM2_PIN, 0);
+  pApp->sleep(800, 0);
+  pApp->servoWrite(PWM2_BANK, PWM2_PIN, 180);
+  pApp->sleep(800, 0);
+  pApp->servoWrite(PWM2_BANK, PWM2_PIN, 82);
+  pApp->sleep(800, 0);
+
+  pApp->servoWrite(PWM2_BANK, PWM2_PIN, 0);
+  pApp->sleep(500, 0);
+}
+
 static NXCTRL_BOOL
 canAction (NXCTRL_VOID) {
   struct timespec tm;
@@ -215,16 +289,23 @@ displayMenu (LPNXCTRLAPP pApp) {
   pApp->drawLine(49, 6, 127, 6, NXCTRL_ON);
   pApp->setCursor(0, 16);
 
-  pApp->writeSTR(mkMenuSTR(rch, "SPARK CORE APP", MENU_IDX_NEXT_APP));
+  if (MENU_IDX < 5)
+    pApp->writeSTR(mkMenuSTR(rch, "SPARK CORE APP", MENU_IDX_NEXT_APP));
   pApp->writeSTR(mkMenuSTR(rch, "SYSTEM UTILS", MENU_IDX_SYSTEM_MENU));
   pApp->writeSTR(mkMenuSTR(rch, "UPDATE INFO", MENU_IDX_UPDATE_MENU));
-  pApp->writeSTR(mkMenuSTR(rch, "EXIT MENU", MENU_IDX_EXIT_MENU));
+  pApp->writeSTR(mkMenuSTR(rch, "P8:13 PWM(LED)", MENU_IDX_P8_13_PWM_MENU));
+  pApp->writeSTR(mkMenuSTR(rch, "P8:19 PWM(SERVO)", MENU_IDX_P8_19_PWM_MENU));
+  if (MENU_IDX >= 5)
+    pApp->writeSTR(mkMenuSTR(rch, "EXIT MENU", MENU_IDX_EXIT_MENU));
 
   pApp->updateDisplay();
 }
 
 NXCTRL_VOID
 NXCTRLAPP_init (LPNXCTRLAPP pApp) {
+  pApp->pinMux(PWM1_BANK, PWM1_PIN, NXCTRL_MODE4, NXCTRL_PULLDN, NXCTRL_LOW);
+  pApp->pinMux(PWM2_BANK, PWM2_PIN, NXCTRL_MODE4, NXCTRL_PULLDN, NXCTRL_LOW);
+  
   MENU_BUTTON_STATE = pApp->digitalRead(MENU_BUTTON_BANK, MENU_BUTTON_PIN);
   EXEC_BUTTON_STATE = pApp->digitalRead(EXEC_BUTTON_BANK, EXEC_BUTTON_PIN);
   DPY_IDLE_COUNT = 0;
@@ -289,6 +370,16 @@ NXCTRLAPP_run (LPNXCTRLAPP pApp) {
           return;
         case MENU_IDX_UPDATE_MENU:
           IN_MENU = NXCTRL_FALSE;
+          displayPeriInfo(pApp);
+          break;
+        case MENU_IDX_P8_13_PWM_MENU:
+          IN_MENU = NXCTRL_FALSE;
+          runPWM1(pApp);
+          displayPeriInfo(pApp);
+          break;
+        case MENU_IDX_P8_19_PWM_MENU:
+          IN_MENU = NXCTRL_FALSE;
+          runPWM2(pApp);
           displayPeriInfo(pApp);
           break;
         default:
