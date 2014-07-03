@@ -160,9 +160,9 @@ static NXCTRL_VOID
 runPWM1 (LPNXCTRLAPP pApp) {
   int i, j;
   int PWM_RES = 1000;
-  int PULSE_CNT = 10;
-  int PULSE_RES = 10;
-  int PULSE_TM = 80;
+  int PULSE_CNT = 5;
+  int PULSE_RES = 200;
+  int PULSE_TM = 5;
   int nDelta = PWM_RES / PULSE_RES;
   
   pApp->clearDisplay();
@@ -219,8 +219,10 @@ runPWM2 (LPNXCTRLAPP pApp) {
   pApp->servoWrite(PWM2_BANK, PWM2_PIN, 82);
   pApp->sleep(800, 0);
 
+#if 0
   pApp->servoWrite(PWM2_BANK, PWM2_PIN, 0);
   pApp->sleep(500, 0);
+#endif
 }
 
 static NXCTRL_BOOL
