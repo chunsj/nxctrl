@@ -32,6 +32,11 @@
 #include <prussdrv.h>
 #include <pruss_intc_mapping.h>
 #include <NXCTRL_appEx.h>
+#include <NXCTRL_bits.h>
+#include <stdint.h>
+#include <sys/ioctl.h>
+#include <linux/types.h>
+#include <linux/spi/spidev.h>
 
 #define FONT_WIDTH                  6
 #define FONT_HEIGHT                 8
@@ -40,13 +45,14 @@
 #define DPY_IDLE_COUNT_MAX          300
 #define MIN_ACTION_DURATION         200
 
-#define MENU_IDX_COUNT              5
+#define MENU_IDX_COUNT              6
 
 #define MENU_IDX_SYSTEM_MENU        0
 #define MENU_IDX_UPDATE_MENU        1
 #define MENU_IDX_P8_13_PWM_MENU     2
 #define MENU_IDX_P8_19_PWM_MENU     3
-#define MENU_IDX_EXIT_MENU          4
+#define MENU_IDX_AK8448_MENU        4
+#define MENU_IDX_EXIT_MENU          5
 
 #define PRU_NUM                     PRU0
 #define PRU_PATH                    "/usr/bin/ctrl-app.bin"
@@ -63,12 +69,154 @@
 #define PWM1_PIN                    NXCTRL_PIN13
 #define PWM2_PIN                    NXCTRL_PIN19
 
+#define SPI_CS0  28  // BLUE
+#define SPI_D1   30  // RED
+#define SPI_D0   29  // YELLOW
+#define SPI_CLK  31  // GREEN
+#define SPI_DEV  "/dev/spidev2.0"
+#define DELAY_USEC 0
+
 static NXCTRL_BOOL                  MENU_BUTTON_STATE = NXCTRL_LOW;
 static NXCTRL_BOOL                  EXEC_BUTTON_STATE = NXCTRL_LOW;
 static unsigned int                 DPY_IDLE_COUNT = 0;
 static unsigned char                MENU_IDX = MENU_IDX_SYSTEM_MENU;
 static NXCTRL_BOOL                  IN_MENU = NXCTRL_FALSE;
 static unsigned long long           LAST_ACTION_TIME = 0;
+
+inline static void
+sprintINT16 (char *rch, unsigned short v16) {
+  INT16 v = { .v16 = v16 };
+  sprintf(rch, "%d%d%d%d %d%d%d%d %d%d%d%d %d%d%d%d",
+          v.bit.b0, v.bit.b1, v.bit.b2, v.bit.b3, v.bit.b4, v.bit.b5,
+          v.bit.b6, v.bit.b7, v.bit.b8, v.bit.b9, v.bit.b10, v.bit.b11,
+          v.bit.b12, v.bit.b13, v.bit.b14, v.bit.b15);
+}
+
+static int
+__SPI_read (LPNXCTRLAPP pApp, int nFD) {
+  int nStatus;
+  struct spi_ioc_transfer xfer[2];
+  char rchTXData[2];
+  char rchRXData[2];
+  char rch[22];
+
+  // for register 0
+  memset(xfer, 0, sizeof(xfer));
+
+  rchTXData[0] = 0;
+  rchTXData[1] = 0;
+  rchRXData[0] = 0;
+  rchRXData[1] = 0;
+
+  rchTXData[0] |= BIT7; // read
+
+  xfer[0].tx_buf = (unsigned int)rchTXData;
+  xfer[0].rx_buf = (unsigned int)rchRXData;
+  xfer[0].len = 2;
+  xfer[0].delay_usecs = DELAY_USEC;
+
+  nStatus = ioctl(nFD, SPI_IOC_MESSAGE(1), xfer);
+  if (nStatus < 0) {
+    perror("SPI_IOC_MESSAGE");
+    return -1;
+  }
+
+  pApp->writeSTR("R:");
+  sprintINT16(rch, rchRXData[0] | (rchRXData[1] << 8));
+  pApp->writeSTR(rch);
+
+  // for register 1
+  memset(xfer, 0, sizeof(xfer));
+
+  rchTXData[0] = 0;
+  rchTXData[1] = 0;
+  rchRXData[0] = 0;
+  rchRXData[1] = 0;
+
+  rchTXData[0] |= BIT7;
+  rchTXData[0] |= BIT0; // register 1
+
+  xfer[0].tx_buf = (unsigned int)rchTXData;
+  xfer[0].rx_buf = (unsigned int)rchRXData;
+  xfer[0].len = 2;
+  xfer[0].delay_usecs = DELAY_USEC;
+
+  nStatus = ioctl(nFD, SPI_IOC_MESSAGE(1), xfer);
+  if (nStatus < 0) {
+    perror("SPI_IOC_MESSAGE");
+    return -1;
+  }
+
+  pApp->writeSTR("R:");
+  sprintINT16(rch, rchRXData[0] | (rchRXData[1] << 8));
+  pApp->writeSTR(rch);
+
+  return 0;
+}
+
+static int
+__SPI_write (LPNXCTRLAPP pApp, int nFD) {
+  int nStatus;
+  struct spi_ioc_transfer xfer[2];
+  char rchTXData[2];
+  char rchRXData[2];
+  char rch[22];
+
+  // for register 0
+  memset(xfer, 0, sizeof(xfer));
+
+  rchTXData[0] = 0;
+  rchTXData[1] = 0;
+  rchRXData[0] = 0;
+  rchRXData[1] = 0;
+
+  rchTXData[1] |= BIT7; // Clamp Mode
+  rchTXData[1] |= BIT5; // For CIS (0V to +V)
+
+  xfer[0].tx_buf = (unsigned int)rchTXData;
+  xfer[0].rx_buf = (unsigned int)rchRXData;
+  xfer[0].len = 2;
+  xfer[0].delay_usecs = DELAY_USEC;
+
+  nStatus = ioctl(nFD, SPI_IOC_MESSAGE(1), xfer);
+  if (nStatus < 0) {
+    perror("SPI_IOC_MESSAGE");
+    return -1;
+  }
+
+  pApp->writeSTR("T:");
+  sprintINT16(rch, rchTXData[0] | (rchTXData[1] << 8));
+  pApp->writeSTR(rch);
+
+  // for register 1
+  memset(xfer, 0, sizeof(xfer));
+
+  rchTXData[0] = 0;
+  rchTXData[1] = 0;
+  rchRXData[0] = 0;
+  rchRXData[1] = 0;
+
+  rchTXData[0] |= BIT0; // register 1
+  rchTXData[1] |= BIT5; // test pattern
+  rchTXData[1] |= BIT3; // 10 bit
+
+  xfer[0].tx_buf = (unsigned int)rchTXData;
+  xfer[0].rx_buf = (unsigned int)rchRXData;
+  xfer[0].len = 2;
+  xfer[0].delay_usecs = DELAY_USEC;
+
+  nStatus = ioctl(nFD, SPI_IOC_MESSAGE(1), xfer);
+  if (nStatus < 0) {
+    perror("SPI_IOC_MESSAGE");
+    return -1;
+  }
+
+  pApp->writeSTR("T:");
+  sprintINT16(rch, rchTXData[0] | (rchTXData[1] << 8));
+  pApp->writeSTR(rch);
+
+  return 0;
+}
 
 static float
 getFetchDistance (NXCTRL_VOID) {
@@ -225,6 +373,44 @@ runPWM2 (LPNXCTRLAPP pApp) {
 #endif
 }
 
+static NXCTRL_VOID
+runAK8448 (LPNXCTRLAPP pApp) {
+  uint8_t nLSB;
+  uint32_t nSpeed, nSPIMode;
+  int nFD = open(SPI_DEV, O_RDWR);
+  
+  nLSB = 0;
+  ioctl(nFD, SPI_IOC_WR_LSB_FIRST, &nLSB);
+  nSpeed = 10000000;
+  ioctl(nFD, SPI_IOC_WR_MAX_SPEED_HZ, &nSpeed);
+  nSPIMode = SPI_MODE_3;
+  ioctl(nFD, SPI_IOC_WR_MODE, &nSPIMode);
+
+  pApp->clearDisplay();
+  pApp->setCursor(5*FONT_WIDTH, 0);
+
+  pApp->writeSTR("AK8448 CFG\n\n");
+
+  __SPI_write(pApp, nFD);
+  __SPI_read(pApp, nFD);
+  
+  close(nFD);
+
+  pApp->updateDisplay();
+
+  pApp->sleep(2000, 0);
+
+  pApp->setCursor(0, 7*FONT_HEIGHT+1);
+  pApp->writeSTR(" PRESS EXEC TO EXIT");
+  pApp->updateDisplay();
+
+  EXEC_BUTTON_STATE = NXCTRL_LOW;
+  while (EXEC_BUTTON_STATE == NXCTRL_LOW) {
+    pApp->sleep(100, 0);
+    EXEC_BUTTON_STATE = pApp->digitalRead(EXEC_BUTTON_BANK, EXEC_BUTTON_PIN);
+  }
+}
+
 static NXCTRL_BOOL
 canAction (NXCTRL_VOID) {
   struct timespec tm;
@@ -288,11 +474,14 @@ displayMenu (LPNXCTRLAPP pApp) {
   pApp->drawLine(49, 6, 127, 6, NXCTRL_ON);
   pApp->setCursor(0, 16);
 
-  pApp->writeSTR(mkMenuSTR(rch, "SYSTEM>>", MENU_IDX_SYSTEM_MENU));
+  if (MENU_IDX < 5)
+    pApp->writeSTR(mkMenuSTR(rch, "SYSTEM>>", MENU_IDX_SYSTEM_MENU));
   pApp->writeSTR(mkMenuSTR(rch, "UPDATE INFO", MENU_IDX_UPDATE_MENU));
   pApp->writeSTR(mkMenuSTR(rch, "P8:13 PWM(LED)", MENU_IDX_P8_13_PWM_MENU));
   pApp->writeSTR(mkMenuSTR(rch, "P8:19 PWM(SERVO)", MENU_IDX_P8_19_PWM_MENU));
-  pApp->writeSTR(mkMenuSTR(rch, "EXIT MENU", MENU_IDX_EXIT_MENU));
+  pApp->writeSTR(mkMenuSTR(rch, "SPIDEV:2(AK8448)", MENU_IDX_AK8448_MENU));
+  if (MENU_IDX >= 5)
+    pApp->writeSTR(mkMenuSTR(rch, "EXIT MENU", MENU_IDX_EXIT_MENU));
 
   pApp->updateDisplay();
 }
@@ -302,6 +491,11 @@ NXCTRLAPP_init (LPNXCTRLAPP pApp) {
   pApp->pinMux(PWM1_BANK, PWM1_PIN, NXCTRL_MODE4, NXCTRL_PULLDN, NXCTRL_LOW);
   pApp->pinMux(PWM2_BANK, PWM2_PIN, NXCTRL_MODE4, NXCTRL_PULLDN, NXCTRL_LOW);
   
+  pApp->pinMux(NXCTRL_P9, SPI_CS0, NXCTRL_MODE3, NXCTRL_PULLDN, NXCTRL_LOW);
+  pApp->pinMux(NXCTRL_P9, SPI_D1, NXCTRL_MODE3, NXCTRL_PULLDN, NXCTRL_LOW);
+  pApp->pinMux(NXCTRL_P9, SPI_D0, NXCTRL_MODE3, NXCTRL_PULLUP, NXCTRL_HIGH);
+  pApp->pinMux(NXCTRL_P9, SPI_CLK, NXCTRL_MODE3, NXCTRL_PULLUP, NXCTRL_HIGH);
+
   MENU_BUTTON_STATE = pApp->digitalRead(MENU_BUTTON_BANK, MENU_BUTTON_PIN);
   EXEC_BUTTON_STATE = pApp->digitalRead(EXEC_BUTTON_BANK, EXEC_BUTTON_PIN);
   DPY_IDLE_COUNT = 0;
@@ -373,6 +567,11 @@ NXCTRLAPP_run (LPNXCTRLAPP pApp) {
         case MENU_IDX_P8_19_PWM_MENU:
           IN_MENU = NXCTRL_FALSE;
           runPWM2(pApp);
+          displayPeriInfo(pApp);
+          break;
+        case MENU_IDX_AK8448_MENU:
+          IN_MENU = NXCTRL_FALSE;
+          runAK8448(pApp);
           displayPeriInfo(pApp);
           break;
         default:
