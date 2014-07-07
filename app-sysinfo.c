@@ -39,11 +39,14 @@
 #define DPY_IDLE_COUNT_MAX          300
 #define MIN_ACTION_DURATION         200
 
-#define MENU_IDX_COUNT              3
+#define MENU_IDX_COUNT              6
 
 #define MENU_IDX_SYSTEM_MENU        0
 #define MENU_IDX_UPDATE_MENU        1
-#define MENU_IDX_EXIT_MENU          2
+#define MENU_IDX_BKHOME_MENU        2
+#define MENU_IDX_BKCASTLE_MENU      3
+#define MENU_IDX_RUN_MLREPL         4
+#define MENU_IDX_EXIT_MENU          5
 
 static NXCTRL_BOOL                  MENU_BUTTON_STATE = NXCTRL_LOW;
 static NXCTRL_BOOL                  EXEC_BUTTON_STATE = NXCTRL_LOW;
@@ -187,9 +190,14 @@ displayMenu (LPNXCTRLAPP pApp) {
   pApp->drawLine(49, 6, 127, 6, NXCTRL_ON);
   pApp->setCursor(0, 16);
 
-  pApp->writeSTR(mkMenuSTR(rch, "SYSTEM>>", MENU_IDX_SYSTEM_MENU));
+  if (MENU_IDX < 5)
+    pApp->writeSTR(mkMenuSTR(rch, "SYSTEM>>", MENU_IDX_SYSTEM_MENU));
   pApp->writeSTR(mkMenuSTR(rch, "UPDATE INFO", MENU_IDX_UPDATE_MENU));
-  pApp->writeSTR(mkMenuSTR(rch, "EXIT MENU", MENU_IDX_EXIT_MENU));
+  pApp->writeSTR(mkMenuSTR(rch, "BACKUP TO HOME", MENU_IDX_BKHOME_MENU));
+  pApp->writeSTR(mkMenuSTR(rch, "BACKUP TO CASTLE", MENU_IDX_BKCASTLE_MENU));
+  pApp->writeSTR(mkMenuSTR(rch, "START ML REPL", MENU_IDX_RUN_MLREPL));
+  if (MENU_IDX >= 5)
+    pApp->writeSTR(mkMenuSTR(rch, "EXIT MENU", MENU_IDX_EXIT_MENU));
 
   pApp->updateDisplay();
 }
@@ -256,6 +264,34 @@ NXCTRLAPP_run (LPNXCTRLAPP pApp) {
           pApp->nCmd = 1;
           return;
         case MENU_IDX_UPDATE_MENU:
+          IN_MENU = NXCTRL_FALSE;
+          displaySysInfo(pApp);
+          break;
+        case MENU_IDX_BKHOME_MENU:
+          pApp->clearDisplay();
+          pApp->setCursor(3*FONT_WIDTH, 3*FONT_HEIGHT);
+          pApp->writeSTR("SYNCING DATA...");
+          pApp->updateDisplay();
+          system("sudo -u chunsj /home/chunsj/bin/bkhome");
+          IN_MENU = NXCTRL_FALSE;
+          displaySysInfo(pApp);
+          break;
+        case MENU_IDX_BKCASTLE_MENU:
+          pApp->clearDisplay();
+          pApp->setCursor(3*FONT_WIDTH, 3*FONT_HEIGHT);
+          pApp->writeSTR("SYNCING DATA...");
+          pApp->updateDisplay();
+          system("sudo -u chunsj /home/chunsj/bin/bkcastle");
+          IN_MENU = NXCTRL_FALSE;
+          displaySysInfo(pApp);
+          break;
+        case MENU_IDX_RUN_MLREPL:
+          pApp->clearDisplay();
+          pApp->setCursor(2*FONT_WIDTH, 3*FONT_HEIGHT);
+          pApp->writeSTR("STARTING NREPL...");
+          pApp->updateDisplay();
+          system("sudo -u chunsj /home/chunsj/bin/ml-repl&");
+          pApp->sleep(4000, 0);
           IN_MENU = NXCTRL_FALSE;
           displaySysInfo(pApp);
           break;

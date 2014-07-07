@@ -224,8 +224,8 @@ NXCTRLAPP_run (LPNXCTRLAPP pApp) {
           sync();
           sync();
           pApp->sleep(500, 0);
-          pApp->clearDisplay();
-          pApp->updateDisplay();
+          //pApp->clearDisplay();
+          //pApp->updateDisplay();
           sync();
           sync();
           sync();
