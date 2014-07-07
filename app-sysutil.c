@@ -229,7 +229,8 @@ NXCTRLAPP_run (LPNXCTRLAPP pApp) {
           sync();
           sync();
           sync();
-          reboot(RB_POWER_OFF);
+          //reboot(RB_POWER_OFF);
+          system("poweroff");
           break;
         case MENU_IDX_MENU_OFF:
           pApp->nCmd = 2;

@@ -169,7 +169,7 @@ $(EXE19): $(SRC19)
 	$(CC) $(CFLAGS) -o $@ $^ $(LDFLAGS) $(LIBS)
 
 $(EXE20): $(SRC20)
-	$(CC) $(CFLAGS) -o $@ $^ $(LDFLAGS) $(LIBS) $(DL_LIBS) $(PRU_LIBS)
+	$(CC) $(CFLAGS) -o $@ $^ $(LDFLAGS) $(LIBS) $(DL_LIBS) $(PRU_LIBS) -lm
 
 $(APP21): $(SRC21-APP)
 	$(CC) $(CFLAGS) -fPIC -DPIC -shared -o $@ $^

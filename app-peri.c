@@ -37,6 +37,7 @@
 #include <sys/ioctl.h>
 #include <linux/types.h>
 #include <linux/spi/spidev.h>
+#include <math.h>
 
 #define FONT_WIDTH                  6
 #define FONT_HEIGHT                 8
@@ -310,8 +311,8 @@ runPWM1 (LPNXCTRLAPP pApp) {
   int PWM_RES = 1000;
   int PULSE_CNT = 5;
   int PULSE_RES = 200;
-  int PULSE_TM = 5;
-  int nDelta = PWM_RES / PULSE_RES;
+  int PULSE_TM = 8;
+  float fLogPulse = log(PULSE_RES);
   
   pApp->clearDisplay();
   pApp->setCursor(0, 3*FONT_HEIGHT);
@@ -321,12 +322,16 @@ runPWM1 (LPNXCTRLAPP pApp) {
   pApp->updateDisplay();
 
   for (j = 0; j < PULSE_CNT; j++) {
-    for (i = 0; i < PULSE_RES; i++) {
-      pApp->analogWrite(PWM1_BANK, PWM1_PIN, nDelta*(i+1));
+    for (i = PULSE_RES; i > 1; i--) {
+      float logF = log(i) / fLogPulse;
+      int nDC = (int)((1 - logF) * PWM_RES);
+      pApp->analogWrite(PWM1_BANK, PWM1_PIN, nDC);
       pApp->sleep(PULSE_TM, 0);
     }
     for (i = 0; i < PULSE_RES; i++) {
-      pApp->analogWrite(PWM1_BANK, PWM1_PIN, PWM_RES - nDelta*(i+1));
+      float logF = log(i+1) / fLogPulse;
+      int nDC = (int)((1 - logF) * PWM_RES);
+      pApp->analogWrite(PWM1_BANK, PWM1_PIN, nDC);
       pApp->sleep(PULSE_TM, 0);
     }
   }
