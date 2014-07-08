@@ -46,15 +46,16 @@
 #define DPY_IDLE_COUNT_MAX          300
 #define MIN_ACTION_DURATION         200
 
-#define MENU_IDX_COUNT              7
+#define MENU_IDX_COUNT              8
 
 #define MENU_IDX_SYSTEM_MENU        0
 #define MENU_IDX_UPDATE_MENU        1
 #define MENU_IDX_P8_13_PWM_MENU     2
 #define MENU_IDX_P8_19_PWM_MENU     3
-#define MENU_IDX_AK8448_MENU        4
-#define MENU_IDX_TR_A3_MENU         5
-#define MENU_IDX_EXIT_MENU          6
+#define MENU_IDX_AK8448_CFG_MENU    4
+#define MENU_IDX_AK8448_READ_MENU   5
+#define MENU_IDX_TR_A3_MENU         6
+#define MENU_IDX_EXIT_MENU          7
 
 #define PRU_NUM                     PRU0
 #define PRU_PATH                    "/usr/bin/ctrl-app.bin"
@@ -71,12 +72,25 @@
 #define PWM1_PIN                    NXCTRL_PIN13
 #define PWM2_PIN                    NXCTRL_PIN19
 
-#define SPI_CS0  28  // BLUE
-#define SPI_D1   30  // RED
-#define SPI_D0   29  // YELLOW
-#define SPI_CLK  31  // GREEN
-#define SPI_DEV  "/dev/spidev2.0"
-#define DELAY_USEC 0
+#define SPI_CS0                     NXCTRL_PIN28  // BLUE
+#define SPI_D1                      NXCTRL_PIN30  // RED
+#define SPI_D0                      NXCTRL_PIN29  // YELLOW
+#define SPI_CLK                     NXCTRL_PIN31  // GREEN
+#define SPI_DEV                     "/dev/spidev2.0"
+#define DELAY_USEC                  0
+
+#define AKBANK                      NXCTRL_P8
+#define AKPIN0                      NXCTRL_PIN45
+#define AKPIN1                      NXCTRL_PIN46
+#define AKPIN2                      NXCTRL_PIN43
+#define AKPIN3                      NXCTRL_PIN44
+#define AKPIN4                      NXCTRL_PIN41
+#define AKPIN5                      NXCTRL_PIN42
+#define AKPIN6                      NXCTRL_PIN39
+#define AKPIN7                      NXCTRL_PIN40
+#define AKPIN8                      NXCTRL_PIN27
+#define AKPIN9                      NXCTRL_PIN29
+#define AKCLK                       NXCTRL_PIN28
 
 static NXCTRL_BOOL                  MENU_BUTTON_STATE = NXCTRL_LOW;
 static NXCTRL_BOOL                  EXEC_BUTTON_STATE = NXCTRL_LOW;
@@ -416,6 +430,65 @@ runPWM2 (LPNXCTRLAPP pApp) {
 }
 
 static NXCTRL_VOID
+readAK8448Pins (LPNXCTRLAPP pApp, NXCTRL_BOOL rbRes[10]) {
+  rbRes[0] = pApp->digitalRead(AKBANK, AKPIN0);
+  rbRes[1] = pApp->digitalRead(AKBANK, AKPIN1);
+  rbRes[2] = pApp->digitalRead(AKBANK, AKPIN2);
+  rbRes[3] = pApp->digitalRead(AKBANK, AKPIN3);
+  rbRes[4] = pApp->digitalRead(AKBANK, AKPIN4);
+  rbRes[5] = pApp->digitalRead(AKBANK, AKPIN5);
+  rbRes[6] = pApp->digitalRead(AKBANK, AKPIN6);
+  rbRes[7] = pApp->digitalRead(AKBANK, AKPIN7);
+  rbRes[8] = pApp->digitalRead(AKBANK, AKPIN8);
+  rbRes[9] = pApp->digitalRead(AKBANK, AKPIN9);
+}
+
+static NXCTRL_VOID
+readAK8448 (LPNXCTRLAPP pApp) {
+  register int i, j;
+  NXCTRL_BOOL rbRes[10];
+
+  pApp->clearDisplay();
+
+  for (j = 0; j < 6; j++) {
+    pApp->setCursor(0, j*FONT_HEIGHT);
+
+    pApp->digitalWrite(AKBANK, AKCLK, NXCTRL_LOW);
+    pApp->sleep(50, 0);
+    pApp->digitalWrite(AKBANK, AKCLK, NXCTRL_HIGH);
+    pApp->sleep(50, 0);
+    readAK8448Pins(pApp, rbRes);
+
+    for (i = 0; i < 10; i++)
+      pApp->writeSTR(rbRes[i] ? "1" : "0");
+    pApp->writeSTR(" ");
+    pApp->updateDisplay();
+    
+    pApp->digitalWrite(AKBANK, AKCLK, NXCTRL_HIGH);
+    pApp->sleep(50, 0);
+    pApp->digitalWrite(AKBANK, AKCLK, NXCTRL_LOW);
+    pApp->sleep(50, 0);
+    readAK8448Pins(pApp, rbRes);
+
+    for (i = 0; i < 10; i++)
+      pApp->writeSTR(rbRes[i] ? "1" : "0");
+    pApp->updateDisplay();
+  }
+
+  pApp->sleep(2000, 0);
+
+  pApp->setCursor(0, 7*FONT_HEIGHT+1);
+  pApp->writeSTR(" PRESS EXEC TO EXIT");
+  pApp->updateDisplay();
+
+  EXEC_BUTTON_STATE = NXCTRL_LOW;
+  while (EXEC_BUTTON_STATE == NXCTRL_LOW) {
+    pApp->sleep(100, 0);
+    EXEC_BUTTON_STATE = pApp->digitalRead(EXEC_BUTTON_BANK, EXEC_BUTTON_PIN);
+  }
+}
+
+static NXCTRL_VOID
 runAK8448 (LPNXCTRLAPP pApp) {
   uint8_t nLSB;
   uint32_t nSpeed, nSPIMode;
@@ -520,12 +593,15 @@ displayMenu (LPNXCTRLAPP pApp) {
     pApp->writeSTR(mkMenuSTR(rch, "SYSTEM>>", MENU_IDX_SYSTEM_MENU));
   if (MENU_IDX < 6)
     pApp->writeSTR(mkMenuSTR(rch, "UPDATE INFO", MENU_IDX_UPDATE_MENU));
-  pApp->writeSTR(mkMenuSTR(rch, "P8:13 PWM(LED)", MENU_IDX_P8_13_PWM_MENU));
+  if (MENU_IDX < 7)
+    pApp->writeSTR(mkMenuSTR(rch, "P8:13 PWM(LED)", MENU_IDX_P8_13_PWM_MENU));
   pApp->writeSTR(mkMenuSTR(rch, "P8:19 PWM(SERVO)", MENU_IDX_P8_19_PWM_MENU));
-  pApp->writeSTR(mkMenuSTR(rch, "SPIDEV:2(AK8448)", MENU_IDX_AK8448_MENU));
+  pApp->writeSTR(mkMenuSTR(rch, "SPIDEV:2(AK8448)", MENU_IDX_AK8448_CFG_MENU));
   if (MENU_IDX >= 5)
-    pApp->writeSTR(mkMenuSTR(rch, "TRACE A3", MENU_IDX_TR_A3_MENU));
+    pApp->writeSTR(mkMenuSTR(rch, "AK8448 TEST", MENU_IDX_AK8448_READ_MENU));
   if (MENU_IDX >= 6)
+    pApp->writeSTR(mkMenuSTR(rch, "TRACE A3", MENU_IDX_TR_A3_MENU));
+  if (MENU_IDX >= 7)
     pApp->writeSTR(mkMenuSTR(rch, "EXIT MENU", MENU_IDX_EXIT_MENU));
 
   pApp->updateDisplay();
@@ -540,6 +616,30 @@ NXCTRLAPP_init (LPNXCTRLAPP pApp) {
   pApp->pinMux(NXCTRL_P9, SPI_D1, NXCTRL_MODE3, NXCTRL_PULLDN, NXCTRL_LOW);
   pApp->pinMux(NXCTRL_P9, SPI_D0, NXCTRL_MODE3, NXCTRL_PULLUP, NXCTRL_HIGH);
   pApp->pinMux(NXCTRL_P9, SPI_CLK, NXCTRL_MODE3, NXCTRL_PULLUP, NXCTRL_HIGH);
+
+  pApp->pinMux(AKBANK, AKPIN0, NXCTRL_MODE7, NXCTRL_PULLDN, NXCTRL_LOW);
+  pApp->pinMux(AKBANK, AKPIN1, NXCTRL_MODE7, NXCTRL_PULLDN, NXCTRL_LOW);
+  pApp->pinMux(AKBANK, AKPIN2, NXCTRL_MODE7, NXCTRL_PULLDN, NXCTRL_LOW);
+  pApp->pinMux(AKBANK, AKPIN3, NXCTRL_MODE7, NXCTRL_PULLDN, NXCTRL_LOW);
+  pApp->pinMux(AKBANK, AKPIN4, NXCTRL_MODE7, NXCTRL_PULLDN, NXCTRL_LOW);
+  pApp->pinMux(AKBANK, AKPIN5, NXCTRL_MODE7, NXCTRL_PULLDN, NXCTRL_LOW);
+  pApp->pinMux(AKBANK, AKPIN6, NXCTRL_MODE7, NXCTRL_PULLDN, NXCTRL_LOW);
+  pApp->pinMux(AKBANK, AKPIN7, NXCTRL_MODE7, NXCTRL_PULLDN, NXCTRL_LOW);
+  pApp->pinMux(AKBANK, AKPIN8, NXCTRL_MODE7, NXCTRL_PULLDN, NXCTRL_LOW);
+  pApp->pinMux(AKBANK, AKPIN9, NXCTRL_MODE7, NXCTRL_PULLDN, NXCTRL_LOW);
+  pApp->pinMux(AKBANK, AKCLK, NXCTRL_MODE7, NXCTRL_PULLDN, NXCTRL_LOW);
+
+  pApp->pinMode(AKBANK, AKPIN0, NXCTRL_INPUT);
+  pApp->pinMode(AKBANK, AKPIN1, NXCTRL_INPUT);
+  pApp->pinMode(AKBANK, AKPIN2, NXCTRL_INPUT);
+  pApp->pinMode(AKBANK, AKPIN3, NXCTRL_INPUT);
+  pApp->pinMode(AKBANK, AKPIN4, NXCTRL_INPUT);
+  pApp->pinMode(AKBANK, AKPIN5, NXCTRL_INPUT);
+  pApp->pinMode(AKBANK, AKPIN6, NXCTRL_INPUT);
+  pApp->pinMode(AKBANK, AKPIN7, NXCTRL_INPUT);
+  pApp->pinMode(AKBANK, AKPIN8, NXCTRL_INPUT);
+  pApp->pinMode(AKBANK, AKPIN9, NXCTRL_INPUT);
+  pApp->pinMode(AKBANK, AKCLK, NXCTRL_OUTPUT);
 
   MENU_BUTTON_STATE = pApp->digitalRead(MENU_BUTTON_BANK, MENU_BUTTON_PIN);
   EXEC_BUTTON_STATE = pApp->digitalRead(EXEC_BUTTON_BANK, EXEC_BUTTON_PIN);
@@ -614,9 +714,14 @@ NXCTRLAPP_run (LPNXCTRLAPP pApp) {
           runPWM2(pApp);
           displayPeriInfo(pApp);
           break;
-        case MENU_IDX_AK8448_MENU:
+        case MENU_IDX_AK8448_CFG_MENU:
           IN_MENU = NXCTRL_FALSE;
           runAK8448(pApp);
+          displayPeriInfo(pApp);
+          break;
+        case MENU_IDX_AK8448_READ_MENU:
+          IN_MENU = NXCTRL_FALSE;
+          readAK8448(pApp);
           displayPeriInfo(pApp);
           break;
         case MENU_IDX_TR_A3_MENU:
