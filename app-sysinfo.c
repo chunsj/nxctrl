@@ -193,8 +193,8 @@ displayMenu (LPNXCTRLAPP pApp) {
   if (MENU_IDX < 5)
     pApp->writeSTR(mkMenuSTR(rch, "SYSTEM>>", MENU_IDX_SYSTEM_MENU));
   pApp->writeSTR(mkMenuSTR(rch, "UPDATE INFO", MENU_IDX_UPDATE_MENU));
-  pApp->writeSTR(mkMenuSTR(rch, "BACKUP TO HOME", MENU_IDX_BKHOME_MENU));
-  pApp->writeSTR(mkMenuSTR(rch, "BACKUP TO CASTLE", MENU_IDX_BKCASTLE_MENU));
+  pApp->writeSTR(mkMenuSTR(rch, "BACKUP (@HOME)", MENU_IDX_BKHOME_MENU));
+  pApp->writeSTR(mkMenuSTR(rch, "BACKUP (@CSVR)", MENU_IDX_BKCASTLE_MENU));
   pApp->writeSTR(mkMenuSTR(rch, "START ML REPL", MENU_IDX_RUN_MLREPL));
   if (MENU_IDX >= 5)
     pApp->writeSTR(mkMenuSTR(rch, "EXIT MENU", MENU_IDX_EXIT_MENU));
