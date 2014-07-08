@@ -46,14 +46,15 @@
 #define DPY_IDLE_COUNT_MAX          300
 #define MIN_ACTION_DURATION         200
 
-#define MENU_IDX_COUNT              6
+#define MENU_IDX_COUNT              7
 
 #define MENU_IDX_SYSTEM_MENU        0
 #define MENU_IDX_UPDATE_MENU        1
 #define MENU_IDX_P8_13_PWM_MENU     2
 #define MENU_IDX_P8_19_PWM_MENU     3
 #define MENU_IDX_AK8448_MENU        4
-#define MENU_IDX_EXIT_MENU          5
+#define MENU_IDX_TR_A3_MENU         5
+#define MENU_IDX_EXIT_MENU          6
 
 #define PRU_NUM                     PRU0
 #define PRU_PATH                    "/usr/bin/ctrl-app.bin"
@@ -271,6 +272,42 @@ getFetchDistance (NXCTRL_VOID) {
 }
 
 static NXCTRL_VOID
+traceA3 (LPNXCTRLAPP pApp) {
+  int nHeight = 50;
+  int nWidth = 110;
+  int i;
+  
+  pApp->clearDisplay();
+  pApp->setCursor(0, 0);
+  pApp->writeSTR("Y");
+  pApp->drawLine(8, 2, 8, 2+nHeight, NXCTRL_ON);
+  pApp->drawLine(8, nHeight+2, 8+nWidth, 2+nHeight, NXCTRL_ON);
+  pApp->setCursor(8+nWidth+2, nHeight);
+  pApp->writeSTR("X");
+  pApp->updateDisplay();
+
+  for (i = 0; i < 110; i++) {
+    int nADC = pApp->analogRead(NXCTRL_A3);
+    nADC = (int)((nADC / 4095.0) * 50);
+    //pApp->drawLine(8 + 1 + i, nHeight - nADC + 2,
+    //               8 + 1 + i, 2 + nHeight, NXCTRL_ON);
+    pApp->drawPixel(8 + 1 + i, nHeight - nADC + 2, NXCTRL_ON);
+    pApp->updateDisplay();
+    pApp->sleep(10, 0);
+  }
+
+  pApp->setCursor(0, 7*FONT_HEIGHT+1);
+  pApp->writeSTR(" PRESS EXEC TO EXIT");
+  pApp->updateDisplay();
+
+  EXEC_BUTTON_STATE = NXCTRL_LOW;
+  while (EXEC_BUTTON_STATE == NXCTRL_LOW) {
+    pApp->sleep(100, 0);
+    EXEC_BUTTON_STATE = pApp->digitalRead(EXEC_BUTTON_BANK, EXEC_BUTTON_PIN);
+  }
+}
+
+static NXCTRL_VOID
 displayPeriInfo (LPNXCTRLAPP pApp) {
   register int i, n = HCSR04_MAX_CNT;
   float fs = 0;
@@ -481,11 +518,14 @@ displayMenu (LPNXCTRLAPP pApp) {
 
   if (MENU_IDX < 5)
     pApp->writeSTR(mkMenuSTR(rch, "SYSTEM>>", MENU_IDX_SYSTEM_MENU));
-  pApp->writeSTR(mkMenuSTR(rch, "UPDATE INFO", MENU_IDX_UPDATE_MENU));
+  if (MENU_IDX < 6)
+    pApp->writeSTR(mkMenuSTR(rch, "UPDATE INFO", MENU_IDX_UPDATE_MENU));
   pApp->writeSTR(mkMenuSTR(rch, "P8:13 PWM(LED)", MENU_IDX_P8_13_PWM_MENU));
   pApp->writeSTR(mkMenuSTR(rch, "P8:19 PWM(SERVO)", MENU_IDX_P8_19_PWM_MENU));
   pApp->writeSTR(mkMenuSTR(rch, "SPIDEV:2(AK8448)", MENU_IDX_AK8448_MENU));
   if (MENU_IDX >= 5)
+    pApp->writeSTR(mkMenuSTR(rch, "TRACE A3", MENU_IDX_TR_A3_MENU));
+  if (MENU_IDX >= 6)
     pApp->writeSTR(mkMenuSTR(rch, "EXIT MENU", MENU_IDX_EXIT_MENU));
 
   pApp->updateDisplay();
@@ -577,6 +617,11 @@ NXCTRLAPP_run (LPNXCTRLAPP pApp) {
         case MENU_IDX_AK8448_MENU:
           IN_MENU = NXCTRL_FALSE;
           runAK8448(pApp);
+          displayPeriInfo(pApp);
+          break;
+        case MENU_IDX_TR_A3_MENU:
+          IN_MENU = NXCTRL_FALSE;
+          traceA3(pApp);
           displayPeriInfo(pApp);
           break;
         default:
