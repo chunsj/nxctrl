@@ -91,7 +91,7 @@
 #define AKPIN8                      NXCTRL_PIN27
 #define AKPIN9                      NXCTRL_PIN29
 #define AKCLK                       NXCTRL_PIN28
-#define AKADCK                      NXCTRL_PIN21
+#define AKADCK                      NXCTRL_PIN16
 
 static NXCTRL_BOOL                  MENU_BUTTON_STATE = NXCTRL_LOW;
 static NXCTRL_BOOL                  EXEC_BUTTON_STATE = NXCTRL_LOW;
