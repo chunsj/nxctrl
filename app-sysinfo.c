@@ -272,7 +272,7 @@ NXCTRLAPP_run (LPNXCTRLAPP pApp) {
           pApp->setCursor(3*FONT_WIDTH, 3*FONT_HEIGHT);
           pApp->writeSTR("SYNCING DATA...");
           pApp->updateDisplay();
-          system("sudo -u chunsj /home/chunsj/bin/bkhome");
+          system("sudo -u chunsj -i /home/chunsj/bin/bkhome");
           IN_MENU = NXCTRL_FALSE;
           displaySysInfo(pApp);
           break;
@@ -281,7 +281,7 @@ NXCTRLAPP_run (LPNXCTRLAPP pApp) {
           pApp->setCursor(3*FONT_WIDTH, 3*FONT_HEIGHT);
           pApp->writeSTR("SYNCING DATA...");
           pApp->updateDisplay();
-          system("sudo -u chunsj /home/chunsj/bin/bkcastle");
+          system("sudo -u chunsj -i /home/chunsj/bin/bkcastle");
           IN_MENU = NXCTRL_FALSE;
           displaySysInfo(pApp);
           break;
@@ -290,7 +290,7 @@ NXCTRLAPP_run (LPNXCTRLAPP pApp) {
           pApp->setCursor(2*FONT_WIDTH, 3*FONT_HEIGHT);
           pApp->writeSTR("STARTING NREPL...");
           pApp->updateDisplay();
-          system("sudo -u chunsj /home/chunsj/bin/ml-repl&");
+          system("sudo -u chunsj -i /home/chunsj/bin/ml-repl&");
           pApp->sleep(4000, 0);
           IN_MENU = NXCTRL_FALSE;
           displaySysInfo(pApp);

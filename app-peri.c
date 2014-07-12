@@ -91,6 +91,7 @@
 #define AKPIN8                      NXCTRL_PIN27
 #define AKPIN9                      NXCTRL_PIN29
 #define AKCLK                       NXCTRL_PIN28
+#define AKADCK                      NXCTRL_PIN21
 
 static NXCTRL_BOOL                  MENU_BUTTON_STATE = NXCTRL_LOW;
 static NXCTRL_BOOL                  EXEC_BUTTON_STATE = NXCTRL_LOW;
@@ -453,9 +454,9 @@ readAK8448 (LPNXCTRLAPP pApp) {
   for (j = 0; j < 6; j++) {
     pApp->setCursor(0, j*FONT_HEIGHT);
 
-    pApp->digitalWrite(AKBANK, AKCLK, NXCTRL_LOW);
+    pApp->digitalWrite(AKBANK, AKADCK, NXCTRL_LOW);
     pApp->sleep(50, 0);
-    pApp->digitalWrite(AKBANK, AKCLK, NXCTRL_HIGH);
+    pApp->digitalWrite(AKBANK, AKADCK, NXCTRL_HIGH);
     pApp->sleep(50, 0);
     readAK8448Pins(pApp, rbRes);
 
@@ -464,9 +465,9 @@ readAK8448 (LPNXCTRLAPP pApp) {
     pApp->writeSTR(" ");
     pApp->updateDisplay();
     
-    pApp->digitalWrite(AKBANK, AKCLK, NXCTRL_HIGH);
+    pApp->digitalWrite(AKBANK, AKADCK, NXCTRL_HIGH);
     pApp->sleep(50, 0);
-    pApp->digitalWrite(AKBANK, AKCLK, NXCTRL_LOW);
+    pApp->digitalWrite(AKBANK, AKADCK, NXCTRL_LOW);
     pApp->sleep(50, 0);
     readAK8448Pins(pApp, rbRes);
 
@@ -628,6 +629,7 @@ NXCTRLAPP_init (LPNXCTRLAPP pApp) {
   pApp->pinMux(AKBANK, AKPIN8, NXCTRL_MODE7, NXCTRL_PULLDN, NXCTRL_LOW);
   pApp->pinMux(AKBANK, AKPIN9, NXCTRL_MODE7, NXCTRL_PULLDN, NXCTRL_LOW);
   pApp->pinMux(AKBANK, AKCLK, NXCTRL_MODE7, NXCTRL_PULLDN, NXCTRL_LOW);
+  pApp->pinMux(AKBANK, AKADCK, NXCTRL_MODE7, NXCTRL_PULLDN, NXCTRL_LOW);
 
   pApp->pinMode(AKBANK, AKPIN0, NXCTRL_INPUT);
   pApp->pinMode(AKBANK, AKPIN1, NXCTRL_INPUT);
@@ -640,6 +642,7 @@ NXCTRLAPP_init (LPNXCTRLAPP pApp) {
   pApp->pinMode(AKBANK, AKPIN8, NXCTRL_INPUT);
   pApp->pinMode(AKBANK, AKPIN9, NXCTRL_INPUT);
   pApp->pinMode(AKBANK, AKCLK, NXCTRL_OUTPUT);
+  pApp->pinMode(AKBANK, AKADCK, NXCTRL_OUTPUT);
 
   MENU_BUTTON_STATE = pApp->digitalRead(MENU_BUTTON_BANK, MENU_BUTTON_PIN);
   EXEC_BUTTON_STATE = pApp->digitalRead(EXEC_BUTTON_BANK, EXEC_BUTTON_PIN);
