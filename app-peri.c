@@ -46,7 +46,7 @@
 #define DPY_IDLE_COUNT_MAX          300
 #define MIN_ACTION_DURATION         200
 
-#define MENU_IDX_COUNT              8
+#define MENU_IDX_COUNT              9
 
 #define MENU_IDX_SYSTEM_MENU        0
 #define MENU_IDX_UPDATE_MENU        1
@@ -55,7 +55,8 @@
 #define MENU_IDX_AK8448_CFG_MENU    4
 #define MENU_IDX_AK8448_READ_MENU   5
 #define MENU_IDX_TR_A3_MENU         6
-#define MENU_IDX_EXIT_MENU          7
+#define MENU_IDX_DCMOTOR_MENU       7
+#define MENU_IDX_EXIT_MENU          8
 
 #define PRU_NUM                     PRU0
 #define PRU_PATH                    "/usr/bin/ctrl-app.bin"
@@ -320,6 +321,18 @@ traceA3 (LPNXCTRLAPP pApp) {
     pApp->sleep(100, 0);
     EXEC_BUTTON_STATE = pApp->digitalRead(EXEC_BUTTON_BANK, EXEC_BUTTON_PIN);
   }
+}
+
+static NXCTRL_VOID
+dcMotorTest (LPNXCTRLAPP pApp) {
+  pApp->clearDisplay();
+  pApp->setCursor(0, 3*FONT_HEIGHT);
+  pApp->writeSTR("    DC MOTOR DRV");
+  pApp->setCursor(0, 4*FONT_HEIGHT + 2);
+  pApp->writeSTR("    H-BRIGDE DRV");
+  pApp->updateDisplay();
+
+  pApp->sleep(4000, 0);
 }
 
 static NXCTRL_VOID
@@ -596,13 +609,16 @@ displayMenu (LPNXCTRLAPP pApp) {
     pApp->writeSTR(mkMenuSTR(rch, "UPDATE INFO", MENU_IDX_UPDATE_MENU));
   if (MENU_IDX < 7)
     pApp->writeSTR(mkMenuSTR(rch, "P8:13 PWM(LED)", MENU_IDX_P8_13_PWM_MENU));
-  pApp->writeSTR(mkMenuSTR(rch, "P8:19 PWM(SERVO)", MENU_IDX_P8_19_PWM_MENU));
+  if (MENU_IDX < 8)
+    pApp->writeSTR(mkMenuSTR(rch, "P8:19 PWM(SERVO)", MENU_IDX_P8_19_PWM_MENU));
   pApp->writeSTR(mkMenuSTR(rch, "SPIDEV:2(AK8448)", MENU_IDX_AK8448_CFG_MENU));
   if (MENU_IDX >= 5)
     pApp->writeSTR(mkMenuSTR(rch, "AK8448 TEST", MENU_IDX_AK8448_READ_MENU));
   if (MENU_IDX >= 6)
     pApp->writeSTR(mkMenuSTR(rch, "TRACE A3", MENU_IDX_TR_A3_MENU));
   if (MENU_IDX >= 7)
+    pApp->writeSTR(mkMenuSTR(rch, "DC MOTOR DRV", MENU_IDX_DCMOTOR_MENU));
+  if (MENU_IDX >= 8)
     pApp->writeSTR(mkMenuSTR(rch, "EXIT MENU", MENU_IDX_EXIT_MENU));
 
   pApp->updateDisplay();
@@ -730,6 +746,11 @@ NXCTRLAPP_run (LPNXCTRLAPP pApp) {
         case MENU_IDX_TR_A3_MENU:
           IN_MENU = NXCTRL_FALSE;
           traceA3(pApp);
+          displayPeriInfo(pApp);
+          break;
+        case MENU_IDX_DCMOTOR_MENU:
+          IN_MENU = NXCTRL_FALSE;
+          dcMotorTest(pApp);
           displayPeriInfo(pApp);
           break;
         default:
