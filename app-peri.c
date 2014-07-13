@@ -94,6 +94,11 @@
 #define AKCLK                       NXCTRL_PIN28
 #define AKADCK                      NXCTRL_PIN16
 
+#define DCBANK                      NXCTRL_P8
+#define DCCTRL1                     NXCTRL_PIN26
+#define DCCTRL2                     NXCTRL_PIN30
+#define DCENABLE                    NXCTRL_PIN19
+
 static NXCTRL_BOOL                  MENU_BUTTON_STATE = NXCTRL_LOW;
 static NXCTRL_BOOL                  EXEC_BUTTON_STATE = NXCTRL_LOW;
 static unsigned int                 DPY_IDLE_COUNT = 0;
@@ -332,7 +337,25 @@ dcMotorTest (LPNXCTRLAPP pApp) {
   pApp->writeSTR("    H-BRIGDE DRV");
   pApp->updateDisplay();
 
-  pApp->sleep(4000, 0);
+  pApp->digitalWrite(DCBANK, DCCTRL1, NXCTRL_HIGH);
+  pApp->digitalWrite(DCBANK, DCCTRL2, NXCTRL_LOW);
+  pApp->analogWrite(DCBANK, DCENABLE, 540);
+  pApp->sleep(3000, 0);
+
+  pApp->digitalWrite(DCBANK, DCCTRL1, NXCTRL_LOW);
+  pApp->digitalWrite(DCBANK, DCCTRL2, NXCTRL_LOW);
+  pApp->analogWrite(DCBANK, DCENABLE, 0);
+  pApp->sleep(1000, 0);
+
+  pApp->digitalWrite(DCBANK, DCCTRL1, NXCTRL_LOW);
+  pApp->digitalWrite(DCBANK, DCCTRL2, NXCTRL_HIGH);
+  pApp->analogWrite(DCBANK, DCENABLE, 540);
+  pApp->sleep(3000, 0);
+
+  pApp->digitalWrite(DCBANK, DCCTRL1, NXCTRL_LOW);
+  pApp->digitalWrite(DCBANK, DCCTRL2, NXCTRL_LOW);
+  pApp->analogWrite(DCBANK, DCENABLE, 0);
+  pApp->sleep(1000, 0);
 }
 
 static NXCTRL_VOID
@@ -659,6 +682,13 @@ NXCTRLAPP_init (LPNXCTRLAPP pApp) {
   pApp->pinMode(AKBANK, AKPIN9, NXCTRL_INPUT);
   pApp->pinMode(AKBANK, AKCLK, NXCTRL_OUTPUT);
   pApp->pinMode(AKBANK, AKADCK, NXCTRL_OUTPUT);
+
+  pApp->pinMux(DCBANK, DCCTRL1, NXCTRL_MODE7, NXCTRL_PULLDN, NXCTRL_LOW);
+  pApp->pinMux(DCBANK, DCCTRL1, NXCTRL_MODE7, NXCTRL_PULLDN, NXCTRL_LOW);
+  //pApp->pinMux(DCBANK, DCENABLE, NXCTRL_MODE4, NXCTRL_PULLDN, NXCTRL_LOW); // same as PWM2
+
+  pApp->pinMode(DCBANK, DCCTRL1, NXCTRL_OUTPUT);
+  pApp->pinMode(DCBANK, DCCTRL2, NXCTRL_OUTPUT);
 
   MENU_BUTTON_STATE = pApp->digitalRead(MENU_BUTTON_BANK, MENU_BUTTON_PIN);
   EXEC_BUTTON_STATE = pApp->digitalRead(EXEC_BUTTON_BANK, EXEC_BUTTON_PIN);
