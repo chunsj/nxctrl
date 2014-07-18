@@ -99,6 +99,9 @@
 #define DCCTRL2                     NXCTRL_PIN30
 #define DCENABLE                    NXCTRL_PIN19
 
+#define CHART_HEIGHT                50
+#define CHART_WIDTH                 110
+
 static NXCTRL_BOOL                  MENU_BUTTON_STATE = NXCTRL_LOW;
 static NXCTRL_BOOL                  EXEC_BUTTON_STATE = NXCTRL_LOW;
 static unsigned int                 DPY_IDLE_COUNT = 0;
@@ -294,32 +297,62 @@ getFetchDistance (NXCTRL_VOID) {
 
 static NXCTRL_VOID
 traceA3 (LPNXCTRLAPP pApp) {
-  int nHeight = 50;
-  int nWidth = 110;
-  int i;
+  register int i = 0, j;
+  int rnADC[CHART_WIDTH];
   
   pApp->clearDisplay();
   pApp->setCursor(0, 0);
   pApp->writeSTR("Y");
-  pApp->drawLine(8, 2, 8, 2+nHeight, NXCTRL_ON);
-  pApp->drawLine(8, nHeight+2, 8+nWidth, 2+nHeight, NXCTRL_ON);
-  pApp->setCursor(8+nWidth+2, nHeight);
+  pApp->drawLine(8, 2, 8, 2+CHART_HEIGHT, NXCTRL_ON);
+  pApp->drawLine(8, CHART_HEIGHT+2, 8+CHART_WIDTH, 2+CHART_HEIGHT, NXCTRL_ON);
+  pApp->setCursor(8+CHART_WIDTH+2, CHART_HEIGHT);
   pApp->writeSTR("X");
   pApp->updateDisplay();
 
-  for (i = 0; i < 110; i++) {
+  pApp->setCursor(0, 7*FONT_HEIGHT+1);
+  pApp->writeSTR(" PRESS MENU TO STOP");
+  pApp->updateDisplay();
+
+  MENU_BUTTON_STATE = NXCTRL_LOW;
+
+  while (1) {
     int nADC = pApp->analogRead(NXCTRL_A3);
     nADC = (int)((nADC / 4095.0) * 50);
-    //pApp->drawLine(8 + 1 + i, nHeight - nADC + 2,
-    //               8 + 1 + i, 2 + nHeight, NXCTRL_ON);
-    pApp->drawPixel(8 + 1 + i, nHeight - nADC + 2, NXCTRL_ON);
-    pApp->updateDisplay();
+    
+    if (i >= CHART_WIDTH) {
+      i = CHART_WIDTH;
+
+      MENU_BUTTON_STATE = pApp->digitalRead(MENU_BUTTON_BANK, MENU_BUTTON_PIN);
+      if (MENU_BUTTON_STATE == NXCTRL_HIGH) { break; }
+      
+      for (j = 0; j < CHART_WIDTH - 1; j++) {
+        if (rnADC[j])
+          pApp->drawPixel(8 + 1 + j, CHART_HEIGHT - rnADC[j] + 2, NXCTRL_OFF);
+        rnADC[j] = rnADC[j + 1];
+        pApp->drawPixel(8 + 1 + j, CHART_HEIGHT - rnADC[j] + 2, NXCTRL_ON);
+      }
+      if (rnADC[j])
+        pApp->drawPixel(8 + 1 + j, CHART_HEIGHT - rnADC[j] + 2, NXCTRL_OFF);
+      rnADC[j] = nADC;
+      pApp->drawPixel(8 + 1 + j, CHART_HEIGHT - rnADC[j] + 2, NXCTRL_ON);
+      pApp->updateDisplay();
+    } else {
+      rnADC[i] = nADC;
+      //pApp->drawLine(8 + 1 + i, CHART_HEIGHT - nADC + 2,
+      //               8 + 1 + i, 2 + CHART_HEIGHT, NXCTRL_ON);
+      pApp->drawPixel(8 + 1 + i, CHART_HEIGHT - rnADC[i] + 2, NXCTRL_ON);
+      pApp->updateDisplay();
+    }
+    
     pApp->sleep(10, 0);
+    i++;
   }
 
   pApp->setCursor(0, 7*FONT_HEIGHT+1);
   pApp->writeSTR(" PRESS EXEC TO EXIT");
   pApp->updateDisplay();
+
+  pApp->sleep(1000, 0);
 
   EXEC_BUTTON_STATE = NXCTRL_LOW;
   while (EXEC_BUTTON_STATE == NXCTRL_LOW) {
