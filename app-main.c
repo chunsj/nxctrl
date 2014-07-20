@@ -62,6 +62,7 @@ static unsigned char                MENU_IDX = MENU_IDX_SYSTEM_MENU;
 static NXCTRL_BOOL                  IN_MENU = NXCTRL_FALSE;
 static unsigned long long           LAST_ACTION_TIME = 0;
 static unsigned int                 DPY_UPDATE_TIME = 10000;
+static float                        CPUTEMP = 0;
 
 static unsigned int
 getCPUTemp (NXCTRL_VOID) {
@@ -107,7 +108,8 @@ getTemperature (LPNXCTRLAPP pApp) {
       fTmp -= (fCPUTemp > CPUTEMP_BASE) ? (fCPUTemp - CPUTEMP_BASE) : 0;
     else
       fTmp -= (fCPUTemp > CPUTEMP_BASE) ? (fCPUTemp - CPUTEMP_BASE + SSG_DELTA) : 0;
-    
+
+    CPUTEMP = fCPUTemp;
     if (fTmp < -30 || fTmp > 50) fTmp = 0;
 
     fTemp = fTmp;
@@ -133,7 +135,7 @@ canAction (NXCTRL_VOID) {
 }
 
 static NXCTRL_VOID
-displayTime (LPNXCTRLAPP pApp) {
+displayInfo (LPNXCTRLAPP pApp) {
   if (DPY_UPDATE_TIME < 9)
     return;
   else {
@@ -157,8 +159,8 @@ displayTime (LPNXCTRLAPP pApp) {
     pApp->clearDisplay();
     pApp->setCursor(0, FONT_HEIGHT*2);
     pApp->writeSTR(rch);
-    pApp->setCursor(2*FONT_WIDTH+4, FONT_HEIGHT*4);
-    sprintf(rch, "TEMPERATURE: %2.0fC", fTmp);
+    pApp->setCursor(3*FONT_WIDTH+0, FONT_HEIGHT*4);
+    sprintf(rch, "TEMP: %2.0fC / %2.0fC", fTmp, CPUTEMP);
     pApp->writeSTR(rch);
 
     pApp->drawLine(2*FONT_WIDTH, FONT_HEIGHT*5+5, 127-2*FONT_WIDTH, FONT_HEIGHT*5+5, NXCTRL_ON);
@@ -265,7 +267,7 @@ NXCTRLAPP_run (LPNXCTRLAPP pApp) {
   updateExecButtonState(pApp);
 
   if (!IN_MENU)
-    displayTime(pApp);
+    displayInfo(pApp);
 
   if (MENU_BUTTON_STATE != NXCTRL_HIGH && EXEC_BUTTON_STATE != NXCTRL_HIGH) {
     DPY_IDLE_COUNT++;
@@ -297,7 +299,7 @@ NXCTRLAPP_run (LPNXCTRLAPP pApp) {
         switch (MENU_IDX) {
         case MENU_IDX_EXIT_MENU:
           IN_MENU = NXCTRL_FALSE;
-          displayTime(pApp);
+          displayInfo(pApp);
           break;
         case MENU_IDX_SYSTEM_MENU:
           pApp->nCmd = 1;
@@ -309,7 +311,7 @@ NXCTRLAPP_run (LPNXCTRLAPP pApp) {
           pApp->updateDisplay();
           system("/usr/bin/ntpd -gq");
           IN_MENU = NXCTRL_FALSE;
-          displayTime(pApp);
+          displayInfo(pApp);
           break;
         default:
           break;
