@@ -133,9 +133,9 @@ displayMenu (LPNXCTRLAPP pApp) {
   if (MENU_IDX < 5)
     pApp->writeSTR(mkAppMenuSTR(rch, "MAIN", MENU_IDX_GO_MAIN));
   if (MENU_IDX < 6)
-    pApp->writeSTR(mkAppMenuSTR(rch, "CONN.INFO", MENU_IDX_GO_CONNINFO));
+    pApp->writeSTR(mkAppMenuSTR(rch, "CONNECTION", MENU_IDX_GO_CONNINFO));
   if (MENU_IDX < 7)
-    pApp->writeSTR(mkAppMenuSTR(rch, "SYS.INFO", MENU_IDX_GO_SYSINFO));
+    pApp->writeSTR(mkAppMenuSTR(rch, "SYSTEM", MENU_IDX_GO_SYSINFO));
   pApp->writeSTR(mkAppMenuSTR(rch, "PERI.DRV", MENU_IDX_GO_PERI));
   pApp->writeSTR(mkAppMenuSTR(rch, "SPARK CORE", MENU_IDX_GO_SPARK));
   if (MENU_IDX >= 5)

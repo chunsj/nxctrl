@@ -45,8 +45,8 @@
 #define MENU_IDX_UPDATE_MENU        1
 #define MENU_IDX_BKHOME_MENU        2
 #define MENU_IDX_BKCASTLE_MENU      3
-#define MENU_IDX_RUN_MLREPL         4
-#define MENU_IDX_RUN_ORION          5
+#define MENU_IDX_RUN_ORION          4
+#define MENU_IDX_RUN_MLREPL         5
 #define MENU_IDX_EXIT_MENU          6
 
 static NXCTRL_BOOL                  MENU_BUTTON_STATE = NXCTRL_LOW;
@@ -194,12 +194,12 @@ displayMenu (LPNXCTRLAPP pApp) {
   if (MENU_IDX < 5)
     pApp->writeSTR(mkMenuSTR(rch, "SYSTEM>>", MENU_IDX_SYSTEM_MENU));
   if (MENU_IDX < 6)
-  pApp->writeSTR(mkMenuSTR(rch, "UPDATE INFO", MENU_IDX_UPDATE_MENU));
+    pApp->writeSTR(mkMenuSTR(rch, "UPDATE INFO", MENU_IDX_UPDATE_MENU));
   pApp->writeSTR(mkMenuSTR(rch, "BACKUP (@HOME)", MENU_IDX_BKHOME_MENU));
   pApp->writeSTR(mkMenuSTR(rch, "BACKUP (@CSVR)", MENU_IDX_BKCASTLE_MENU));
-  pApp->writeSTR(mkMenuSTR(rch, "START ML REPL", MENU_IDX_RUN_MLREPL));
+  pApp->writeSTR(mkMenuSTR(rch, "START ORION", MENU_IDX_RUN_ORION));
   if (MENU_IDX >= 5)
-    pApp->writeSTR(mkMenuSTR(rch, "START ORION", MENU_IDX_RUN_ORION));
+    pApp->writeSTR(mkMenuSTR(rch, "START ML REPL", MENU_IDX_RUN_MLREPL));
   if (MENU_IDX >= 6)
     pApp->writeSTR(mkMenuSTR(rch, "EXIT MENU", MENU_IDX_EXIT_MENU));
 
