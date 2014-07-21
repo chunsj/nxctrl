@@ -36,6 +36,7 @@
 #define CPUTEMP_BASE                56.0
 #define CPUTEMP_SSG                 60.0
 #define SSG_DELTA                   0.00
+#define TMP_MAX_DELTA               9.00
 
 #define TEMP_UPDATE_COUNT           20
 
@@ -106,8 +107,12 @@ getTemperature (LPNXCTRLAPP pApp) {
     fCPUTemp = (fCPUTemp > 120) ? (fCPUTemp - 74) : fCPUTemp;
     if (fCPUTemp < CPUTEMP_SSG)
       fTmp -= (fCPUTemp > CPUTEMP_BASE) ? (fCPUTemp - CPUTEMP_BASE) : 0;
-    else
-      fTmp -= (fCPUTemp > CPUTEMP_BASE) ? (fCPUTemp - CPUTEMP_BASE + SSG_DELTA) : 0;
+    else {
+      float fD = (fCPUTemp > CPUTEMP_BASE) ?
+        (fCPUTemp - CPUTEMP_BASE + SSG_DELTA) : 0;
+      if (fD > TMP_MAX_DELTA) fD = TMP_MAX_DELTA;
+      fTmp -= fD;
+    }
 
     CPUTEMP = fCPUTemp;
     if (fTmp < -30 || fTmp > 50) fTmp = 0;
