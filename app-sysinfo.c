@@ -187,12 +187,12 @@ displayMenu (LPNXCTRLAPP pApp) {
   pApp->clearDisplay();
 
   pApp->setCursor(0, 0);
-  pApp->writeSTR("SYS.INFO");
-  pApp->drawLine(49, 6, 127, 6, NXCTRL_ON);
+  pApp->writeSTR("SYSTEM");
+  pApp->drawLine(37, 6, 127, 6, NXCTRL_ON);
   pApp->setCursor(0, 16);
 
   if (MENU_IDX < 5)
-    pApp->writeSTR(mkMenuSTR(rch, "SYSTEM>>", MENU_IDX_SYSTEM_MENU));
+    pApp->writeSTR(mkMenuSTR(rch, "TC>>", MENU_IDX_SYSTEM_MENU));
   if (MENU_IDX < 6)
     pApp->writeSTR(mkMenuSTR(rch, "UPDATE INFO", MENU_IDX_UPDATE_MENU));
   pApp->writeSTR(mkMenuSTR(rch, "BACKUP (@HOME)", MENU_IDX_BKHOME_MENU));

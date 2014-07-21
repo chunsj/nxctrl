@@ -398,8 +398,8 @@ displayPeriInfo (LPNXCTRLAPP pApp) {
   char rch[22];
 
   pApp->clearDisplay();
-  pApp->setCursor(3*FONT_WIDTH, 0);
-  pApp->writeSTR("PERIPHERAL DRV.\n");
+  pApp->setCursor(5*FONT_WIDTH, 0);
+  pApp->writeSTR("PERIPHERAL\n");
 
   pApp->setCursor(0, FONT_HEIGHT + 8);
 
@@ -655,12 +655,12 @@ displayMenu (LPNXCTRLAPP pApp) {
   pApp->clearDisplay();
 
   pApp->setCursor(0, 0);
-  pApp->writeSTR("PERI.DRV");
-  pApp->drawLine(49, 6, 127, 6, NXCTRL_ON);
+  pApp->writeSTR("PERIPHERAL");
+  pApp->drawLine(61, 6, 127, 6, NXCTRL_ON);
   pApp->setCursor(0, 16);
 
   if (MENU_IDX < 5)
-    pApp->writeSTR(mkMenuSTR(rch, "SYSTEM>>", MENU_IDX_SYSTEM_MENU));
+    pApp->writeSTR(mkMenuSTR(rch, "TC>>", MENU_IDX_SYSTEM_MENU));
   if (MENU_IDX < 6)
     pApp->writeSTR(mkMenuSTR(rch, "UPDATE INFO", MENU_IDX_UPDATE_MENU));
   if (MENU_IDX < 7)

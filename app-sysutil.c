@@ -126,8 +126,8 @@ displayMenu (LPNXCTRLAPP pApp) {
   pApp->clearDisplay();
 
   pApp->setCursor(0, 0);
-  pApp->writeSTR("SYSTEM");
-  pApp->drawLine(37, 6, 127, 6, NXCTRL_ON);
+  pApp->writeSTR("TC");
+  pApp->drawLine(13, 6, 127, 6, NXCTRL_ON);
   pApp->setCursor(0, 16);
 
   if (MENU_IDX < 5)
@@ -136,7 +136,7 @@ displayMenu (LPNXCTRLAPP pApp) {
     pApp->writeSTR(mkAppMenuSTR(rch, "CONNECTION", MENU_IDX_GO_CONNINFO));
   if (MENU_IDX < 7)
     pApp->writeSTR(mkAppMenuSTR(rch, "SYSTEM", MENU_IDX_GO_SYSINFO));
-  pApp->writeSTR(mkAppMenuSTR(rch, "PERI.DRV", MENU_IDX_GO_PERI));
+  pApp->writeSTR(mkAppMenuSTR(rch, "PERIPHERAL", MENU_IDX_GO_PERI));
   pApp->writeSTR(mkAppMenuSTR(rch, "SPARK CORE", MENU_IDX_GO_SPARK));
   if (MENU_IDX >= 5)
     pApp->writeSTR(mkMenuSTR(rch, "SCREEN OFF", MENU_IDX_MENU_OFF));
