@@ -46,8 +46,9 @@
 #define MENU_IDX_BKHOME_MENU        2
 #define MENU_IDX_BKCASTLE_MENU      3
 #define MENU_IDX_RUN_ORION          4
-#define MENU_IDX_RUN_MLREPL         5
-#define MENU_IDX_EXIT_MENU          6
+#define MENU_IDX_RUN_TTY            5
+#define MENU_IDX_RUN_MLREPL         6
+#define MENU_IDX_EXIT_MENU          7
 
 static NXCTRL_BOOL                  MENU_BUTTON_STATE = NXCTRL_LOW;
 static NXCTRL_BOOL                  EXEC_BUTTON_STATE = NXCTRL_LOW;
@@ -195,12 +196,15 @@ displayMenu (LPNXCTRLAPP pApp) {
     pApp->writeSTR(mkMenuSTR(rch, "TC>>", MENU_IDX_SYSTEM_MENU));
   if (MENU_IDX < 6)
     pApp->writeSTR(mkMenuSTR(rch, "UPDATE INFO", MENU_IDX_UPDATE_MENU));
-  pApp->writeSTR(mkMenuSTR(rch, "BACKUP (@HOME)", MENU_IDX_BKHOME_MENU));
+  if (MENU_IDX < 7)
+    pApp->writeSTR(mkMenuSTR(rch, "BACKUP (@HOME)", MENU_IDX_BKHOME_MENU));
   pApp->writeSTR(mkMenuSTR(rch, "BACKUP (@CSVR)", MENU_IDX_BKCASTLE_MENU));
   pApp->writeSTR(mkMenuSTR(rch, "START ORION", MENU_IDX_RUN_ORION));
   if (MENU_IDX >= 5)
-    pApp->writeSTR(mkMenuSTR(rch, "START ML REPL", MENU_IDX_RUN_MLREPL));
+    pApp->writeSTR(mkMenuSTR(rch, "START TTY.JS", MENU_IDX_RUN_TTY));
   if (MENU_IDX >= 6)
+    pApp->writeSTR(mkMenuSTR(rch, "START ML REPL", MENU_IDX_RUN_MLREPL));
+  if (MENU_IDX >= 7)
     pApp->writeSTR(mkMenuSTR(rch, "EXIT MENU", MENU_IDX_EXIT_MENU));
 
   pApp->updateDisplay();
@@ -305,6 +309,16 @@ NXCTRLAPP_run (LPNXCTRLAPP pApp) {
           pApp->writeSTR("STARTING ORION...");
           pApp->updateDisplay();
           system("sudo -u chunsj -i /home/chunsj/bin/orion&");
+          pApp->sleep(2000, 0);
+          IN_MENU = NXCTRL_FALSE;
+          displaySysInfo(pApp);
+          break;
+        case MENU_IDX_RUN_TTY:
+          pApp->clearDisplay();
+          pApp->setCursor(1*FONT_WIDTH, 3*FONT_HEIGHT);
+          pApp->writeSTR("STARTING TTY.JS...");
+          pApp->updateDisplay();
+          system("sudo -u chunsj -i /home/chunsj/bin/tty");
           pApp->sleep(2000, 0);
           IN_MENU = NXCTRL_FALSE;
           displaySysInfo(pApp);
