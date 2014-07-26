@@ -1,7 +1,7 @@
 /*
  * NXCTRL BeagleBone Black Control Library
  *
- * BBB GPIO Pin Information
+ * BBB GPIO Pin Information - Used information from derekmolloy.ie
  *
  * Copyright (C) 2014 Sungjin Chun <chunsj@gmail.com>
  *
