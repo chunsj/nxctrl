@@ -471,21 +471,66 @@ displayGPSInfo (LPNXCTRLAPP pApp) {
         snprintf(rchLine, 25, "%s", rch);
         rchLine[25] = '\0';
         if (!strncasecmp("$GPGGA", rchLine, 6)) {
+#if 0
           pApp->setCursor(0, 14);
           pApp->writeSTR(rchLine+4);
           pApp->updateDisplay();
+#endif
         } else if (!strncasecmp("$GPGSA", rchLine, 6)) {
+#if 0
           pApp->setCursor(0, 24);
           pApp->writeSTR(rchLine+4);
           pApp->updateDisplay();
+#endif
         } else if (!strncasecmp("$GPRMC", rchLine, 6)) {
+#if 0
           pApp->setCursor(0, 34);
           pApp->writeSTR(rchLine+4);
           pApp->updateDisplay();
+#else
+          char *token;
+          char *pszSep = ", \r\n";
+          // $GPRMC
+          token = strtok(rch, pszSep);
+          // time
+          token = strtok(NULL, pszSep);
+          pApp->setCursor(0, 14);
+          pApp->writeSTR(token);
+          // status code 'A' for valid data
+          token = strtok(NULL, pszSep);
+          if (!strlen(token)) { // invalid data
+            pApp->updateDisplay();
+            return;
+          }
+          if (token[0] == 'V') { // void data
+            pApp->updateDisplay();
+            return;
+          }
+          // pos
+          token = strtok(NULL, pszSep);
+          pApp->setCursor(0, 24);
+          pApp->writeSTR(token);
+          token = strtok(NULL, pszSep);
+          pApp->writeSTR(token);
+          token = strtok(NULL, pszSep);
+          pApp->setCursor(0, 34);
+          pApp->writeSTR(token);
+          token = strtok(NULL, pszSep);
+          pApp->writeSTR(token);
+          // ground speed & direction
+          token = strtok(NULL, pszSep);
+          pApp->setCursor(0, 44);
+          pApp->writeSTR(token);
+          pApp->writeSTR(" ");
+          token = strtok(NULL, pszSep);
+          pApp->writeSTR(token);
+#endif
         } else if (!strncasecmp("$GPVTG", rchLine, 6)) {
+#if 0
           pApp->setCursor(0, 44);
           pApp->writeSTR(rchLine+4);
           pApp->updateDisplay();
+#endif
           pApp->sleep(500, 0);
         }
         rch[0] = '\0';
