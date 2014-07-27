@@ -1,4 +1,4 @@
-cscope 15 $HOME/workspace/nxctrl               0000816621
+cscope 15 $HOME/workspace/nxctrl               0000830559
 	@NXCTRL.c
 
 21 
@@ -22441,7 +22441,7 @@ pAµ
 
 49 
 	#MENU_IDX_COUNT
- 9
+ 10
 
 	)
 
@@ -22494,12 +22494,18 @@ pAµ
 	)
 
 59 
-	#MENU_IDX_EXIT_MENU
+	#MENU_IDX_PININFO_MENU
  8
 
 	)
 
-61 
+60 
+	#MENU_IDX_EXIT_MENU
+ 9
+
+	)
+
+62 
 	#PRU_NUM
  
 PRU0
@@ -22507,13 +22513,13 @@ PRU0
 
 	)
 
-62 
+63 
 	#PRU_PATH
  "/u§/bö/˘æ-≠p.bö"
 
 	)
 
-64 
+65 
 	#HCSR04_BANK
  
 NXCTRL_P8
@@ -22521,19 +22527,19 @@ NXCTRL_P8
 
 	)
 
-65 
+66 
 	#HCSR04_MAX_CNT
  1
 
 	)
 
-66 
+67 
 	#HCSR04_MAX_DIST
  100
 
 	)
 
-68 
+69 
 	#TRIGGER_PIN
  
 NXCTRL_PIN11
@@ -22541,7 +22547,7 @@ NXCTRL_PIN11
 
 	)
 
-69 
+70 
 	#ECHO_PIN
  
 NXCTRL_PIN15
@@ -22549,7 +22555,7 @@ NXCTRL_PIN15
 
 	)
 
-71 
+72 
 	#PWM1_BANK
  
 NXCTRL_P8
@@ -22557,7 +22563,7 @@ NXCTRL_P8
 
 	)
 
-72 
+73 
 	#PWM2_BANK
  
 NXCTRL_P8
@@ -22565,7 +22571,7 @@ NXCTRL_P8
 
 	)
 
-73 
+74 
 	#PWM1_PIN
  
 NXCTRL_PIN13
@@ -22573,7 +22579,7 @@ NXCTRL_PIN13
 
 	)
 
-74 
+75 
 	#PWM2_PIN
  
 NXCTRL_PIN19
@@ -22581,43 +22587,43 @@ NXCTRL_PIN19
 
 	)
 
-76 
+77 
 	#SPI_CS0
  
 NXCTRL_PIN28
 
 
-77 
+78 
 	#SPI_D1
  
 NXCTRL_PIN30
 
 
-78 
+79 
 	#SPI_D0
  
 NXCTRL_PIN29
 
 
-79 
+80 
 	#SPI_CLK
  
 NXCTRL_PIN31
 
 
-80 
+81 
 	#SPI_DEV
  "/dev/•idev2.0"
 
 	)
 
-81 
+82 
 	#DELAY_USEC
  0
 
 	)
 
-83 
+84 
 	#AKBANK
  
 NXCTRL_P8
@@ -22625,7 +22631,7 @@ NXCTRL_P8
 
 	)
 
-84 
+85 
 	#AKPIN0
  
 NXCTRL_PIN45
@@ -22633,7 +22639,7 @@ NXCTRL_PIN45
 
 	)
 
-85 
+86 
 	#AKPIN1
  
 NXCTRL_PIN46
@@ -22641,7 +22647,7 @@ NXCTRL_PIN46
 
 	)
 
-86 
+87 
 	#AKPIN2
  
 NXCTRL_PIN43
@@ -22649,7 +22655,7 @@ NXCTRL_PIN43
 
 	)
 
-87 
+88 
 	#AKPIN3
  
 NXCTRL_PIN44
@@ -22657,7 +22663,7 @@ NXCTRL_PIN44
 
 	)
 
-88 
+89 
 	#AKPIN4
  
 NXCTRL_PIN41
@@ -22665,7 +22671,7 @@ NXCTRL_PIN41
 
 	)
 
-89 
+90 
 	#AKPIN5
  
 NXCTRL_PIN42
@@ -22673,7 +22679,7 @@ NXCTRL_PIN42
 
 	)
 
-90 
+91 
 	#AKPIN6
  
 NXCTRL_PIN39
@@ -22681,7 +22687,7 @@ NXCTRL_PIN39
 
 	)
 
-91 
+92 
 	#AKPIN7
  
 NXCTRL_PIN40
@@ -22689,7 +22695,7 @@ NXCTRL_PIN40
 
 	)
 
-92 
+93 
 	#AKPIN8
  
 NXCTRL_PIN27
@@ -22697,7 +22703,7 @@ NXCTRL_PIN27
 
 	)
 
-93 
+94 
 	#AKPIN9
  
 NXCTRL_PIN29
@@ -22705,7 +22711,7 @@ NXCTRL_PIN29
 
 	)
 
-94 
+95 
 	#AKCLK
  
 NXCTRL_PIN28
@@ -22713,7 +22719,7 @@ NXCTRL_PIN28
 
 	)
 
-95 
+96 
 	#AKADCK
  
 NXCTRL_PIN16
@@ -22721,7 +22727,7 @@ NXCTRL_PIN16
 
 	)
 
-97 
+98 
 	#DCBANK
  
 NXCTRL_P8
@@ -22729,7 +22735,7 @@ NXCTRL_P8
 
 	)
 
-98 
+99 
 	#DCCTRL1
  
 NXCTRL_PIN26
@@ -22737,7 +22743,7 @@ NXCTRL_PIN26
 
 	)
 
-99 
+100 
 	#DCCTRL2
  
 NXCTRL_PIN30
@@ -22745,7 +22751,7 @@ NXCTRL_PIN30
 
 	)
 
-100 
+101 
 	#DCENABLE
  
 NXCTRL_PIN19
@@ -22753,19 +22759,19 @@ NXCTRL_PIN19
 
 	)
 
-102 
+103 
 	#CHART_HEIGHT
  50
 
 	)
 
-103 
+104 
 	#CHART_WIDTH
  110
 
 	)
 
-105 
+106 
 NXCTRL_BOOL
  
 	gMENU_BUTTON_STATE
@@ -22773,7 +22779,7 @@ NXCTRL_BOOL
 NXCTRL_LOW
 ;
 
-106 
+107 
 NXCTRL_BOOL
  
 	gEXEC_BUTTON_STATE
@@ -22781,17 +22787,17 @@ NXCTRL_BOOL
 NXCTRL_LOW
 ;
 
-107 
+108 
 	gDPY_IDLE_COUNT
  = 0;
 
-108 
+109 
 	gMENU_IDX
  = 
 MENU_IDX_SYSTEM_MENU
 ;
 
-109 
+110 
 NXCTRL_BOOL
  
 	gIN_MENU
@@ -22799,15 +22805,15 @@ NXCTRL_BOOL
 NXCTRL_FALSE
 ;
 
-110 
+111 
 	gLAST_ACTION_TIME
  = 0;
 
-112 
+113 
 ölöe
  
 
-113 
+114 
 	$•rötINT16
  (*
 rch
@@ -22815,7 +22821,7 @@ rch
 v16
 ) {
 
-114 
+115 
 INT16
  
 v
@@ -22823,13 +22829,13 @@ v
 v16
  = v16 };
 
-115 
+116 
 	`•rötf
 (
 rch
 , "%d%d%d%d %d%d%d%d %d%d%d%d %d%d%d%d",
 
-116 
+117 
 v
 .
 bô
@@ -22847,7 +22853,7 @@ b4
 b5
 ,
 
-117 
+118 
 v
 .
 bô
@@ -22865,7 +22871,7 @@ b10
 b11
 ,
 
-118 
+119 
 v
 .
 bô
@@ -22879,11 +22885,11 @@ b14
 b15
 );
 
-119 
+120 
 	}
 }
 
-122 
+123 
 	$__SPI_ªad
  (
 LPNXCTRLAPP
@@ -22893,79 +22899,79 @@ pAµ
 nFD
 ) {
 
-123 
+124 
 nSètus
 ;
 
-124 
+125 
 •i_ioc_å™s„r
  
 x„r
 [2];
 
-125 
+126 
 rchTXD©a
 [2];
 
-126 
+127 
 rchRXD©a
 [2];
 
-127 
+128 
 rch
 [22];
 
-130 
+131 
 	`mem£t
 (
 x„r
 , 0, (xfer));
 
-132 
-rchTXD©a
-[0] = 0;
-
 133 
 rchTXD©a
-[1] = 0;
+[0] = 0;
 
 134 
-rchRXD©a
-[0] = 0;
+rchTXD©a
+[1] = 0;
 
 135 
 rchRXD©a
+[0] = 0;
+
+136 
+rchRXD©a
 [1] = 0;
 
-137 
+138 
 rchTXD©a
 [0] |
 BIT7
-;
-
-139 
-x„r
-[0].
-tx_buf
- = ()
-rchTXD©a
 ;
 
 140 
 x„r
 [0].
-rx_buf
+tx_buf
  = ()
-rchRXD©a
+rchTXD©a
 ;
 
 141 
 x„r
 [0].
+rx_buf
+ = ()
+rchRXD©a
+;
+
+142 
+x„r
+[0].
 Àn
  = 2;
 
-142 
+143 
 x„r
 [0].
 dñay_u£cs
@@ -22973,7 +22979,7 @@ dñay_u£cs
 DELAY_USEC
 ;
 
-144 
+145 
 nSètus
  = 
 	`io˘l
@@ -22985,21 +22991,21 @@ nFD
 x„r
 );
 
-145 i‡(
+146 i‡(
 nSètus
  < 0) {
 
-146 
+147 
 	`≥º‹
 ("SPI_IOC_MESSAGE");
 
-150 
+151 
 pAµ
 ->
 	`wrôeSTR
 ("R:");
 
-151 
+152 
 	`•rötINT16
 (
 rch
@@ -23007,7 +23013,7 @@ rch
 rchRXD©a
 [0] | (rchRXData[1] << 8));
 
-152 
+153 
 pAµ
 ->
 	`wrôeSTR
@@ -23015,41 +23021,41 @@ pAµ
 rch
 );
 
-155 
+156 
 	`mem£t
 (
 x„r
 , 0, (xfer));
 
-157 
-rchTXD©a
-[0] = 0;
-
 158 
 rchTXD©a
-[1] = 0;
+[0] = 0;
 
 159 
-rchRXD©a
-[0] = 0;
+rchTXD©a
+[1] = 0;
 
 160 
 rchRXD©a
+[0] = 0;
+
+161 
+rchRXD©a
 [1] = 0;
 
-162 
+163 
 rchTXD©a
 [0] |
 BIT7
 ;
 
-163 
+164 
 rchTXD©a
 [0] |
 BIT0
 ;
 
-165 
+166 
 x„r
 [0].
 tx_buf
@@ -23057,7 +23063,7 @@ tx_buf
 rchTXD©a
 ;
 
-166 
+167 
 x„r
 [0].
 rx_buf
@@ -23065,13 +23071,13 @@ rx_buf
 rchRXD©a
 ;
 
-167 
+168 
 x„r
 [0].
 Àn
  = 2;
 
-168 
+169 
 x„r
 [0].
 dñay_u£cs
@@ -23079,7 +23085,7 @@ dñay_u£cs
 DELAY_USEC
 ;
 
-170 
+171 
 nSètus
  = 
 	`io˘l
@@ -23091,21 +23097,21 @@ nFD
 x„r
 );
 
-171 i‡(
+172 i‡(
 nSètus
  < 0) {
 
-172 
+173 
 	`≥º‹
 ("SPI_IOC_MESSAGE");
 
-176 
+177 
 pAµ
 ->
 	`wrôeSTR
 ("R:");
 
-177 
+178 
 	`•rötINT16
 (
 rch
@@ -23113,7 +23119,7 @@ rch
 rchRXD©a
 [0] | (rchRXData[1] << 8));
 
-178 
+179 
 pAµ
 ->
 	`wrôeSTR
@@ -23121,11 +23127,11 @@ pAµ
 rch
 );
 
-181 
+182 
 	}
 }
 
-184 
+185 
 	$__SPI_wrôe
  (
 LPNXCTRLAPP
@@ -23135,85 +23141,85 @@ pAµ
 nFD
 ) {
 
-185 
+186 
 nSètus
 ;
 
-186 
+187 
 •i_ioc_å™s„r
  
 x„r
 [2];
 
-187 
+188 
 rchTXD©a
 [2];
 
-188 
+189 
 rchRXD©a
 [2];
 
-189 
+190 
 rch
 [22];
 
-192 
+193 
 	`mem£t
 (
 x„r
 , 0, (xfer));
 
-194 
-rchTXD©a
-[0] = 0;
-
 195 
 rchTXD©a
-[1] = 0;
+[0] = 0;
 
 196 
-rchRXD©a
-[0] = 0;
+rchTXD©a
+[1] = 0;
 
 197 
 rchRXD©a
+[0] = 0;
+
+198 
+rchRXD©a
 [1] = 0;
 
-199 
+200 
 rchTXD©a
 [1] |
 BIT7
 ;
 
-200 
+201 
 rchTXD©a
 [1] |
 BIT5
-;
-
-202 
-x„r
-[0].
-tx_buf
- = ()
-rchTXD©a
 ;
 
 203 
 x„r
 [0].
-rx_buf
+tx_buf
  = ()
-rchRXD©a
+rchTXD©a
 ;
 
 204 
 x„r
 [0].
+rx_buf
+ = ()
+rchRXD©a
+;
+
+205 
+x„r
+[0].
 Àn
  = 2;
 
-205 
+206 
 x„r
 [0].
 dñay_u£cs
@@ -23221,7 +23227,7 @@ dñay_u£cs
 DELAY_USEC
 ;
 
-207 
+208 
 nSètus
  = 
 	`io˘l
@@ -23233,21 +23239,21 @@ nFD
 x„r
 );
 
-208 i‡(
+209 i‡(
 nSètus
  < 0) {
 
-209 
+210 
 	`≥º‹
 ("SPI_IOC_MESSAGE");
 
-213 
+214 
 pAµ
 ->
 	`wrôeSTR
 ("T:");
 
-214 
+215 
 	`•rötINT16
 (
 rch
@@ -23255,7 +23261,7 @@ rch
 rchTXD©a
 [0] | (rchTXData[1] << 8));
 
-215 
+216 
 pAµ
 ->
 	`wrôeSTR
@@ -23263,47 +23269,47 @@ pAµ
 rch
 );
 
-218 
+219 
 	`mem£t
 (
 x„r
 , 0, (xfer));
 
-220 
-rchTXD©a
-[0] = 0;
-
 221 
 rchTXD©a
-[1] = 0;
+[0] = 0;
 
 222 
-rchRXD©a
-[0] = 0;
+rchTXD©a
+[1] = 0;
 
 223 
 rchRXD©a
+[0] = 0;
+
+224 
+rchRXD©a
 [1] = 0;
 
-225 
+226 
 rchTXD©a
 [0] |
 BIT0
 ;
 
-226 
+227 
 rchTXD©a
 [1] |
 BIT5
 ;
 
-227 
+228 
 rchTXD©a
 [1] |
 BIT3
 ;
 
-229 
+230 
 x„r
 [0].
 tx_buf
@@ -23311,7 +23317,7 @@ tx_buf
 rchTXD©a
 ;
 
-230 
+231 
 x„r
 [0].
 rx_buf
@@ -23319,13 +23325,13 @@ rx_buf
 rchRXD©a
 ;
 
-231 
+232 
 x„r
 [0].
 Àn
  = 2;
 
-232 
+233 
 x„r
 [0].
 dñay_u£cs
@@ -23333,7 +23339,7 @@ dñay_u£cs
 DELAY_USEC
 ;
 
-234 
+235 
 nSètus
  = 
 	`io˘l
@@ -23345,21 +23351,21 @@ nFD
 x„r
 );
 
-235 i‡(
+236 i‡(
 nSètus
  < 0) {
 
-236 
+237 
 	`≥º‹
 ("SPI_IOC_MESSAGE");
 
-240 
+241 
 pAµ
 ->
 	`wrôeSTR
 ("T:");
 
-241 
+242 
 	`•rötINT16
 (
 rch
@@ -23367,7 +23373,7 @@ rch
 rchTXD©a
 [0] | (rchTXData[1] << 8));
 
-242 
+243 
 pAµ
 ->
 	`wrôeSTR
@@ -23375,21 +23381,21 @@ pAµ
 rch
 );
 
-245 
+246 
 	}
 }
 
-248 
+249 
 	$gëFëchDi°™˚
  (
 NXCTRL_VOID
 ) {
 
-249 
+250 
 nRë
 ;
 
-250 
+251 
 çruss_ötc_öôd©a
  
 nINTC
@@ -23397,35 +23403,35 @@ nINTC
 PRUSS_INTC_INITDATA
 ;
 
-251 *
+252 *
 pPRUD©aMem
  = 
 NULL
 ;
 
-252 *
+253 *
 ≤PRUD©a
  = 
 NULL
 ;
 
-253 
+254 
 fDi°
  = 0.0f;
 
-256 i‡((
+257 i‡((
 nRë
  = 
 	`¥ussdrv_öô
 ())) {
 
-257 
+258 
 	`Ârötf
 (
 °dîr
 , "prussdrv_init() failed\n");
 
-262 i‡((
+263 i‡((
 nRë
  = 
 	`¥ussdrv_›í
@@ -23433,7 +23439,7 @@ nRë
 PRU_EVTOUT_0
 ))) {
 
-263 
+264 
 	`Ârötf
 (
 °dîr
@@ -23443,7 +23449,7 @@ PRU_EVTOUT_0
 î∫o
 ));
 
-268 i‡((
+269 i‡((
 nRë
  = 
 	`¥ussdrv_¥uötc_öô
@@ -23451,13 +23457,13 @@ nRë
 nINTC
 ))) {
 
-269 
+270 
 	`Ârötf
 (
 °dîr
 , "prussdrv_pruintc_init() failed\n");
 
-273 
+274 
 	`¥ussdrv_m≠_¥umem
 (
 PRUSS0_PRU0_DATARAM
@@ -23465,13 +23471,13 @@ PRUSS0_PRU0_DATARAM
 pPRUD©aMem
 );
 
-274 
+275 
 ≤PRUD©a
  = (*)
 pPRUD©aMem
 ;
 
-277 i‡((
+278 i‡((
 nRë
  = 
 	`¥ussdrv_exec_¥ogøm
@@ -23481,19 +23487,19 @@ PRU_NUM
 PRU_PATH
 ))) {
 
-278 
+279 
 	`Ârötf
 (
 °dîr
 , "prussdrv_exec_program() failed\n");
 
-282 
+283 
 	`¥ussdrv_¥u_waô_evít
 (
 PRU_EVTOUT_0
 );
 
-283 i‡(
+284 i‡(
 	`¥ussdrv_¥u_˛ór_evít
 (
 PRU_EVTOUT_0
@@ -23501,53 +23507,53 @@ PRU_EVTOUT_0
 PRU0_ARM_INTERRUPT
 ))
 
-284 
+285 
 	`Ârötf
 (
 °dîr
 , "prussdrv_pru_clear_event() failed\n");
 
-285 
+286 
 fDi°
  = ()
 ≤PRUD©a
 [0]/2.0/29.1;
 
-288 i‡(
+289 i‡(
 	`¥ussdrv_¥u_dißbÀ
 (
 PRU_NUM
 ))
 
-289 
+290 
 	`Ârötf
 (
 °dîr
 , "prussdrv_pru_disable() failed\n");
 
-292 i‡(
+293 i‡(
 	`¥ussdrv_exô
 ())
 
-293 
+294 
 	`Ârötf
 (
 °dîr
 , "prussdrv_exit() failed\n");
 
-295  
+296  
 fDi°
 ;
 
-296 
+297 
 	}
 }
 
-298 
+299 
 NXCTRL_VOID
 
 
-299 
+300 
 	$åa˚A3
  (
 LPNXCTRLAPP
@@ -23555,37 +23561,37 @@ LPNXCTRLAPP
 pAµ
 ) {
 
-300 
+301 
 i
  = 0, 
 j
 ;
 
-301 
+302 
 ∫ADC
 [
 CHART_WIDTH
 ];
 
-303 
+304 
 pAµ
 ->
 	`˛órDi•œy
 ();
 
-304 
+305 
 pAµ
 ->
 	`£tCurs‹
 (0, 0);
 
-305 
+306 
 pAµ
 ->
 	`wrôeSTR
 ("Y");
 
-306 
+307 
 pAµ
 ->
 	`døwLöe
@@ -23595,7 +23601,7 @@ CHART_HEIGHT
 NXCTRL_ON
 );
 
-307 
+308 
 pAµ
 ->
 	`døwLöe
@@ -23607,7 +23613,7 @@ CHART_WIDTH
 NXCTRL_ON
 );
 
-308 
+309 
 pAµ
 ->
 	`£tCurs‹
@@ -23617,19 +23623,19 @@ CHART_WIDTH
 CHART_HEIGHT
 );
 
-309 
+310 
 pAµ
 ->
 	`wrôeSTR
 ("X");
 
-310 
+311 
 pAµ
 ->
 	`upd©eDi•œy
 ();
 
-312 
+313 
 pAµ
 ->
 	`£tCurs‹
@@ -23637,25 +23643,25 @@ pAµ
 FONT_HEIGHT
 +1);
 
-313 
+314 
 pAµ
 ->
 	`wrôeSTR
 (" PRESS MENU TO STOP");
 
-314 
+315 
 pAµ
 ->
 	`upd©eDi•œy
 ();
 
-316 
+317 
 MENU_BUTTON_STATE
  = 
 NXCTRL_LOW
 ;
 
-319 
+320 
 nADC
  = 
 pAµ
@@ -23665,23 +23671,23 @@ pAµ
 NXCTRL_A3
 );
 
-320 
+321 
 nADC
  = ()((nADC / 4095.0) * 50);
 
-322 i‡(
+323 i‡(
 i
  >
 CHART_WIDTH
 ) {
 
-323 
+324 
 i
  = 
 CHART_WIDTH
 ;
 
-325 
+326 
 MENU_BUTTON_STATE
  = 
 pAµ
@@ -23693,25 +23699,25 @@ MENU_BUTTON_BANK
 MENU_BUTTON_PIN
 );
 
-326 i‡(
+327 i‡(
 MENU_BUTTON_STATE
  =
 NXCTRL_HIGH
 ) { ; }
 
-328 
+329 
 j
  = 0; j < 
 CHART_WIDTH
  - 1; j++) {
 
-329 i‡(
+330 i‡(
 ∫ADC
 [
 j
 ])
 
-330 
+331 
 pAµ
 ->
 	`døwPixñ
@@ -23725,13 +23731,13 @@ CHART_HEIGHT
 NXCTRL_OFF
 );
 
-331 
+332 
 ∫ADC
 [
 j
 ] =ÑnADC[j + 1];
 
-332 
+333 
 pAµ
 ->
 	`døwPixñ
@@ -23745,13 +23751,13 @@ CHART_HEIGHT
 NXCTRL_ON
 );
 
-334 i‡(
+335 i‡(
 ∫ADC
 [
 j
 ])
 
-335 
+336 
 pAµ
 ->
 	`døwPixñ
@@ -23765,7 +23771,7 @@ CHART_HEIGHT
 NXCTRL_OFF
 );
 
-336 
+337 
 ∫ADC
 [
 j
@@ -23773,7 +23779,7 @@ j
 nADC
 ;
 
-337 
+338 
 pAµ
 ->
 	`døwPixñ
@@ -23787,13 +23793,13 @@ CHART_HEIGHT
 NXCTRL_ON
 );
 
-338 
+339 
 pAµ
 ->
 	`upd©eDi•œy
 ();
 
-340 
+341 
 ∫ADC
 [
 i
@@ -23801,7 +23807,7 @@ i
 nADC
 ;
 
-343 
+344 
 pAµ
 ->
 	`døwPixñ
@@ -23815,23 +23821,23 @@ CHART_HEIGHT
 NXCTRL_ON
 );
 
-344 
+345 
 pAµ
 ->
 	`upd©eDi•œy
 ();
 
-347 
+348 
 pAµ
 ->
 	`¶ìp
 (10, 0);
 
-348 
+349 
 i
 ++;
 
-351 
+352 
 pAµ
 ->
 	`£tCurs‹
@@ -23839,43 +23845,43 @@ pAµ
 FONT_HEIGHT
 +1);
 
-352 
+353 
 pAµ
 ->
 	`wrôeSTR
 (" PRESS EXEC TO EXIT");
 
-353 
+354 
 pAµ
 ->
 	`upd©eDi•œy
 ();
 
-355 
+356 
 pAµ
 ->
 	`¶ìp
 (1000, 0);
 
-357 
+358 
 EXEC_BUTTON_STATE
  = 
 NXCTRL_LOW
 ;
 
-358 
+359 
 EXEC_BUTTON_STATE
  =
 NXCTRL_LOW
 ) {
 
-359 
+360 
 pAµ
 ->
 	`¶ìp
 (100, 0);
 
-360 
+361 
 EXEC_BUTTON_STATE
  = 
 pAµ
@@ -23887,15 +23893,15 @@ EXEC_BUTTON_BANK
 EXEC_BUTTON_PIN
 );
 
-362 
+363 
 	}
 }
 
-364 
+365 
 NXCTRL_VOID
 
 
-365 
+366 
 	$dcMŸ‹Te°
  (
 LPNXCTRLAPP
@@ -23903,13 +23909,13 @@ LPNXCTRLAPP
 pAµ
 ) {
 
-366 
+367 
 pAµ
 ->
 	`˛órDi•œy
 ();
 
-367 
+368 
 pAµ
 ->
 	`£tCurs‹
@@ -23917,13 +23923,13 @@ pAµ
 FONT_HEIGHT
 );
 
-368 
+369 
 pAµ
 ->
 	`wrôeSTR
 (" DC MOTOR DRV");
 
-369 
+370 
 pAµ
 ->
 	`£tCurs‹
@@ -23931,29 +23937,17 @@ pAµ
 FONT_HEIGHT
  + 2);
 
-370 
+371 
 pAµ
 ->
 	`wrôeSTR
 (" H-BRIGDE DRV");
 
-371 
+372 
 pAµ
 ->
 	`upd©eDi•œy
 ();
-
-373 
-pAµ
-->
-	`digôÆWrôe
-(
-DCBANK
-, 
-DCCTRL1
-, 
-NXCTRL_HIGH
-);
 
 374 
 pAµ
@@ -23962,12 +23956,24 @@ pAµ
 (
 DCBANK
 , 
+DCCTRL1
+, 
+NXCTRL_HIGH
+);
+
+375 
+pAµ
+->
+	`digôÆWrôe
+(
+DCBANK
+, 
 DCCTRL2
 , 
 NXCTRL_LOW
 );
 
-375 
+376 
 pAµ
 ->
 	`™ÆogWrôe
@@ -23977,13 +23983,13 @@ DCBANK
 DCENABLE
 , 540);
 
-376 
+377 
 pAµ
 ->
 	`¶ìp
 (3000, 0);
 
-378 
+379 
 pAµ
 ->
 	`digôÆWrôe
@@ -23995,7 +24001,7 @@ DCCTRL1
 NXCTRL_LOW
 );
 
-379 
+380 
 pAµ
 ->
 	`digôÆWrôe
@@ -24007,7 +24013,7 @@ DCCTRL2
 NXCTRL_LOW
 );
 
-380 
+381 
 pAµ
 ->
 	`™ÆogWrôe
@@ -24017,13 +24023,13 @@ DCBANK
 DCENABLE
 , 0);
 
-381 
+382 
 pAµ
 ->
 	`¶ìp
 (1000, 0);
 
-383 
+384 
 pAµ
 ->
 	`digôÆWrôe
@@ -24035,7 +24041,7 @@ DCCTRL1
 NXCTRL_LOW
 );
 
-384 
+385 
 pAµ
 ->
 	`digôÆWrôe
@@ -24047,7 +24053,7 @@ DCCTRL2
 NXCTRL_HIGH
 );
 
-385 
+386 
 pAµ
 ->
 	`™ÆogWrôe
@@ -24057,13 +24063,13 @@ DCBANK
 DCENABLE
 , 540);
 
-386 
+387 
 pAµ
 ->
 	`¶ìp
 (3000, 0);
 
-388 
+389 
 pAµ
 ->
 	`digôÆWrôe
@@ -24075,7 +24081,7 @@ DCCTRL1
 NXCTRL_LOW
 );
 
-389 
+390 
 pAµ
 ->
 	`digôÆWrôe
@@ -24087,7 +24093,7 @@ DCCTRL2
 NXCTRL_LOW
 );
 
-390 
+391 
 pAµ
 ->
 	`™ÆogWrôe
@@ -24097,21 +24103,165 @@ DCBANK
 DCENABLE
 , 0);
 
-391 
+392 
 pAµ
 ->
 	`¶ìp
 (1000, 0);
 
-392 
+393 
 	}
 }
 
-394 
+395 
 NXCTRL_VOID
 
 
-395 
+396 
+	$pöInfo
+ (
+LPNXCTRLAPP
+ 
+pAµ
+) {
+
+397 
+pAµ
+->
+	`˛órDi•œy
+();
+
+398 
+pAµ
+->
+	`£tCurs‹
+(0, 0);
+
+399 
+pAµ
+->
+	`wrôeSTR
+("P9[1|3|5|7] G|3|D5|5");
+
+400 
+pAµ
+->
+	`£tCurs‹
+(0, 10);
+
+401 
+pAµ
+->
+	`wrôeSTR
+("P9[32|33|34] VA|A4|G");
+
+402 
+pAµ
+->
+	`£tCurs‹
+(0, 20);
+
+403 
+pAµ
+->
+	`wrôeSTR
+("P9[35|36] A6|5");
+
+404 
+pAµ
+->
+	`£tCurs‹
+(0, 30);
+
+405 
+pAµ
+->
+	`wrôeSTR
+("P9[37-40] A2|3|0|1");
+
+406 
+pAµ
+->
+	`£tCurs‹
+(0, 40);
+
+407 
+pAµ
+->
+	`wrôeSTR
+("P8[3-6|20-25] EMMC");
+
+408 
+pAµ
+->
+	`upd©eDi•œy
+();
+
+410 
+pAµ
+->
+	`¶ìp
+(2000, 0);
+
+412 
+pAµ
+->
+	`£tCurs‹
+(9, 7*
+FONT_HEIGHT
++1);
+
+413 
+pAµ
+->
+	`wrôeSTR
+("PRESS EXEC TO EXIT");
+
+414 
+pAµ
+->
+	`upd©eDi•œy
+();
+
+416 
+EXEC_BUTTON_STATE
+ = 
+NXCTRL_LOW
+;
+
+417 
+EXEC_BUTTON_STATE
+ =
+NXCTRL_LOW
+) {
+
+418 
+pAµ
+->
+	`¶ìp
+(100, 0);
+
+419 
+EXEC_BUTTON_STATE
+ = 
+pAµ
+->
+	`digôÆRód
+(
+EXEC_BUTTON_BANK
+, 
+EXEC_BUTTON_PIN
+);
+
+421 
+	}
+}
+
+423 
+NXCTRL_VOID
+
+
+424 
 	$di•œyPîiInfo
  (
 LPNXCTRLAPP
@@ -24119,7 +24269,7 @@ LPNXCTRLAPP
 pAµ
 ) {
 
-396 
+425 
 i
 , 
 n
@@ -24127,21 +24277,21 @@ n
 HCSR04_MAX_CNT
 ;
 
-397 
+426 
 fs
  = 0;
 
-398 
+427 
 rch
 [22];
 
-400 
+429 
 pAµ
 ->
 	`˛órDi•œy
 ();
 
-401 
+430 
 pAµ
 ->
 	`£tCurs‹
@@ -24149,13 +24299,13 @@ pAµ
 FONT_WIDTH
 , 0);
 
-402 
+431 
 pAµ
 ->
 	`wrôeSTR
 ("PERIPHERAL\n");
 
-404 
+433 
 pAµ
 ->
 	`£tCurs‹
@@ -24163,31 +24313,31 @@ pAµ
 FONT_HEIGHT
  + 8);
 
-406 
+435 
 i
  = 0; i < 
 n
 ; i++) {
 
-407 
+436 
 fs
  +
 	`gëFëchDi°™˚
 ();
 
-409 
+438 
 fs
  /
 n
 ;
 
-411 i‡(
+440 i‡(
 fs
  > 
 HCSR04_MAX_DIST
 )
 
-412 
+441 
 	`•rötf
 (
 rch
@@ -24195,7 +24345,7 @@ rch
 HCSR04_MAX_DIST
 /100.0));
 
-414 
+443 
 	`•rötf
 (
 rch
@@ -24203,7 +24353,7 @@ rch
 fs
 );
 
-415 
+444 
 pAµ
 ->
 	`wrôeSTR
@@ -24211,7 +24361,7 @@ pAµ
 rch
 );
 
-417 
+446 
 	`•rötf
 (
 rch
@@ -24223,7 +24373,7 @@ pAµ
 NXCTRL_A0
 ));
 
-418 
+447 
 pAµ
 ->
 	`wrôeSTR
@@ -24231,7 +24381,7 @@ pAµ
 rch
 );
 
-419 
+448 
 	`•rötf
 (
 rch
@@ -24243,7 +24393,7 @@ pAµ
 NXCTRL_A1
 ));
 
-420 
+449 
 pAµ
 ->
 	`wrôeSTR
@@ -24251,7 +24401,7 @@ pAµ
 rch
 );
 
-421 
+450 
 	`•rötf
 (
 rch
@@ -24263,7 +24413,7 @@ pAµ
 NXCTRL_A2
 ));
 
-422 
+451 
 pAµ
 ->
 	`wrôeSTR
@@ -24271,7 +24421,7 @@ pAµ
 rch
 );
 
-423 
+452 
 	`•rötf
 (
 rch
@@ -24283,7 +24433,7 @@ pAµ
 NXCTRL_A3
 ));
 
-424 
+453 
 pAµ
 ->
 	`wrôeSTR
@@ -24291,21 +24441,21 @@ pAµ
 rch
 );
 
-426 
+455 
 pAµ
 ->
 	`upd©eDi•œy
 ();
 
-427 
+456 
 	}
 }
 
-429 
+458 
 NXCTRL_VOID
 
 
-430 
+459 
 	$runPWM1
  (
 LPNXCTRLAPP
@@ -24313,205 +24463,35 @@ LPNXCTRLAPP
 pAµ
 ) {
 
-431 
+460 
 i
 , 
 j
 ;
 
-432 
+461 
 PWM_RES
  = 1000;
 
-433 
+462 
 PULSE_CNT
  = 5;
 
-434 
+463 
 PULSE_RES
  = 200;
 
-435 
+464 
 PULSE_TM
  = 8;
 
-436 
+465 
 fLogPul£
  = 
 	`log
 (
 PULSE_RES
 );
-
-438 
-pAµ
-->
-	`˛órDi•œy
-();
-
-439 
-pAµ
-->
-	`£tCurs‹
-(0, 3*
-FONT_HEIGHT
-);
-
-440 
-pAµ
-->
-	`wrôeSTR
-(" PWM ON P8:13");
-
-441 
-pAµ
-->
-	`£tCurs‹
-(0, 4*
-FONT_HEIGHT
- + 2);
-
-442 
-pAµ
-->
-	`wrôeSTR
-(" PULSING LED");
-
-443 
-pAµ
-->
-	`upd©eDi•œy
-();
-
-445 
-j
- = 0; j < 
-PULSE_CNT
-; j++) {
-
-446 
-i
- = 
-PULSE_RES
-; i > 1; i--) {
-
-447 
-logF
- = 
-	`log
-(
-i
-Ë/ 
-fLogPul£
-;
-
-448 
-nDC
- = ()((1 - 
-logF
-Ë* 
-PWM_RES
-);
-
-449 
-pAµ
-->
-	`™ÆogWrôe
-(
-PWM1_BANK
-, 
-PWM1_PIN
-, 
-nDC
-);
-
-450 
-pAµ
-->
-	`¶ìp
-(
-PULSE_TM
-, 0);
-
-452 
-i
- = 0; i < 
-PULSE_RES
-; i++) {
-
-453 
-logF
- = 
-	`log
-(
-i
-+1Ë/ 
-fLogPul£
-;
-
-454 
-nDC
- = ()((1 - 
-logF
-Ë* 
-PWM_RES
-);
-
-455 
-pAµ
-->
-	`™ÆogWrôe
-(
-PWM1_BANK
-, 
-PWM1_PIN
-, 
-nDC
-);
-
-456 
-pAµ
-->
-	`¶ìp
-(
-PULSE_TM
-, 0);
-
-459 
-pAµ
-->
-	`™ÆogWrôe
-(
-PWM1_BANK
-, 
-PWM1_PIN
-, 0);
-
-460 
-pAµ
-->
-	`¶ìp
-(100, 0);
-
-461 
-	}
-}
-
-463 
-NXCTRL_VOID
-
-
-464 
-	$runPWM2
- (
-LPNXCTRLAPP
- 
-pAµ
-) {
-
-465 
-i
-;
 
 467 
 pAµ
@@ -24531,7 +24511,7 @@ FONT_HEIGHT
 pAµ
 ->
 	`wrôeSTR
-(" PWM ON P8:19");
+(" PWM ON P8:13");
 
 470 
 pAµ
@@ -24545,7 +24525,7 @@ FONT_HEIGHT
 pAµ
 ->
 	`wrôeSTR
-(" SERVO CONTROL");
+(" PULSING LED");
 
 472 
 pAµ
@@ -24553,7 +24533,177 @@ pAµ
 	`upd©eDi•œy
 ();
 
-474 
+474 
+j
+ = 0; j < 
+PULSE_CNT
+; j++) {
+
+475 
+i
+ = 
+PULSE_RES
+; i > 1; i--) {
+
+476 
+logF
+ = 
+	`log
+(
+i
+Ë/ 
+fLogPul£
+;
+
+477 
+nDC
+ = ()((1 - 
+logF
+Ë* 
+PWM_RES
+);
+
+478 
+pAµ
+->
+	`™ÆogWrôe
+(
+PWM1_BANK
+, 
+PWM1_PIN
+, 
+nDC
+);
+
+479 
+pAµ
+->
+	`¶ìp
+(
+PULSE_TM
+, 0);
+
+481 
+i
+ = 0; i < 
+PULSE_RES
+; i++) {
+
+482 
+logF
+ = 
+	`log
+(
+i
++1Ë/ 
+fLogPul£
+;
+
+483 
+nDC
+ = ()((1 - 
+logF
+Ë* 
+PWM_RES
+);
+
+484 
+pAµ
+->
+	`™ÆogWrôe
+(
+PWM1_BANK
+, 
+PWM1_PIN
+, 
+nDC
+);
+
+485 
+pAµ
+->
+	`¶ìp
+(
+PULSE_TM
+, 0);
+
+488 
+pAµ
+->
+	`™ÆogWrôe
+(
+PWM1_BANK
+, 
+PWM1_PIN
+, 0);
+
+489 
+pAµ
+->
+	`¶ìp
+(100, 0);
+
+490 
+	}
+}
+
+492 
+NXCTRL_VOID
+
+
+493 
+	$runPWM2
+ (
+LPNXCTRLAPP
+ 
+pAµ
+) {
+
+494 
+i
+;
+
+496 
+pAµ
+->
+	`˛órDi•œy
+();
+
+497 
+pAµ
+->
+	`£tCurs‹
+(0, 3*
+FONT_HEIGHT
+);
+
+498 
+pAµ
+->
+	`wrôeSTR
+(" PWM ON P8:19");
+
+499 
+pAµ
+->
+	`£tCurs‹
+(0, 4*
+FONT_HEIGHT
+ + 2);
+
+500 
+pAµ
+->
+	`wrôeSTR
+(" SERVO CONTROL");
+
+501 
+pAµ
+->
+	`upd©eDi•œy
+();
+
+503 
 pAµ
 ->
 	`£rvoWrôe
@@ -24563,13 +24713,13 @@ PWM2_BANK
 PWM2_PIN
 , 82);
 
-475 
+504 
 pAµ
 ->
 	`¶ìp
 (800, 0);
 
-476 
+505 
 pAµ
 ->
 	`£rvoWrôe
@@ -24579,13 +24729,13 @@ PWM2_BANK
 PWM2_PIN
 , 30);
 
-477 
+506 
 pAµ
 ->
 	`¶ìp
 (800, 0);
 
-478 
+507 
 pAµ
 ->
 	`£rvoWrôe
@@ -24595,13 +24745,13 @@ PWM2_BANK
 PWM2_PIN
 , 150);
 
-479 
+508 
 pAµ
 ->
 	`¶ìp
 (800, 0);
 
-481 
+510 
 pAµ
 ->
 	`£rvoWrôe
@@ -24611,17 +24761,17 @@ PWM2_BANK
 PWM2_PIN
 , 0);
 
-482 
+511 
 pAµ
 ->
 	`¶ìp
 (500, 0);
 
-484 
+513 
 i
  = 0; i <= 180; i += 2) {
 
-485 
+514 
 pAµ
 ->
 	`£rvoWrôe
@@ -24633,13 +24783,13 @@ PWM2_PIN
 i
 );
 
-486 
+515 
 pAµ
 ->
 	`¶ìp
 (20, 0);
 
-489 
+518 
 pAµ
 ->
 	`£rvoWrôe
@@ -24649,13 +24799,13 @@ PWM2_BANK
 PWM2_PIN
 , 0);
 
-490 
+519 
 pAµ
 ->
 	`¶ìp
 (800, 0);
 
-491 
+520 
 pAµ
 ->
 	`£rvoWrôe
@@ -24665,13 +24815,13 @@ PWM2_BANK
 PWM2_PIN
 , 180);
 
-492 
+521 
 pAµ
 ->
 	`¶ìp
 (800, 0);
 
-493 
+522 
 pAµ
 ->
 	`£rvoWrôe
@@ -24681,13 +24831,13 @@ PWM2_BANK
 PWM2_PIN
 , 82);
 
-494 
+523 
 pAµ
 ->
 	`¶ìp
 (800, 0);
 
-497 
+526 
 pAµ
 ->
 	`£rvoWrôe
@@ -24697,21 +24847,21 @@ PWM2_BANK
 PWM2_PIN
 , 0);
 
-498 
+527 
 pAµ
 ->
 	`¶ìp
 (500, 0);
 
-500 
+529 
 	}
 }
 
-502 
+531 
 NXCTRL_VOID
 
 
-503 
+532 
 	$ªadAK8448Pös
  (
 LPNXCTRLAPP
@@ -24723,7 +24873,7 @@ NXCTRL_BOOL
 rbRes
 [10]) {
 
-504 
+533 
 rbRes
 [0] = 
 pAµ
@@ -24735,7 +24885,7 @@ AKBANK
 AKPIN0
 );
 
-505 
+534 
 rbRes
 [1] = 
 pAµ
@@ -24747,7 +24897,7 @@ AKBANK
 AKPIN1
 );
 
-506 
+535 
 rbRes
 [2] = 
 pAµ
@@ -24759,7 +24909,7 @@ AKBANK
 AKPIN2
 );
 
-507 
+536 
 rbRes
 [3] = 
 pAµ
@@ -24771,7 +24921,7 @@ AKBANK
 AKPIN3
 );
 
-508 
+537 
 rbRes
 [4] = 
 pAµ
@@ -24783,7 +24933,7 @@ AKBANK
 AKPIN4
 );
 
-509 
+538 
 rbRes
 [5] = 
 pAµ
@@ -24795,7 +24945,7 @@ AKBANK
 AKPIN5
 );
 
-510 
+539 
 rbRes
 [6] = 
 pAµ
@@ -24807,7 +24957,7 @@ AKBANK
 AKPIN6
 );
 
-511 
+540 
 rbRes
 [7] = 
 pAµ
@@ -24819,7 +24969,7 @@ AKBANK
 AKPIN7
 );
 
-512 
+541 
 rbRes
 [8] = 
 pAµ
@@ -24831,7 +24981,7 @@ AKBANK
 AKPIN8
 );
 
-513 
+542 
 rbRes
 [9] = 
 pAµ
@@ -24843,15 +24993,15 @@ AKBANK
 AKPIN9
 );
 
-514 
+543 
 	}
 }
 
-516 
+545 
 NXCTRL_VOID
 
 
-517 
+546 
 	$ªadAK8448
  (
 LPNXCTRLAPP
@@ -24859,29 +25009,29 @@ LPNXCTRLAPP
 pAµ
 ) {
 
-518 
+547 
 i
 , 
 j
 ;
 
-519 
+548 
 NXCTRL_BOOL
  
 rbRes
 [10];
 
-521 
+550 
 pAµ
 ->
 	`˛órDi•œy
 ();
 
-523 
+552 
 j
  = 0; j < 6; j++) {
 
-524 
+553 
 pAµ
 ->
 	`£tCurs‹
@@ -24891,7 +25041,7 @@ j
 FONT_HEIGHT
 );
 
-526 
+555 
 pAµ
 ->
 	`digôÆWrôe
@@ -24903,13 +25053,13 @@ AKADCK
 NXCTRL_LOW
 );
 
-527 
+556 
 pAµ
 ->
 	`¶ìp
 (50, 0);
 
-528 
+557 
 pAµ
 ->
 	`digôÆWrôe
@@ -24921,13 +25071,13 @@ AKADCK
 NXCTRL_HIGH
 );
 
-529 
+558 
 pAµ
 ->
 	`¶ìp
 (50, 0);
 
-530 
+559 
 	`ªadAK8448Pös
 (
 pAµ
@@ -24935,11 +25085,11 @@ pAµ
 rbRes
 );
 
-532 
+561 
 i
  = 0; i < 10; i++)
 
-533 
+562 
 pAµ
 ->
 	`wrôeSTR
@@ -24949,19 +25099,19 @@ rbRes
 i
 ] ? "1" : "0");
 
-534 
+563 
 pAµ
 ->
 	`wrôeSTR
 (" ");
 
-535 
+564 
 pAµ
 ->
 	`upd©eDi•œy
 ();
 
-537 
+566 
 pAµ
 ->
 	`digôÆWrôe
@@ -24973,13 +25123,13 @@ AKADCK
 NXCTRL_HIGH
 );
 
-538 
+567 
 pAµ
 ->
 	`¶ìp
 (50, 0);
 
-539 
+568 
 pAµ
 ->
 	`digôÆWrôe
@@ -24991,13 +25141,13 @@ AKADCK
 NXCTRL_LOW
 );
 
-540 
+569 
 pAµ
 ->
 	`¶ìp
 (50, 0);
 
-541 
+570 
 	`ªadAK8448Pös
 (
 pAµ
@@ -25005,11 +25155,11 @@ pAµ
 rbRes
 );
 
-543 
+572 
 i
  = 0; i < 10; i++)
 
-544 
+573 
 pAµ
 ->
 	`wrôeSTR
@@ -25019,19 +25169,19 @@ rbRes
 i
 ] ? "1" : "0");
 
-545 
+574 
 pAµ
 ->
 	`upd©eDi•œy
 ();
 
-548 
+577 
 pAµ
 ->
 	`¶ìp
 (2000, 0);
 
-550 
+579 
 pAµ
 ->
 	`£tCurs‹
@@ -25039,37 +25189,37 @@ pAµ
 FONT_HEIGHT
 +1);
 
-551 
+580 
 pAµ
 ->
 	`wrôeSTR
 (" PRESS EXEC TO EXIT");
 
-552 
+581 
 pAµ
 ->
 	`upd©eDi•œy
 ();
 
-554 
+583 
 EXEC_BUTTON_STATE
  = 
 NXCTRL_LOW
 ;
 
-555 
+584 
 EXEC_BUTTON_STATE
  =
 NXCTRL_LOW
 ) {
 
-556 
+585 
 pAµ
 ->
 	`¶ìp
 (100, 0);
 
-557 
+586 
 EXEC_BUTTON_STATE
  = 
 pAµ
@@ -25081,15 +25231,15 @@ EXEC_BUTTON_BANK
 EXEC_BUTTON_PIN
 );
 
-559 
+588 
 	}
 }
 
-561 
+590 
 NXCTRL_VOID
 
 
-562 
+591 
 	$runAK8448
  (
 LPNXCTRLAPP
@@ -25097,13 +25247,13 @@ LPNXCTRLAPP
 pAµ
 ) {
 
-563 
+592 
 uöt8_t
  
 nLSB
 ;
 
-564 
+593 
 uöt32_t
  
 nS≥ed
@@ -25111,7 +25261,7 @@ nS≥ed
 nSPIMode
 ;
 
-565 
+594 
 nFD
  = 
 	`›í
@@ -25121,11 +25271,11 @@ SPI_DEV
 O_RDWR
 );
 
-567 
+596 
 nLSB
  = 0;
 
-568 
+597 
 	`io˘l
 (
 nFD
@@ -25135,11 +25285,11 @@ SPI_IOC_WR_LSB_FIRST
 nLSB
 );
 
-569 
+598 
 nS≥ed
  = 10000000;
 
-570 
+599 
 	`io˘l
 (
 nFD
@@ -25149,13 +25299,13 @@ SPI_IOC_WR_MAX_SPEED_HZ
 nS≥ed
 );
 
-571 
+600 
 nSPIMode
  = 
 SPI_MODE_3
 ;
 
-572 
+601 
 	`io˘l
 (
 nFD
@@ -25165,13 +25315,13 @@ SPI_IOC_WR_MODE
 nSPIMode
 );
 
-574 
+603 
 pAµ
 ->
 	`˛órDi•œy
 ();
 
-575 
+604 
 pAµ
 ->
 	`£tCurs‹
@@ -25179,13 +25329,13 @@ pAµ
 FONT_WIDTH
 , 0);
 
-577 
+606 
 pAµ
 ->
 	`wrôeSTR
 ("AK8448 CFG\n\n");
 
-579 
+608 
 	`__SPI_wrôe
 (
 pAµ
@@ -25193,7 +25343,7 @@ pAµ
 nFD
 );
 
-580 
+609 
 	`__SPI_ªad
 (
 pAµ
@@ -25201,25 +25351,25 @@ pAµ
 nFD
 );
 
-582 
+611 
 	`˛o£
 (
 nFD
 );
 
-584 
+613 
 pAµ
 ->
 	`upd©eDi•œy
 ();
 
-586 
+615 
 pAµ
 ->
 	`¶ìp
 (2000, 0);
 
-588 
+617 
 pAµ
 ->
 	`£tCurs‹
@@ -25227,37 +25377,37 @@ pAµ
 FONT_HEIGHT
 +1);
 
-589 
+618 
 pAµ
 ->
 	`wrôeSTR
 (" PRESS EXEC TO EXIT");
 
-590 
+619 
 pAµ
 ->
 	`upd©eDi•œy
 ();
 
-592 
+621 
 EXEC_BUTTON_STATE
  = 
 NXCTRL_LOW
 ;
 
-593 
+622 
 EXEC_BUTTON_STATE
  =
 NXCTRL_LOW
 ) {
 
-594 
+623 
 pAµ
 ->
 	`¶ìp
 (100, 0);
 
-595 
+624 
 EXEC_BUTTON_STATE
  = 
 pAµ
@@ -25269,37 +25419,37 @@ EXEC_BUTTON_BANK
 EXEC_BUTTON_PIN
 );
 
-597 
+626 
 	}
 }
 
-599 
+628 
 NXCTRL_BOOL
 
 
-600 
+629 
 	$ˇnA˘i⁄
  (
 NXCTRL_VOID
 ) {
 
-601 
+630 
 time•ec
  
 tm
 ;
 
-602 
+631 
 timeInMûlis
 ;
 
-603 
+632 
 	`˛ock_gëtime
 (, 
 time•ec
  *);
 
-604 
+633 
 	`˛ock_gëtime
 (
 _POSIX_CPUTIME
@@ -25307,7 +25457,7 @@ _POSIX_CPUTIME
 tm
 );
 
-605 
+634 
 timeInMûlis
  = 
 tm
@@ -25317,7 +25467,7 @@ tv_£c
 tv_n£c
 /1000000;
 
-606 i‡((
+635 i‡((
 timeInMûlis
  - 
 LAST_ACTION_TIME
@@ -25325,29 +25475,29 @@ LAST_ACTION_TIME
 MIN_ACTION_DURATION
 ) {
 
-607 
+636 
 LAST_ACTION_TIME
  = 
 timeInMûlis
 ;
 
-608  
+637  
 NXCTRL_TRUE
 ;
 
-610  
+639  
 NXCTRL_FALSE
 ;
 
-611 
+640 
 	}
 }
 
-613 
+642 
 NXCTRL_VOID
 
 
-614 
+643 
 	$upd©eMíuBuâ⁄Sèã
  (
 LPNXCTRLAPP
@@ -25355,13 +25505,13 @@ LPNXCTRLAPP
 pAµ
 ) {
 
-615 i‡(
+644 i‡(
 MENU_BUTTON_STATE
  =
 NXCTRL_LOW
 ) {
 
-616 i‡(
+645 i‡(
 pAµ
 ->
 	`digôÆRód
@@ -25373,17 +25523,17 @@ MENU_BUTTON_PIN
 NXCTRL_HIGH
 ) {
 
-617 
+646 
 MENU_BUTTON_STATE
  = 
 NXCTRL_HIGH
 ;
 
-618 
+647 
 DPY_IDLE_COUNT
  = 0;
 
-621 i‡(
+650 i‡(
 pAµ
 ->
 	`digôÆRód
@@ -25395,25 +25545,25 @@ MENU_BUTTON_PIN
 NXCTRL_LOW
 ) {
 
-622 
+651 
 MENU_BUTTON_STATE
  = 
 NXCTRL_LOW
 ;
 
-623 
+652 
 DPY_IDLE_COUNT
  = 0;
 
-626 
+655 
 	}
 }
 
-628 
+657 
 NXCTRL_VOID
 
 
-629 
+658 
 	$upd©eExecBuâ⁄Sèã
  (
 LPNXCTRLAPP
@@ -25421,13 +25571,13 @@ LPNXCTRLAPP
 pAµ
 ) {
 
-630 i‡(
+659 i‡(
 EXEC_BUTTON_STATE
  =
 NXCTRL_LOW
 ) {
 
-631 i‡(
+660 i‡(
 pAµ
 ->
 	`digôÆRód
@@ -25439,17 +25589,17 @@ EXEC_BUTTON_PIN
 NXCTRL_HIGH
 ) {
 
-632 
+661 
 EXEC_BUTTON_STATE
  = 
 NXCTRL_HIGH
 ;
 
-633 
+662 
 DPY_IDLE_COUNT
  = 0;
 
-636 i‡(
+665 i‡(
 pAµ
 ->
 	`digôÆRód
@@ -25461,21 +25611,21 @@ EXEC_BUTTON_PIN
 NXCTRL_LOW
 ) {
 
-637 
+666 
 EXEC_BUTTON_STATE
  = 
 NXCTRL_LOW
 ;
 
-638 
+667 
 DPY_IDLE_COUNT
  = 0;
 
-641 
+670 
 	}
 }
 
-644 
+673 
 	$mkMíuSTR
  (*
 rch
@@ -25485,13 +25635,13 @@ pszName
 nMíu
 ) {
 
-645 
+674 
 	`•rötf
 (
 rch
 , "%c %s\n",
 
-646 (
+675 (
 MENU_IDX
  =
 nMíu
@@ -25499,23 +25649,23 @@ nMíu
 MENU_SEL_CHAR
  : ' '),
 
-647 
+676 
 pszName
 );
 
-648  
+677  
 rch
 ;
 
-649 
+678 
 	}
 }
 
-651 
+680 
 NXCTRL_VOID
 
 
-652 
+681 
 	$di•œyMíu
  (
 LPNXCTRLAPP
@@ -25523,29 +25673,29 @@ LPNXCTRLAPP
 pAµ
 ) {
 
-653 
+682 
 rch
 [21];
 
-655 
+684 
 pAµ
 ->
 	`˛órDi•œy
 ();
 
-657 
+686 
 pAµ
 ->
 	`£tCurs‹
 (0, 0);
 
-658 
+687 
 pAµ
 ->
 	`wrôeSTR
 ("PERIPHERAL");
 
-659 
+688 
 pAµ
 ->
 	`døwLöe
@@ -25553,17 +25703,17 @@ pAµ
 NXCTRL_ON
 );
 
-660 
+689 
 pAµ
 ->
 	`£tCurs‹
 (0, 16);
 
-662 i‡(
+691 i‡(
 MENU_IDX
  < 5)
 
-663 
+692 
 pAµ
 ->
 	`wrôeSTR
@@ -25575,11 +25725,11 @@ rch
 MENU_IDX_SYSTEM_MENU
 ));
 
-664 i‡(
+693 i‡(
 MENU_IDX
  < 6)
 
-665 
+694 
 pAµ
 ->
 	`wrôeSTR
@@ -25591,11 +25741,11 @@ rch
 MENU_IDX_UPDATE_MENU
 ));
 
-666 i‡(
+695 i‡(
 MENU_IDX
  < 7)
 
-667 
+696 
 pAµ
 ->
 	`wrôeSTR
@@ -25607,11 +25757,11 @@ rch
 MENU_IDX_P8_13_PWM_MENU
 ));
 
-668 i‡(
+697 i‡(
 MENU_IDX
  < 8)
 
-669 
+698 
 pAµ
 ->
 	`wrôeSTR
@@ -25623,7 +25773,11 @@ rch
 MENU_IDX_P8_19_PWM_MENU
 ));
 
-670 
+699 i‡(
+MENU_IDX
+ < 9)
+
+700 
 pAµ
 ->
 	`wrôeSTR
@@ -25635,11 +25789,11 @@ rch
 MENU_IDX_AK8448_CFG_MENU
 ));
 
-671 i‡(
+701 i‡(
 MENU_IDX
  >= 5)
 
-672 
+702 
 pAµ
 ->
 	`wrôeSTR
@@ -25651,11 +25805,11 @@ rch
 MENU_IDX_AK8448_READ_MENU
 ));
 
-673 i‡(
+703 i‡(
 MENU_IDX
  >= 6)
 
-674 
+704 
 pAµ
 ->
 	`wrôeSTR
@@ -25667,11 +25821,11 @@ rch
 MENU_IDX_TR_A3_MENU
 ));
 
-675 i‡(
+705 i‡(
 MENU_IDX
  >= 7)
 
-676 
+706 
 pAµ
 ->
 	`wrôeSTR
@@ -25683,11 +25837,27 @@ rch
 MENU_IDX_DCMOTOR_MENU
 ));
 
-677 i‡(
+707 i‡(
 MENU_IDX
  >= 8)
 
-678 
+708 
+pAµ
+->
+	`wrôeSTR
+(
+	`mkMíuSTR
+(
+rch
+, "PIN INFO", 
+MENU_IDX_PININFO_MENU
+));
+
+709 i‡(
+MENU_IDX
+ >= 9)
+
+710 
 pAµ
 ->
 	`wrôeSTR
@@ -25699,21 +25869,21 @@ rch
 MENU_IDX_EXIT_MENU
 ));
 
-680 
+712 
 pAµ
 ->
 	`upd©eDi•œy
 ();
 
-681 
+713 
 	}
 }
 
-683 
+715 
 NXCTRL_VOID
 
 
-684 
+716 
 	$NXCTRLAPP_öô
  (
 LPNXCTRLAPP
@@ -25721,7 +25891,7 @@ LPNXCTRLAPP
 pAµ
 ) {
 
-685 
+717 
 pAµ
 ->
 	`pöMux
@@ -25737,7 +25907,7 @@ NXCTRL_PULLDN
 NXCTRL_LOW
 );
 
-686 
+718 
 pAµ
 ->
 	`pöMux
@@ -25753,7 +25923,7 @@ NXCTRL_PULLDN
 NXCTRL_LOW
 );
 
-688 
+720 
 pAµ
 ->
 	`pöMux
@@ -25769,7 +25939,7 @@ NXCTRL_PULLDN
 NXCTRL_LOW
 );
 
-689 
+721 
 pAµ
 ->
 	`pöMux
@@ -25785,7 +25955,7 @@ NXCTRL_PULLDN
 NXCTRL_LOW
 );
 
-690 
+722 
 pAµ
 ->
 	`pöMux
@@ -25801,7 +25971,7 @@ NXCTRL_PULLUP
 NXCTRL_HIGH
 );
 
-691 
+723 
 pAµ
 ->
 	`pöMux
@@ -25817,7 +25987,7 @@ NXCTRL_PULLUP
 NXCTRL_HIGH
 );
 
-693 
+725 
 pAµ
 ->
 	`pöMux
@@ -25833,7 +26003,7 @@ NXCTRL_PULLDN
 NXCTRL_LOW
 );
 
-694 
+726 
 pAµ
 ->
 	`pöMux
@@ -25849,7 +26019,7 @@ NXCTRL_PULLDN
 NXCTRL_LOW
 );
 
-695 
+727 
 pAµ
 ->
 	`pöMux
@@ -25865,7 +26035,7 @@ NXCTRL_PULLDN
 NXCTRL_LOW
 );
 
-696 
+728 
 pAµ
 ->
 	`pöMux
@@ -25881,7 +26051,7 @@ NXCTRL_PULLDN
 NXCTRL_LOW
 );
 
-697 
+729 
 pAµ
 ->
 	`pöMux
@@ -25897,7 +26067,7 @@ NXCTRL_PULLDN
 NXCTRL_LOW
 );
 
-698 
+730 
 pAµ
 ->
 	`pöMux
@@ -25913,7 +26083,7 @@ NXCTRL_PULLDN
 NXCTRL_LOW
 );
 
-699 
+731 
 pAµ
 ->
 	`pöMux
@@ -25929,7 +26099,7 @@ NXCTRL_PULLDN
 NXCTRL_LOW
 );
 
-700 
+732 
 pAµ
 ->
 	`pöMux
@@ -25945,7 +26115,7 @@ NXCTRL_PULLDN
 NXCTRL_LOW
 );
 
-701 
+733 
 pAµ
 ->
 	`pöMux
@@ -25961,7 +26131,7 @@ NXCTRL_PULLDN
 NXCTRL_LOW
 );
 
-702 
+734 
 pAµ
 ->
 	`pöMux
@@ -25977,7 +26147,7 @@ NXCTRL_PULLDN
 NXCTRL_LOW
 );
 
-703 
+735 
 pAµ
 ->
 	`pöMux
@@ -25993,7 +26163,7 @@ NXCTRL_PULLDN
 NXCTRL_LOW
 );
 
-704 
+736 
 pAµ
 ->
 	`pöMux
@@ -26009,7 +26179,7 @@ NXCTRL_PULLDN
 NXCTRL_LOW
 );
 
-706 
+738 
 pAµ
 ->
 	`pöMode
@@ -26021,7 +26191,7 @@ AKPIN0
 NXCTRL_INPUT
 );
 
-707 
+739 
 pAµ
 ->
 	`pöMode
@@ -26033,7 +26203,7 @@ AKPIN1
 NXCTRL_INPUT
 );
 
-708 
+740 
 pAµ
 ->
 	`pöMode
@@ -26045,7 +26215,7 @@ AKPIN2
 NXCTRL_INPUT
 );
 
-709 
+741 
 pAµ
 ->
 	`pöMode
@@ -26057,7 +26227,7 @@ AKPIN3
 NXCTRL_INPUT
 );
 
-710 
+742 
 pAµ
 ->
 	`pöMode
@@ -26069,7 +26239,7 @@ AKPIN4
 NXCTRL_INPUT
 );
 
-711 
+743 
 pAµ
 ->
 	`pöMode
@@ -26081,7 +26251,7 @@ AKPIN5
 NXCTRL_INPUT
 );
 
-712 
+744 
 pAµ
 ->
 	`pöMode
@@ -26093,7 +26263,7 @@ AKPIN6
 NXCTRL_INPUT
 );
 
-713 
+745 
 pAµ
 ->
 	`pöMode
@@ -26105,7 +26275,7 @@ AKPIN7
 NXCTRL_INPUT
 );
 
-714 
+746 
 pAµ
 ->
 	`pöMode
@@ -26117,7 +26287,7 @@ AKPIN8
 NXCTRL_INPUT
 );
 
-715 
+747 
 pAµ
 ->
 	`pöMode
@@ -26129,7 +26299,7 @@ AKPIN9
 NXCTRL_INPUT
 );
 
-716 
+748 
 pAµ
 ->
 	`pöMode
@@ -26141,7 +26311,7 @@ AKCLK
 NXCTRL_OUTPUT
 );
 
-717 
+749 
 pAµ
 ->
 	`pöMode
@@ -26153,7 +26323,7 @@ AKADCK
 NXCTRL_OUTPUT
 );
 
-719 
+751 
 pAµ
 ->
 	`pöMux
@@ -26169,7 +26339,7 @@ NXCTRL_PULLDN
 NXCTRL_LOW
 );
 
-720 
+752 
 pAµ
 ->
 	`pöMux
@@ -26185,7 +26355,7 @@ NXCTRL_PULLDN
 NXCTRL_LOW
 );
 
-723 
+755 
 pAµ
 ->
 	`pöMode
@@ -26197,7 +26367,7 @@ DCCTRL1
 NXCTRL_OUTPUT
 );
 
-724 
+756 
 pAµ
 ->
 	`pöMode
@@ -26209,7 +26379,7 @@ DCCTRL2
 NXCTRL_OUTPUT
 );
 
-726 
+758 
 MENU_BUTTON_STATE
  = 
 pAµ
@@ -26221,7 +26391,7 @@ MENU_BUTTON_BANK
 MENU_BUTTON_PIN
 );
 
-727 
+759 
 EXEC_BUTTON_STATE
  = 
 pAµ
@@ -26233,39 +26403,39 @@ EXEC_BUTTON_BANK
 EXEC_BUTTON_PIN
 );
 
-728 
+760 
 DPY_IDLE_COUNT
  = 0;
 
-729 
+761 
 MENU_IDX
  = 
 MENU_IDX_SYSTEM_MENU
 ;
 
-730 
+762 
 IN_MENU
  = 
 NXCTRL_FALSE
 ;
 
-731 
+763 
 LAST_ACTION_TIME
  = 0;
 
-733 
+765 
 MENU_BUTTON_STATE
  =
 NXCTRL_HIGH
 ) {
 
-734 
+766 
 pAµ
 ->
 	`¶ìp
 (100, 0);
 
-735 
+767 
 MENU_BUTTON_STATE
  = 
 pAµ
@@ -26277,21 +26447,21 @@ MENU_BUTTON_BANK
 MENU_BUTTON_PIN
 );
 
-738 
+770 
 	`di•œyPîiInfo
 (
 pAµ
 );
 
-739 
+771 
 	}
 }
 
-741 
+773 
 NXCTRL_VOID
 
 
-742 
+774 
 	$NXCTRLAPP_˛ón
  (
 LPNXCTRLAPP
@@ -26299,15 +26469,15 @@ LPNXCTRLAPP
 pAµ
 ) {
 
-743 
+775 
 	}
 }
 
-745 
+777 
 NXCTRL_VOID
 
 
-746 
+778 
 	$NXCTRLAPP_run
  (
 LPNXCTRLAPP
@@ -26315,19 +26485,19 @@ LPNXCTRLAPP
 pAµ
 ) {
 
-747 
+779 
 	`upd©eMíuBuâ⁄Sèã
 (
 pAµ
 );
 
-748 
+780 
 	`upd©eExecBuâ⁄Sèã
 (
 pAµ
 );
 
-750 i‡(
+782 i‡(
 MENU_BUTTON_STATE
  !
 NXCTRL_HIGH
@@ -26335,237 +26505,101 @@ NXCTRL_HIGH
 EXEC_BUTTON_STATE
  != NXCTRL_HIGH) {
 
-751 
+783 
 DPY_IDLE_COUNT
 ++;
 
-752 i‡(
+784 i‡(
 DPY_IDLE_COUNT
  > 
 DPY_IDLE_COUNT_MAX
 ) {
 
-753 
+785 
 pAµ
 ->
 nCmd
  = 2;
 
-759 i‡(
+791 i‡(
 MENU_BUTTON_STATE
  =
 NXCTRL_ON
 ) {
 
-760 i‡(
+792 i‡(
 IN_MENU
 ) {
 
-761 i‡(
+793 i‡(
 	`ˇnA˘i⁄
 ()) {
 
-762 
+794 
 MENU_IDX
 ++;
 
-763 i‡(
+795 i‡(
 MENU_IDX
  >
 MENU_IDX_COUNT
 )
 
-764 
+796 
 MENU_IDX
  = 
 MENU_IDX_SYSTEM_MENU
 ;
 
-765 
+797 
 	`di•œyMíu
 (
 pAµ
 );
 
-768 
+800 
 IN_MENU
  = 
 NXCTRL_TRUE
 ;
 
-769 
+801 
 	`di•œyMíu
 (
 pAµ
 );
 
-770 
+802 
 	`ˇnA˘i⁄
 ();
 
-774 i‡(
+806 i‡(
 EXEC_BUTTON_STATE
  =
 NXCTRL_ON
 ) {
 
-775 i‡(
+807 i‡(
 IN_MENU
 ) {
 
-776 i‡(
+808 i‡(
 	`ˇnA˘i⁄
 ()) {
 
-777 
+809 
 MENU_IDX
 ) {
 
-778 
+810 
 MENU_IDX_EXIT_MENU
 :
 
-779 
-IN_MENU
- = 
-NXCTRL_FALSE
-;
-
-780 
-	`di•œyPîiInfo
-(
-pAµ
-);
-
-782 
-MENU_IDX_SYSTEM_MENU
-:
-
-783 
-pAµ
-->
-nCmd
- = 1;
-
-785 
-MENU_IDX_UPDATE_MENU
-:
-
-786 
-IN_MENU
- = 
-NXCTRL_FALSE
-;
-
-787 
-	`di•œyPîiInfo
-(
-pAµ
-);
-
-789 
-MENU_IDX_P8_13_PWM_MENU
-:
-
-790 
-IN_MENU
- = 
-NXCTRL_FALSE
-;
-
-791 
-	`runPWM1
-(
-pAµ
-);
-
-792 
-	`di•œyPîiInfo
-(
-pAµ
-);
-
-794 
-MENU_IDX_P8_19_PWM_MENU
-:
-
-795 
-IN_MENU
- = 
-NXCTRL_FALSE
-;
-
-796 
-	`runPWM2
-(
-pAµ
-);
-
-797 
-	`di•œyPîiInfo
-(
-pAµ
-);
-
-799 
-MENU_IDX_AK8448_CFG_MENU
-:
-
-800 
-IN_MENU
- = 
-NXCTRL_FALSE
-;
-
-801 
-	`runAK8448
-(
-pAµ
-);
-
-802 
-	`di•œyPîiInfo
-(
-pAµ
-);
-
-804 
-MENU_IDX_AK8448_READ_MENU
-:
-
-805 
-IN_MENU
- = 
-NXCTRL_FALSE
-;
-
-806 
-	`ªadAK8448
-(
-pAµ
-);
-
-807 
-	`di•œyPîiInfo
-(
-pAµ
-);
-
-809 
-MENU_IDX_TR_A3_MENU
-:
-
-810 
-IN_MENU
- = 
-NXCTRL_FALSE
-;
-
 811 
-	`åa˚A3
-(
-pAµ
-);
+IN_MENU
+ = 
+NXCTRL_FALSE
+;
 
 812 
 	`di•œyPîiInfo
@@ -26574,28 +26608,186 @@ pAµ
 );
 
 814 
-MENU_IDX_DCMOTOR_MENU
+MENU_IDX_SYSTEM_MENU
 :
 
 815 
+pAµ
+->
+nCmd
+ = 1;
+
+817 
+MENU_IDX_UPDATE_MENU
+:
+
+818 
 IN_MENU
  = 
 NXCTRL_FALSE
 ;
 
-816 
-	`dcMŸ‹Te°
-(
-pAµ
-);
-
-817 
+819 
 	`di•œyPîiInfo
 (
 pAµ
 );
 
-825 
+821 
+MENU_IDX_P8_13_PWM_MENU
+:
+
+822 
+IN_MENU
+ = 
+NXCTRL_FALSE
+;
+
+823 
+	`runPWM1
+(
+pAµ
+);
+
+824 
+	`di•œyPîiInfo
+(
+pAµ
+);
+
+826 
+MENU_IDX_P8_19_PWM_MENU
+:
+
+827 
+IN_MENU
+ = 
+NXCTRL_FALSE
+;
+
+828 
+	`runPWM2
+(
+pAµ
+);
+
+829 
+	`di•œyPîiInfo
+(
+pAµ
+);
+
+831 
+MENU_IDX_AK8448_CFG_MENU
+:
+
+832 
+IN_MENU
+ = 
+NXCTRL_FALSE
+;
+
+833 
+	`runAK8448
+(
+pAµ
+);
+
+834 
+	`di•œyPîiInfo
+(
+pAµ
+);
+
+836 
+MENU_IDX_AK8448_READ_MENU
+:
+
+837 
+IN_MENU
+ = 
+NXCTRL_FALSE
+;
+
+838 
+	`ªadAK8448
+(
+pAµ
+);
+
+839 
+	`di•œyPîiInfo
+(
+pAµ
+);
+
+841 
+MENU_IDX_TR_A3_MENU
+:
+
+842 
+IN_MENU
+ = 
+NXCTRL_FALSE
+;
+
+843 
+	`åa˚A3
+(
+pAµ
+);
+
+844 
+	`di•œyPîiInfo
+(
+pAµ
+);
+
+846 
+MENU_IDX_DCMOTOR_MENU
+:
+
+847 
+IN_MENU
+ = 
+NXCTRL_FALSE
+;
+
+848 
+	`dcMŸ‹Te°
+(
+pAµ
+);
+
+849 
+	`di•œyPîiInfo
+(
+pAµ
+);
+
+851 
+MENU_IDX_PININFO_MENU
+:
+
+852 
+IN_MENU
+ = 
+NXCTRL_FALSE
+;
+
+853 
+	`pöInfo
+(
+pAµ
+);
+
+854 
+	`di•œyPîiInfo
+(
+pAµ
+);
+
+861 
 	}
 }
 
@@ -38682,14 +38874,492 @@ sock
 >
 
 25 
-	~<sig«l.h
+	~<°rögs.h
 >
 
-26 
-	~<NXCTRL.h
->
+27 
+	s__ègPININFO
+ {
 
-29 
+28 *
+	mpszPö
+;
+
+29 *
+	mpszName
+;
+
+30 *
+	mpszM7
+;
+
+31 *
+	mpszM6
+;
+
+32 *
+	mpszM5
+;
+
+33 *
+	mpszM4
+;
+
+34 *
+	mpszM3
+;
+
+35 *
+	mpszM2
+;
+
+36 *
+	mpszM1
+;
+
+37 *
+	mpszM0
+;
+
+38 *
+	mpszNŸe
+;
+
+39 } 
+	tPININFO
+;
+
+41 
+	#DP
+(
+p
+,
+n
+,
+m7
+,
+m6
+,
+m5
+,
+m4
+,
+m3
+,
+m2
+,
+m1
+,
+m0
+,
+¡
+Ë{ .
+pszPö
+ =Ö, .
+pszName
+ =Ç, .
+pszM7
+ = m7, .
+pszM6
+ = m6, .
+pszM5
+ = m5, .
+pszM4
+ = m4, .
+pszM3
+ = m3, .
+pszM2
+ = m2, .
+pszM1
+ = m1, .
+pszM0
+ = m0, .
+pszNŸe
+ =Çà}
+
+	)
+
+43 
+PININFO
+ 
+	griP8
+[] = {
+
+44 
+DP
+("P8_01", "DGND", "", "", "", "", "", "", "", "", "Ground"),
+
+45 
+DP
+("P8_02", "DGND", "", "", "", "", "", "", "", "", "Ground"),
+
+46 
+DP
+("P8_03", "GPIO1[6]", "GPIO1[6]", "", "", "", "", "", "MMC1_DAT6", "GPMC_AD6", "Board(EMMC2_PINS)"),
+
+47 
+DP
+("P8_04", "GPIO1[7]", "GPIO1[7]", "", "", "", "", "", "MMC1_DAT7", "GPMC_AD7", "Board(EMMC2_PINS)"),
+
+48 
+DP
+("P8_05", "GPIO1[2]", "GPIO1[2]", "", "", "", "", "", "MMC1_DAT2", "GPMC_AD2", "Board(EMMC2_PINS)"),
+
+49 
+DP
+("P8_06", "GPIO1[3]", "GPIO1[3]", "", "", "", "", "", "MMC1_DAT3", "GPMC_AD3", "Board(EMMC2_PINS)"),
+
+50 
+DP
+("P8_07", "TIMER4", "GPIO2[2]", "", "", "", "", "TIMER4", "", "GPMC_ADVN_ALE", ""),
+
+51 
+DP
+("P8_08", "TIMER7", "GPIO2[3]", "", "", "", "", "TIMER7", "", "GPMC_OEN_REN", ""),
+
+52 
+DP
+("P8_09", "TIMER5", "GPIO2[5]", "", "", "", "", "TIMER5", "", "GPMC_BE0N_CLE", ""),
+
+53 
+DP
+("P8_10", "TIMER6", "GPIO2[4]", "", "", "", "", "TIMER6", "", "GPMC_WEN", ""),
+
+54 
+DP
+("P8_11", "GPIO1[13]", "GPIO1[13]", "PR1_PRU0_PRU_R30_15", "", "EQEP2B_IN", "MMC2_DAT1", "MMC1_DAT5", "LCD_DATA18", "GPMC_AD13", ""),
+
+55 
+DP
+("P8_12", "GPIO1[12]", "GPIO1[12]", "PR1_PRU0_PRU_R30_14", "", "EQEP2A_IN", "MMC2_DAT0", "MMC1_DAT4", "LCD_DATA19", "GPMC_AD12", ""),
+
+56 
+DP
+("P8_13", "EHRPWM2B", "GPIO0[23]", "", "", "EHRPWM2B", "MMC2_DAT5", "MMC1_DAT1", "LCD_DATA22", "GPMC_AD9", ""),
+
+57 
+DP
+("P8_14", "GPIO0[26]", "GPIO0[26]", "", "", "EHRPWM2_TRIPZONE_IN", "MMC2_DAT6", "MMC1_DAT2", "LCD_DATA21", "GPMC_AD10", ""),
+
+58 
+DP
+("P8_15", "GPIO1[15]", "GPIO1[15]", "PR1_PRU0_PRU_R31_15", "", "EQEP2_STROBE", "MMC2_DAT3", "MMC1_DAT7", "LCD_DATA16", "GPMC_AD15", ""),
+
+59 
+DP
+("P8_16", "GPIO1[14]", "GPIO1[14]", "PR1_PRU0_PRU_R31_14", "", "EQEP2_INDEX", "MMC2_DAT2", "MMC1_DAT6", "LCD_DATA17", "GPMC_AD14", ""),
+
+60 
+DP
+("P8_17", "GPIO0[27]", "GPIO0[27]", "", "", "EHRPWM0_SYNCO", "MMC2_DAT7", "MMC1_DAT3", "LCD_DATA20", "GPMC_AD11", ""),
+
+61 
+DP
+("P8_18", "GPIO2[1]", "GPIO2[1]", "MCASP0_FSR", "", "", "MMC2_CLK", "GPMC_WAIT1", "LCD_MEMORY_CLK", "GPMC_CLK_MUX0", ""),
+
+62 
+DP
+("P8_19", "EHRPWM2A", "GPIO0[22]", "", "", "EHRPWM2A", "MMC2_DAT4", "MMC1_DAT0", "LCD_DATA23", "GPMC_AD8", ""),
+
+63 
+DP
+("P8_20", "GPIO1[31]", "GPIO1[31]", "PR1_PRU1_PRU_R31_13", "PR1_PRU1_PRU_R30_13", "", "", "MMC1_CMD", "GPMC_BE1N", "GPMC_CSN2", "Board(EMMC2_PINS)"),
+
+64 
+DP
+("P8_21", "GPIO1[30]", "GPIO1[30]", "PR1_PRU1_PRU_R31_12", "PR1_PRU1_PRU_R30_12", "", "", "MMC1_CLK", "GPMC_CLK", "GPMC_CSN1", "Board(EMMC2_PINS)"),
+
+65 
+DP
+("P8_22", "GPIO1[5]", "GPIO1[5]", "", "", "", "", "", "MMC1_DAT5", "GPMC_AD5", "Board(EMMC2_PINS)"),
+
+66 
+DP
+("P8_23", "GPIO1[4]", "GPIO1[4]", "", "", "", "", "", "MMC1_DAT4", "GPMC_AD4", "Board(EMMC2_PINS)"),
+
+67 
+DP
+("P8_24", "GPIO1[1]", "GPIO1[1]", "", "", "", "", "", "MMC1_DAT1", "GPMC_AD1", "Board(EMMC2_PINS)"),
+
+68 
+DP
+("P8_25", "GPIO1[0]", "GPIO1[0]", "", "", "", "", "", "MMC1_DAT0", "GPMC_AD0", "Board(EMMC2_PINS)"),
+
+69 
+DP
+("P8_26", "GPIO1[29]", "GPIO1[29]", "", "", "", "", "", "", "GPMC_CSN0", ""),
+
+70 
+DP
+("P8_27", "GPIO2[22]", "GPIO2[22]", "PR1_PRU1_PRU_R31_8", "PR1_PRU1_PRU_R30_8", "", "", "", "GPMC_A8", "LCD_VSYNC", "Board(HDMI_PINS)"),
+
+71 
+DP
+("P8_28", "GPIO2[24]", "GPIO2[24]", "PR1_PRU1_PRU_R31_10", "PR1_PRU1_PRU_R30_10", "", "", "", "GPMC_A10", "LCD_PCLK", "Board(HDMI_PINS)"),
+
+72 
+DP
+("P8_29", "GPIO2[23]", "GPIO2[23]", "PR1_PRU1_PRU_R31_9", "PR1_PRU1_PRU_R30_9", "", "", "", "GPMC_A9", "LCD_HSYNC", "Board(HDMI_PINS)"),
+
+73 
+DP
+("P8_30", "GPIO2[25]", "GPIO2[25]", "", "", "", "", "", "GPMC_A11", "LCD_AC_BIAS_EN", "Board(HDMI_PINS)"),
+
+74 
+DP
+("P8_31", "UART5_CTSN", "GPIO0[10]", "UART5_CTSN", "", "UART5_RXD", "MCASP0_AXR1", "EQEP1_INDEX", "GPMC_A18", "LCD_DATA14", "Board(HDMI_PINS)"),
+
+75 
+DP
+("P8_32", "UART5_RTSN", "GPIO0[11]", "UART5_RTSN", "", "MCASP0_AXR3", "MCASP0_AHCLKX", "EQEP1_STROBE", "GPMC_A19", "LCD_DATA15", "Board(HDMI_PINS)"),
+
+76 
+DP
+("P8_33", "UART4_RTSN", "GPIO0[9]", "UART4_RTSN", "", "MCASP_AXR3", "MCASP0_FSR", "EQEP1B_IN", "GPMC_A17", "LCD_DATA13", "Board(HDMI_PINS)"),
+
+77 
+DP
+("P8_34", "UART3_RTSN", "GPIO2[17]", "UART3_RTSN", "", "MCASP0_AXR2", "MCASP0_AHCLKR", "EHRPWM1B", "GPMC_A15", "LCD_DATA11", "Board(HDMI_PINS)"),
+
+78 
+DP
+("P8_35", "UART4_CTSN", "GPIO0[8]", "UART4_CTSN", "", "MCASP0_AXR2", "MCASP0_ACLKR", "EQEP1A_IN", "GPMC_A16", "LCD_DATA12", "Board(HDMI_PINS)"),
+
+79 
+DP
+("P8_36", "UART3_CTSN", "GPIO2[16]", "UART3_CTSN", "", "", "MCASP0_AXR0", "EHRPWM1A", "GPMC_A14", "LCD_DATA10", "Board(HDMI_PINS)"),
+
+80 
+DP
+("P8_37", "UART5_TXD", "GPIO2[14]", "UART2_CTSN", "", "UART5_TXD", "MCASP0_ACLKX", "EHRPWM1_TRIPZONE_IN", "GPMC_A12", "LCD_DATA8", "Board(HDMI_PINS)"),
+
+81 
+DP
+("P8_38", "UART5_RXD", "GPIO2[15]", "UART2_RTSN", "", "UART5_RXD", "MCASP0_FSX", "EHRPWM0_SYNCO", "GPMC_A13", "LCD_DATA9", "Board(HDMI_PINS)"),
+
+82 
+DP
+("P8_39", "GPIO2[12]", "GPIO2[12]", "PR1_PRU1_PRU_R31_6", "PR1_PRU1_PRU_R30_6", "", "EQEP2_INDEX", "", "GPMC_A6", "LCD_DATA6", "Board(HDMI_PINS)"),
+
+83 
+DP
+("P8_40", "GPIO2[13]", "GPIO2[13]", "PR1_PRU1_PRU_R31_7", "PR1_PRU1_PRU_R30_7", "PR1_EDIO_DATA_OUT7", "EQEP2_STROBE", "", "GPMC_A7", "LCD_DATA7", "Board(HDMI_PINS)"),
+
+84 
+DP
+("P8_41", "GPIO2[10]", "GPIO2[10]", "PR1_PRU1_PRU_R31_4", "PR1_PRU1_PRU_R30_4", "", "EQEP2A_IN", "", "GPMC_A4", "LCD_DATA4", "Board(HDMI_PINS)"),
+
+85 
+DP
+("P8_42", "GPIO2[11]", "GPIO2[11]", "PR1_PRU1_PRU_R31_5", "PR1_PRU1_PRU_R30_5", "", "EQEP2B_IN", "", "GPMC_A5", "LCD_DATA5", "Board(HDMI_PINS)"),
+
+86 
+DP
+("P8_43", "GPIO2[8]", "GPIO2[8]", "PR1_PRU1_PRU_R31_2", "PR1_PRU1_PRU_R30_2", "", "EHRPWM2_TRIPZONE_IN", "", "GPMC_A2", "LCD_DATA2", "Board(HDMI_PINS)"),
+
+87 
+DP
+("P8_44", "GPIO2[9]", "GPIO2[9]", "PR1_PRU1_PRU_R31_3", "PR1_PRU1_PRU_R30_3", "", "EHRPWM0_SYNCO", "", "GPMC_A3", "LCD_DATA3", "Board(HDMI_PINS)"),
+
+88 
+DP
+("P8_45", "GPIO2[6]", "GPIO2[6]", "PR1_PRU1_PRU_R31_0", "PR1_PRU1_PRU_R30_0", "", "EHRPWM2A", "", "GPMC_A0", "LCD_DATA0", "Board(HDMI_PINS)"),
+
+89 
+DP
+("P8_46", "GPIO2[7]", "GPIO2[7]", "PR1_PRU1_PRU_R31_1", "PR1_PRU1_PRU_R30_1", "", "EHRPWM2B", "", "GPMC_A1", "LCD_DATA1", "Board(HDMI_PINS)"),
+
+92 
+PININFO
+ 
+	griP9
+[] = {
+
+93 
+DP
+("P9_01", "GND", "", "", "", "", "", "", "", "", "Ground"),
+
+94 
+DP
+("P9_02", "GND", "", "", "", "", "", "", "", "", "Ground"),
+
+95 
+DP
+("P9_03", "3V3", "", "", "", "", "", "", "", "", "250mA Max"),
+
+96 
+DP
+("P9_04", "3V3", "", "", "", "", "", "", "", "", "250mA Max"),
+
+97 
+DP
+("P9_05", "VDD_5V", "", "", "", "", "", "", "", "", "1A Max(DC)"),
+
+98 
+DP
+("P9_06", "VDD_5V", "", "", "", "", "", "", "", "", "1A Max(DC)"),
+
+99 
+DP
+("P9_07", "5V", "", "", "", "", "", "", "", "", "250mA Max"),
+
+100 
+DP
+("P9_08", "5V", "", "", "", "", "", "", "", "", "250mA Max"),
+
+101 
+DP
+("P9_09", "PWR_BUT", "", "", "", "", "", "", "", "", "5V Pulled Up"),
+
+102 
+DP
+("P9_10", "SYS_RESET", "", "", "", "", "", "", "", "", ""),
+
+103 
+DP
+("P9_11", "UART4_RXD", "GPIO0[30]", "UART4_RXD_MUX2", "", "MMC1_SDCD", "RMII2_CRS_DV", "GPMC_CSN4", "MII2_CRS", "GPMC_WAIT0", ""),
+
+104 
+DP
+("P9_12", "GPIO1[28]", "GPIO1[28]", "MCASP0_ACLKR_MUX3", "", "GPMC_DIR", "MMC2_DAT3", "GPMC_CSN6", "MII2_COL", "GPMC_BE1N", ""),
+
+105 
+DP
+("P9_13", "UART4_TXD", "GPIO0[31]", "UART4_TXD_MUX2", "", "MMC2_SDCD", "RMII2_RXERR", "GPMC_CSN5", "MII2_RXERR", "GPMC_WPN", ""),
+
+106 
+DP
+("P9_14", "EHRPWM1A", "GPIO1[18]", "EHRPWM1A_MUX1", "", "GPMC_A18", "MMC2_DAT1", "RGMII2_TD3", "MII2_TXD3", "GPMC_A3", ""),
+
+107 
+DP
+("P9_15", "GPIO1[16]", "GPIO1[16]", "EHRPWM1_TRIPZONE_INPUT", "GPMC_A16", "MII2_TXEN", "RMII2_TCTL", "GMII2_TXEN", "GPMC_A0", "", ""),
+
+108 
+DP
+("P9_16", "EHRPWM1B", "GPIO1[19]", "EHRPWM1B_MUX1", "", "GPMC_A19", "MMC2_DAT2", "RGMII2_TD2", "MII2_TXD2", "GPMC_A3", ""),
+
+109 
+DP
+("P9_17", "I2C1_SCL", "GPIO0[5]", "", "", "PR1_UART0_TXD", "EHRPWM0_SYNCI", "I2C1_SCL", "MMC2_SDWP", "SPI0_CS0", ""),
+
+110 
+DP
+("P9_18", "I2C1_SDA", "GPIO0[4]", "", "", "PR1_UART0_RXD", "EHRPWM0_TRIPZONE", "I2C1_SDA", "MMC1_SDWP", "SPI0_D1", ""),
+
+111 
+DP
+("P9_19", "I2C2_SCL", "GPIO0[13]", "", "PR1_UART0_RTS_N", "SPI1_CS1", "I2C2_SCL", "DCAN0_RX", "TIMER5", "UART1_RTSN", "I2C2_PINS"),
+
+112 
+DP
+("P9_20", "I2C2_SDA", "GPIO0[12]", "", "PR1_UART0_CTS_N", "SPI1_CS0", "I2C2_SDA", "DCAN0_TX", "TIMER6", "UART1_CTSN", "I2C2_PINS"),
+
+113 
+DP
+("P9_21", "UART2_TXD", "GPIO0[3]", "EMU3_MUX1", "", "PR1_UART0_RTS_N", "EHRPWM0B", "I2C2_SCL", "UART2_TDX", "SPI0_D0", ""),
+
+114 
+DP
+("P9_22", "UART2_RXD", "GPIO0[2]", "EMU2_MUX1", "", "PR1_UART0_CTS_N", "EHRPWM0A", "I2C2_SDA", "UART2_RXD", "SPI0_SCLK", ""),
+
+115 
+DP
+("P9_23", "GPIO1[17]", "GPIO1[17]", "EHRPWM0_SYNCO", "", "GPMC_A17", "MMC2_DAT0", "RGMII2_RXDV", "GMII2_RXDV", "GPMC_A1", ""),
+
+116 
+DP
+("P9_24", "UART1_TXD", "GPIO0[15]", "PR1_PRU0_PRU_R31_16", "P1_UART0_TXD", "", "I2C1_SCL", "DCAN1_RX", "MMC2_SDWP", "UART1_TXD", ""),
+
+117 
+DP
+("P9_25", "GPIO3[21]", "GPIO3[21]", "PR1_PRU0_PRU_R31_7", "PR1_PRU0_PRU_R30_7", "EMU4_MUX2", "MCASP1_AXR1", "MCASP0_AXR3", "EQEP0_STROBE", "MCASP0_AHCLKX", "MCASP0_PINS"),
+
+118 
+DP
+("P9_26", "UART1_RXD", "GPIO0[14]", "PR1_PRU1_PRU_R31_16", "PR1_UART0_RXD", "", "I2C1_SDA", "DCAN1_TX", "MMC1_SDWP", "UART1_RXD", ""),
+
+119 
+DP
+("P9_27", "GPIO3[19]", "GPIO3[19]", "PR1_PRU0_PRU_R31_5", "PR1_PRU0_PRU_R30_5", "EMU2_MUX2", "MCASP1_FSX", "MCASP0_AXR3", "EQEP0B_IN", "MCASP0_FSR", ""),
+
+120 
+DP
+("P9_28", "SPI1_CS0", "GPIO3[17]", "PR1_PRU0_PRU_R31_3", "PR1_PRU0_PRU_R30_3", "ECAP2_IN_PWM2_OUT", "SPI1_CS0", "MCASP0_AXR2", "EHRPWM0_SYNCI", "MCASP0_AHCLKR", "MCASP0_PINS"),
+
+121 
+DP
+("P9_29", "SPI1_D0", "GPIO3[15]", "PR1_PRU0_PRU_R31_1", "PR1_PRU0_PRU_R30_1", "MMC1_SDCD_MUX1", "SPI1_D0", "", "EHRPWM0B", "MCASP0_FSX", "MCASP0_PINS"),
+
+122 
+DP
+("P9_30", "SPI1_D1", "GPIO3[16]", "PR1_PRU0_PRU_R31_2", "PR1_PRU0_PRU_R30_2", "MMC2_SDCD_MUX1", "SPI1_D1", "", "EHRPWM0_TRIPZONE", "MCASP0_AXR0", "MCASP0_PINS"),
+
+123 
+DP
+("P9_31", "SPI1_SCLK", "GPIO3[14]", "PR1_PRU0_PRU_R31_0", "PR1_PRU0_PRU_R30_0", "MMC0_SDCD_MUX1", "SPI1_SCLK", "", "EHRPWM0A", "MCASP0_ACLKX", "MCASP0_PINS"),
+
+124 
+DP
+("P9_32", "VADC", "", "", "", "", "", "", "", "", "1.8V Reference"),
+
+125 
+DP
+("P9_33", "AIN4", "", "", "", "", "", "", "", "", "1.8V"),
+
+126 
+DP
+("P9_34", "AGND", "", "", "", "", "", "", "", "", "ADC Ground"),
+
+127 
+DP
+("P9_35", "AIN6", "", "", "", "", "", "", "", "", "1.8V"),
+
+128 
+DP
+("P9_36", "AIN5", "", "", "", "", "", "", "", "", "1.8V"),
+
+129 
+DP
+("P9_37", "AIN2", "", "", "", "", "", "", "", "", "1.8V"),
+
+130 
+DP
+("P9_38", "AIN3", "", "", "", "", "", "", "", "", "1.8V"),
+
+131 
+DP
+("P9_39", "AIN0", "", "", "", "", "", "", "", "", "1.8V"),
+
+132 
+DP
+("P9_40", "AIN1", "", "", "", "", "", "", "", "", "1.8V"),
+
+133 
+DP
+("P9_41", "CLKOUT2/GPIO3[20]", "GPIO0[20]/GPIO3[20]", "EMU3_MUX0/PR1_PRU0_PRU_R31_6", "PR1_PRU0_PRU_R31_16/PR1_PRU0_PRU_R30_6", "TIMER7_MUX1/EMU3", "CLKOUT2/MCASP1_AXR0", "TCLKIN", "EQEP0_INDEX", "XDMA_EVENT_INTR1/MCASP0_AXR1", "41A/B"),
+
+134 
+DP
+("P9_42", "GPIO0[7]/GPIO3[18]", "GPIO0[7]/GPIO3[18]", "XDMA_EVENT_INTR2/PR1_PRU0_PRU_R31_4", "MMC0_SDWP/PR1_PRU0_PRU_R30_4", "SPI1_SCLK", "PR1_ECAP0_ECAP_CAPIN_APWM_O/MCASP1_ACLKX", "SPI1_CS1/MCASP0_AXR2", "UART3_TXD/EQEP0A_IN", "ECAP0_IN_PWM0_OUT/MCASP0_ACLKR", "42A/B, MCASP0_PINS"),
+
+135 
+DP
+("P9_43", "GND", "", "", "", "", "", "", "", "", "Ground"),
+
+136 
+DP
+("P9_44", "GND", "", "", "", "", "", "", "", "", "Ground"),
+
+137 
+DP
+("P9_45", "GND", "", "", "", "", "", "", "", "", "Ground"),
+
+138 
+DP
+("P9_46", "GND", "", "", "", "", "", "", "", "", "Ground"),
+
+142 
 	$maö
  (
 ¨gc
@@ -38697,73 +39367,271 @@ sock
 ¨gv
 []) {
 
-30 c⁄° *
-pszB™kName
- = 
-NULL
+143 
+PININFO
+ *
+ri
 ;
 
-31 c⁄° *
-pszPöName
- = 
-NULL
+144 
+i
 ;
 
-32 i‡(
+146 
 ¨gc
- == 1) {
+) {
 
-33 
-pszB™kName
- = "ALL";
-
-34 
-pszPöName
- = "ALL";
-
-35 } i‡(
-¨gc
- == 3) {
-
-36 
-pszPöName
- = 
+148 i‡(!
+	`°rˇ£cmp
+("P8", 
 ¨gv
-[2];
+[1]))
 
-37 
-pszB™kName
+149 
+ri
  = 
-¨gv
-[1];
+riP8
+;
 
-39 
+150 i‡(!
+	`°rˇ£cmp
+("P9", 
+¨gv
+[1]))
+
+151 
+ri
+ = 
+riP9
+;
+
+153 
 	`Ârötf
 (
 °dîr
-, "usage:Öin-info [banknameÖinnumber]\n");
+, "usage:Öin-info [BANK] [PIN]\n");
 
-43 
+157 
+i
+ = 0; i < 46; i++) {
+
+158 
 	`¥ötf
-("XXX Li° Pö Inf‹m©i⁄ f‹ %s[%s]; suchá†mux\n", 
-pszB™kName
-, 
-pszPöName
+("[%s] %-18s", 
+ri
+[
+i
+].
+pszPö
+,Ñi[i].
+pszName
 );
 
-46 
-	}
-}
+159 
+	`¥ötf
+(" %s\n", 
+ri
+[
+i
+].
+pszNŸe
+);
 
-48 
-	$NXCTRLSëup
- (Ë{
-	}
-}
+161 
+	`¥ötf
+("\n");
 
-49 
-	$NXCTRLLo›
- (Ë{
+165 i‡(!
+	`°rˇ£cmp
+("P8", 
+¨gv
+[1]))
+
+166 
+ri
+ = 
+riP8
+;
+
+167 i‡(!
+	`°rˇ£cmp
+("P9", 
+¨gv
+[1]))
+
+168 
+ri
+ = 
+riP9
+;
+
+170 
+	`Ârötf
+(
+°dîr
+, "usage:Öin-info [BANK] [PIN]\n");
+
+174 
+i
+ = 
+	`©oi
+(
+¨gv
+[2]) - 1;
+
+176 i‡(
+i
+ > -1 && i < 46) {
+
+177 
+	`¥ötf
+("[%s] %-18s", 
+ri
+[
+i
+].
+pszPö
+,Ñi[i].
+pszName
+);
+
+178 
+	`¥ötf
+(" %s\n", 
+ri
+[
+i
+].
+pszNŸe
+);
+
+179 
+	`¥ötf
+(" M7: %-40†M6: %-30s\n", 
+ri
+[
+i
+].
+pszM7
+,Ñi[i].
+pszM6
+);
+
+180 
+	`¥ötf
+(" M5: %-40†M4: %-30s\n", 
+ri
+[
+i
+].
+pszM5
+,Ñi[i].
+pszM4
+);
+
+181 
+	`¥ötf
+(" M3: %-40†M2: %-30s\n", 
+ri
+[
+i
+].
+pszM3
+,Ñi[i].
+pszM2
+);
+
+182 
+	`¥ötf
+(" M1: %-40†M0: %-30s\n", 
+ri
+[
+i
+].
+pszM1
+,Ñi[i].
+pszM0
+);
+
+184 
+	`Ârötf
+(
+°dîr
+, "usage:Öin-info [BANK] [PIN]\n");
+
+189 
+ri
+ = 
+riP8
+;
+
+190 
+i
+ = 0; i < 46; i++) {
+
+191 
+	`¥ötf
+("[%s] %-18s", 
+ri
+[
+i
+].
+pszPö
+,Ñi[i].
+pszName
+);
+
+192 
+	`¥ötf
+(" %s\n", 
+ri
+[
+i
+].
+pszNŸe
+);
+
+194 
+	`¥ötf
+("\n");
+
+196 
+ri
+ = 
+riP9
+;
+
+197 
+i
+ = 0; i < 46; i++) {
+
+198 
+	`¥ötf
+("[%s] %-18s", 
+ri
+[
+i
+].
+pszPö
+,Ñi[i].
+pszName
+);
+
+199 
+	`¥ötf
+(" %s\n", 
+ri
+[
+i
+].
+pszNŸe
+);
+
+201 
+	`¥ötf
+("\n");
+
+204 
 	}
 }
 
