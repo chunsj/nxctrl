@@ -46,7 +46,7 @@
 #define DPY_IDLE_COUNT_MAX          300
 #define MIN_ACTION_DURATION         200
 
-#define MENU_IDX_COUNT              9
+#define MENU_IDX_COUNT              10
 
 #define MENU_IDX_SYSTEM_MENU        0
 #define MENU_IDX_UPDATE_MENU        1
@@ -56,7 +56,8 @@
 #define MENU_IDX_AK8448_READ_MENU   5
 #define MENU_IDX_TR_A3_MENU         6
 #define MENU_IDX_DCMOTOR_MENU       7
-#define MENU_IDX_EXIT_MENU          8
+#define MENU_IDX_PININFO_MENU       8
+#define MENU_IDX_EXIT_MENU          9
 
 #define PRU_NUM                     PRU0
 #define PRU_PATH                    "/usr/bin/ctrl-app.bin"
@@ -392,6 +393,34 @@ dcMotorTest (LPNXCTRLAPP pApp) {
 }
 
 static NXCTRL_VOID
+pinInfo (LPNXCTRLAPP pApp) {
+  pApp->clearDisplay();
+  pApp->setCursor(0, 0);
+  pApp->writeSTR("P9[1|3|5|7]  G|3|D5|5");
+  pApp->setCursor(0, 10);
+  pApp->writeSTR("P9[32|33|34]  VA|A4|G");
+  pApp->setCursor(0, 20);
+  pApp->writeSTR("P9[35|36]        A6|5");
+  pApp->setCursor(0, 30);
+  pApp->writeSTR("P9[37-40]    A2|3|0|1");
+  pApp->setCursor(0, 40);
+  pApp->writeSTR("P8[3-6|20-25]    EMMC");
+  pApp->updateDisplay();
+
+  pApp->sleep(2000, 0);
+
+  pApp->setCursor(9, 7*FONT_HEIGHT+1);
+  pApp->writeSTR("PRESS EXEC TO EXIT");
+  pApp->updateDisplay();
+
+  EXEC_BUTTON_STATE = NXCTRL_LOW;
+  while (EXEC_BUTTON_STATE == NXCTRL_LOW) {
+    pApp->sleep(100, 0);
+    EXEC_BUTTON_STATE = pApp->digitalRead(EXEC_BUTTON_BANK, EXEC_BUTTON_PIN);
+  }
+}
+
+static NXCTRL_VOID
 displayPeriInfo (LPNXCTRLAPP pApp) {
   register int i, n = HCSR04_MAX_CNT;
   float fs = 0;
@@ -667,7 +696,8 @@ displayMenu (LPNXCTRLAPP pApp) {
     pApp->writeSTR(mkMenuSTR(rch, "P8:13 PWM(LED)", MENU_IDX_P8_13_PWM_MENU));
   if (MENU_IDX < 8)
     pApp->writeSTR(mkMenuSTR(rch, "P8:19 PWM(SERVO)", MENU_IDX_P8_19_PWM_MENU));
-  pApp->writeSTR(mkMenuSTR(rch, "SPIDEV:2(AK8448)", MENU_IDX_AK8448_CFG_MENU));
+  if (MENU_IDX < 9)
+    pApp->writeSTR(mkMenuSTR(rch, "SPIDEV:2(AK8448)", MENU_IDX_AK8448_CFG_MENU));
   if (MENU_IDX >= 5)
     pApp->writeSTR(mkMenuSTR(rch, "AK8448 TEST", MENU_IDX_AK8448_READ_MENU));
   if (MENU_IDX >= 6)
@@ -675,6 +705,8 @@ displayMenu (LPNXCTRLAPP pApp) {
   if (MENU_IDX >= 7)
     pApp->writeSTR(mkMenuSTR(rch, "DC MOTOR DRV", MENU_IDX_DCMOTOR_MENU));
   if (MENU_IDX >= 8)
+    pApp->writeSTR(mkMenuSTR(rch, "PIN INFO", MENU_IDX_PININFO_MENU));
+  if (MENU_IDX >= 9)
     pApp->writeSTR(mkMenuSTR(rch, "EXIT MENU", MENU_IDX_EXIT_MENU));
 
   pApp->updateDisplay();
@@ -816,6 +848,10 @@ NXCTRLAPP_run (LPNXCTRLAPP pApp) {
           dcMotorTest(pApp);
           displayPeriInfo(pApp);
           break;
+        case MENU_IDX_PININFO_MENU:
+          IN_MENU = NXCTRL_FALSE;
+          pinInfo(pApp);
+          displayPeriInfo(pApp);
         default:
           break;
         }
