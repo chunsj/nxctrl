@@ -456,8 +456,8 @@ displayGPSInfo (LPNXCTRLAPP pApp) {
   cfsetispeed(&tio, GPS_BAUDRATE);
   tcsetattr(fdTTY, TCSANOW, &tio);
 
-  pApp->setCursor(9, 7*FONT_HEIGHT+1);
-  pApp->writeSTR("PRESS EXEC TO EXIT");
+  pApp->setCursor(2*FONT_WIDTH, 7*FONT_HEIGHT+1);
+  pApp->writeSTR("HOLD EXEC TO EXIT");
   pApp->updateDisplay();
 
   rch[0] = '\0';
@@ -490,40 +490,47 @@ displayGPSInfo (LPNXCTRLAPP pApp) {
 #else
           char *token;
           char *pszSep = ", \r\n";
+          char rchTime[7];
           // $GPRMC
           token = strtok(rch, pszSep);
           // time
           token = strtok(NULL, pszSep);
-          pApp->setCursor(0, 14);
-          pApp->writeSTR(token);
+          snprintf(rchTime, 7, "%s", token);
+          rchTime[6] = 0;
           // status code 'A' for valid data
           token = strtok(NULL, pszSep);
-          if (!strlen(token)) { // invalid data
-            pApp->updateDisplay();
-            return;
+          if (strlen(token) && (token[0] == 'A')) {
+            // pos
+            token = strtok(NULL, pszSep);
+            pApp->setCursor(0, 24);
+            pApp->writeSTR(token);
+            token = strtok(NULL, pszSep);
+            pApp->writeSTR(token);
+            token = strtok(NULL, pszSep);
+            pApp->setCursor(0, 34);
+            pApp->writeSTR(token);
+            token = strtok(NULL, pszSep);
+            pApp->writeSTR(token);
+            // ground speed & direction
+            token = strtok(NULL, pszSep);
+            pApp->setCursor(0, 44);
+            pApp->writeSTR(token);
+            pApp->writeSTR(" ");
+            token = strtok(NULL, pszSep);
+            pApp->writeSTR(token);
+            // date
+            token = strtok(NULL, pszSep);
+            pApp->setCursor(0, 14);
+            pApp->writeSTR(token);
+            pApp->writeSTR(" ");
+            pApp->writeSTR(rchTime);
+          } else {
+            pApp->setCursor(0, 24);
+            pApp->writeSTR("  SEARCHING SATS...");
+            pApp->setCursor(7*FONT_WIDTH, 34);
+            pApp->writeSTR(rchTime);
           }
-          if (token[0] == 'V') { // void data
-            pApp->updateDisplay();
-            return;
-          }
-          // pos
-          token = strtok(NULL, pszSep);
-          pApp->setCursor(0, 24);
-          pApp->writeSTR(token);
-          token = strtok(NULL, pszSep);
-          pApp->writeSTR(token);
-          token = strtok(NULL, pszSep);
-          pApp->setCursor(0, 34);
-          pApp->writeSTR(token);
-          token = strtok(NULL, pszSep);
-          pApp->writeSTR(token);
-          // ground speed & direction
-          token = strtok(NULL, pszSep);
-          pApp->setCursor(0, 44);
-          pApp->writeSTR(token);
-          pApp->writeSTR(" ");
-          token = strtok(NULL, pszSep);
-          pApp->writeSTR(token);
+          pApp->updateDisplay();
 #endif
         } else if (!strncasecmp("$GPVTG", rchLine, 6)) {
 #if 0
