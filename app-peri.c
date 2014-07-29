@@ -20,12 +20,12 @@
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-#include <unistd.h>
-#include <fcntl.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include <strings.h>
+#include <unistd.h>
+#include <fcntl.h>
 #include <signal.h>
 #include <sys/time.h>
 #include <time.h>
@@ -427,12 +427,66 @@ pinInfo (LPNXCTRLAPP pApp) {
 }
 
 static NXCTRL_VOID
+setTimeInUTC (const char *pszDatePart, const char *pszTimePart) {
+  struct tm tm;
+  struct timeval tv;
+  char rch[3], rchTZ[128];
+  char *pszOLDTZ;
+  time_t tmNew;
+  extern int setenv (const char *__name, const char *__value, int __replace);
+  extern int unsetenv (const char *__name);
+  extern int settimeofday (const struct timeval *tv, void *pIgnoreThis);
+
+  snprintf(rch, 3, "%s", pszDatePart);
+  tm.tm_mday = atoi(rch);
+  snprintf(rch, 3, "%s", pszDatePart + 2);
+  tm.tm_mon = atoi(rch) - 1;
+  snprintf(rch, 3, "%s", pszDatePart + 4);
+  tm.tm_year = 2000 + atoi(rch) - 1900;
+
+  snprintf(rch, 3, pszTimePart);
+  tm.tm_hour = atoi(rch);
+  snprintf(rch, 3, pszTimePart + 2);
+  tm.tm_min = atoi(rch);
+  snprintf(rch, 3, pszTimePart + 4);
+  tm.tm_sec = atoi(rch);
+
+  pszOLDTZ = getenv("TZ");
+  if (pszOLDTZ)
+    sprintf(rchTZ, "%s", pszOLDTZ);
+  
+  if (setenv("TZ", "UTC", 1) < 0)
+    return;
+
+  tmNew = mktime(&tm);
+
+  tv.tv_sec = tmNew;
+  tv.tv_usec = 0;
+
+  if (settimeofday(&tv, NULL) < 0) {
+    if (pszOLDTZ)
+      setenv("TZ", rchTZ, 1);
+    else
+      unsetenv("TZ");
+    return;
+  }
+
+  if (pszOLDTZ)
+    setenv("TZ", rchTZ, 1);
+  else
+    unsetenv("TZ");
+
+  return;
+}
+
+static NXCTRL_VOID
 displayGPSInfo (LPNXCTRLAPP pApp) {
   struct termios tio;
   int fdTTY;
   char c;
   char rch[1024], *psz;
   char rchLine[26];
+  int nTimeUpdateCount = -1;
   
   pApp->clearDisplay();
   pApp->setCursor(0, 0);
@@ -456,6 +510,9 @@ displayGPSInfo (LPNXCTRLAPP pApp) {
   cfsetispeed(&tio, GPS_BAUDRATE);
   tcsetattr(fdTTY, TCSANOW, &tio);
 
+  pApp->setCursor(0, 24);
+  pApp->writeSTR("   GPS UNAVAILABLE");
+  
   pApp->setCursor(2*FONT_WIDTH, 7*FONT_HEIGHT+1);
   pApp->writeSTR("HOLD EXEC TO EXIT");
   pApp->updateDisplay();
@@ -532,11 +589,21 @@ displayGPSInfo (LPNXCTRLAPP pApp) {
             pApp->writeSTR(token);
             pApp->writeSTR(" ");
             pApp->writeSTR(rchTime);
+            if (nTimeUpdateCount < 0 || nTimeUpdateCount >= 100) {
+              nTimeUpdateCount = 0;
+              setTimeInUTC(token, rchTime);
+            } else
+              nTimeUpdateCount++;
           } else {
-            pApp->setCursor(0, 24);
-            pApp->writeSTR("  SEARCHING SATS...");
-            pApp->setCursor(7*FONT_WIDTH, 34);
-            pApp->writeSTR(rchTime);
+            if (strlen(rchTime)) {
+              pApp->setCursor(0, 24);
+              pApp->writeSTR("  SEARCHING SATS...");
+              pApp->setCursor(7*FONT_WIDTH, 34);
+              pApp->writeSTR(rchTime);
+            } else {
+              pApp->setCursor(0, 24);
+              pApp->writeSTR("   GPS UNAVAILABLE");
+            }
           }
           pApp->updateDisplay();
 #endif
