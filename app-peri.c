@@ -596,10 +596,19 @@ displayGPSInfo (LPNXCTRLAPP pApp) {
               nTimeUpdateCount++;
           } else {
             if (strlen(rchTime)) {
+              token = strtok(NULL, pszSep);
+              token = strtok(NULL, pszSep);
+              // date
+              token = strtok(NULL, pszSep);
               pApp->setCursor(0, 24);
               pApp->writeSTR("  SEARCHING SATS...");
               pApp->setCursor(7*FONT_WIDTH, 34);
               pApp->writeSTR(rchTime);
+              if (nTimeUpdateCount < 0 || nTimeUpdateCount >= 100) {
+                nTimeUpdateCount = 0;
+                setTimeInUTC(token, rchTime);
+              } else
+                nTimeUpdateCount++;
             } else {
               pApp->setCursor(0, 24);
               pApp->writeSTR("   GPS UNAVAILABLE");
