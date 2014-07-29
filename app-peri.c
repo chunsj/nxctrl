@@ -500,27 +500,35 @@ displayGPSInfo (LPNXCTRLAPP pApp) {
           // status code 'A' for valid data
           token = strtok(NULL, pszSep);
           if (strlen(token) && (token[0] == 'A')) {
+            pApp->setCursor(0, 24);
+            pApp->writeSTR("                    ");
+            pApp->setCursor(7*FONT_WIDTH, 34);
+            pApp->writeSTR("                    ");
             // pos
             token = strtok(NULL, pszSep);
             pApp->setCursor(0, 24);
+            pApp->writeSTR("LAT: ");
             pApp->writeSTR(token);
             token = strtok(NULL, pszSep);
             pApp->writeSTR(token);
             token = strtok(NULL, pszSep);
             pApp->setCursor(0, 34);
+            pApp->writeSTR("LON: ");
             pApp->writeSTR(token);
             token = strtok(NULL, pszSep);
             pApp->writeSTR(token);
             // ground speed & direction
             token = strtok(NULL, pszSep);
             pApp->setCursor(0, 44);
+            pApp->writeSTR("SPD: ");
             pApp->writeSTR(token);
-            pApp->writeSTR(" ");
+            pApp->writeSTR(" KTS ");
             token = strtok(NULL, pszSep);
             pApp->writeSTR(token);
             // date
             token = strtok(NULL, pszSep);
             pApp->setCursor(0, 14);
+            pApp->writeSTR("ITM: ");
             pApp->writeSTR(token);
             pApp->writeSTR(" ");
             pApp->writeSTR(rchTime);
