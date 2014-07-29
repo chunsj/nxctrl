@@ -60,8 +60,8 @@ EXE18-BIN=ctrl-app.bin
 SRC18-PRU=ctrl-app.p
 EXE19=pin-info
 SRC19=pin-info.c
-EXE20=tc
-SRC20=tc.c NXCTRL.c NXCTRL_oled.c NXCTRL_bitArray.c
+EXE20=tcdr
+SRC20=tcdr.c NXCTRL.c NXCTRL_oled.c NXCTRL_bitArray.c
 APP21=app-main.app
 SRC21-APP=app-main.c NXCTRL.c
 APP22=app-sysutil.app
@@ -195,9 +195,9 @@ $(APP27): $(SRC27-APP)
 clean:
 	rm -rf $(ARTIFACTS) $(AUX_ARTIFACTS)
 
-install-tc: tc app-main.app app-sysutil.app app-blank.app app-conninfo.app app-sysinfo.app app-peri.app \
+install-tcdr: tcdr app-main.app app-sysutil.app app-blank.app app-conninfo.app app-sysinfo.app app-peri.app \
 	app-spark.app
-	strip tc
-	cp tc /usr/bin
+	strip tcdr
+	cp tcdr /usr/bin
 	cp app-main.app app-sysutil.app app-blank.app app-conninfo.app app-sysinfo.app app-peri.app /usr/bin
 	cp app-spark.app /usr/bin

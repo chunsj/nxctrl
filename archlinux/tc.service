@@ -2,7 +2,7 @@
 Description=BBB Control Application Enhanced
 
 [Service]
-ExecStart=/usr/bin/tc
+ExecStart=/usr/bin/tcdr
 
 [Install]
 WantedBy=multi-user.target
