@@ -47,8 +47,7 @@
 #define MENU_IDX_BKCASTLE_MENU      3
 #define MENU_IDX_RUN_ORION          4
 #define MENU_IDX_RUN_TTY            5
-#define MENU_IDX_RUN_MLREPL         6
-#define MENU_IDX_EXIT_MENU          7
+#define MENU_IDX_EXIT_MENU          6
 
 static NXCTRL_BOOL                  MENU_BUTTON_STATE = NXCTRL_LOW;
 static NXCTRL_BOOL                  EXEC_BUTTON_STATE = NXCTRL_LOW;
@@ -196,15 +195,12 @@ displayMenu (LPNXCTRLAPP pApp) {
     pApp->writeSTR(mkMenuSTR(rch, "TC>>", MENU_IDX_SYSTEM_MENU));
   if (MENU_IDX < 6)
     pApp->writeSTR(mkMenuSTR(rch, "UPDATE INFO", MENU_IDX_UPDATE_MENU));
-  if (MENU_IDX < 7)
-    pApp->writeSTR(mkMenuSTR(rch, "BACKUP (@HOME)", MENU_IDX_BKHOME_MENU));
+  pApp->writeSTR(mkMenuSTR(rch, "BACKUP (@HOME)", MENU_IDX_BKHOME_MENU));
   pApp->writeSTR(mkMenuSTR(rch, "BACKUP (@CSVR)", MENU_IDX_BKCASTLE_MENU));
   pApp->writeSTR(mkMenuSTR(rch, "START ORION", MENU_IDX_RUN_ORION));
   if (MENU_IDX >= 5)
     pApp->writeSTR(mkMenuSTR(rch, "START TTY.JS", MENU_IDX_RUN_TTY));
   if (MENU_IDX >= 6)
-    pApp->writeSTR(mkMenuSTR(rch, "START ML REPL", MENU_IDX_RUN_MLREPL));
-  if (MENU_IDX >= 7)
     pApp->writeSTR(mkMenuSTR(rch, "EXIT MENU", MENU_IDX_EXIT_MENU));
 
   pApp->updateDisplay();
@@ -275,7 +271,7 @@ NXCTRLAPP_run (LPNXCTRLAPP pApp) {
           IN_MENU = NXCTRL_FALSE;
           displaySysInfo(pApp);
           break;
-        case MENU_IDX_BKHOME_MENU:
+         case MENU_IDX_BKHOME_MENU:
           pApp->clearDisplay();
           pApp->setCursor(3*FONT_WIDTH, 3*FONT_HEIGHT);
           pApp->writeSTR("SYNCING DATA...");
@@ -290,16 +286,6 @@ NXCTRLAPP_run (LPNXCTRLAPP pApp) {
           pApp->writeSTR("SYNCING DATA...");
           pApp->updateDisplay();
           system("sudo -u chunsj -i /home/chunsj/bin/bkcastle");
-          IN_MENU = NXCTRL_FALSE;
-          displaySysInfo(pApp);
-          break;
-        case MENU_IDX_RUN_MLREPL:
-          pApp->clearDisplay();
-          pApp->setCursor(2*FONT_WIDTH, 3*FONT_HEIGHT);
-          pApp->writeSTR("STARTING NREPL...");
-          pApp->updateDisplay();
-          system("sudo -u chunsj -i /home/chunsj/bin/ml-repl&");
-          pApp->sleep(4000, 0);
           IN_MENU = NXCTRL_FALSE;
           displaySysInfo(pApp);
           break;
