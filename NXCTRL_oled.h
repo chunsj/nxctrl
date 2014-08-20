@@ -22,7 +22,7 @@
 #define __NXCTRL_OLED_HEADER__
 
 // Most of the drawing logic is from Arduino library from Adafruit
-// Thank Adafruit for great library
+// Thanks Adafruit for great library
 
 #include <NXCTRL.h>
 #include <inttypes.h>
