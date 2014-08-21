@@ -32,8 +32,8 @@
 
 #define TMP36_PIN                   NXCTRL_A1
 
-#define TMP36_DELTA                 0.02
-#define CPUTEMP_BASE                56.0
+#define TMP36_DELTA                 0.034
+#define CPUTEMP_BASE                57.0
 #define CPUTEMP_SSG                 60.0
 #define SSG_DELTA                   0.00
 #define TMP_MAX_DELTA               9.00
