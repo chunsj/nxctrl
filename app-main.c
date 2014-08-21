@@ -32,7 +32,7 @@
 
 #define TMP36_PIN                   NXCTRL_A1
 
-#define TMP36_DELTA                 0.00
+#define TMP36_DELTA                 0.02
 #define CPUTEMP_BASE                56.0
 #define CPUTEMP_SSG                 60.0
 #define SSG_DELTA                   0.00
@@ -56,7 +56,8 @@
 #define MENU_IDX_UPDATE_TIME        1
 #define MENU_IDX_EXIT_MENU          2
 
-static NXCTRL_BOOL                  MENU_BUTTON_STATE = NXCTRL_LOW;
+static NXCTRL_BOOL                  MENU_U_BUTTON_STATE = NXCTRL_LOW;
+static NXCTRL_BOOL                  MENU_D_BUTTON_STATE = NXCTRL_LOW;
 static NXCTRL_BOOL                  EXEC_BUTTON_STATE = NXCTRL_LOW;
 static unsigned int                 DPY_IDLE_COUNT = 0;
 static unsigned char                MENU_IDX = MENU_IDX_SYSTEM_MENU;
@@ -188,14 +189,26 @@ displayInfo (LPNXCTRLAPP pApp) {
 
 static NXCTRL_VOID
 updateMenuButtonState (LPNXCTRLAPP pApp) {
-  if (MENU_BUTTON_STATE == NXCTRL_LOW) {
-    if (pApp->digitalRead(MENU_BUTTON_BANK, MENU_BUTTON_PIN) == NXCTRL_HIGH) {
-      MENU_BUTTON_STATE = NXCTRL_HIGH;
+  if (MENU_U_BUTTON_STATE == NXCTRL_LOW) {
+    if (pApp->digitalRead(MENU_U_BUTTON_BANK, MENU_U_BUTTON_PIN) == NXCTRL_HIGH) {
+      MENU_U_BUTTON_STATE = NXCTRL_HIGH;
       DPY_IDLE_COUNT = 0;
     }
   } else {
-    if (pApp->digitalRead(MENU_BUTTON_BANK, MENU_BUTTON_PIN) == NXCTRL_LOW) {
-      MENU_BUTTON_STATE = NXCTRL_LOW;
+    if (pApp->digitalRead(MENU_U_BUTTON_BANK, MENU_U_BUTTON_PIN) == NXCTRL_LOW) {
+      MENU_U_BUTTON_STATE = NXCTRL_LOW;
+      DPY_IDLE_COUNT = 0;
+    }
+  }
+
+  if (MENU_D_BUTTON_STATE == NXCTRL_LOW) {
+    if (pApp->digitalRead(MENU_D_BUTTON_BANK, MENU_D_BUTTON_PIN) == NXCTRL_HIGH) {
+      MENU_D_BUTTON_STATE = NXCTRL_HIGH;
+      DPY_IDLE_COUNT = 0;
+    }
+  } else {
+    if (pApp->digitalRead(MENU_D_BUTTON_BANK, MENU_D_BUTTON_PIN) == NXCTRL_LOW) {
+      MENU_D_BUTTON_STATE = NXCTRL_LOW;
       DPY_IDLE_COUNT = 0;
     }
   }
@@ -246,16 +259,21 @@ displayMenu (LPNXCTRLAPP pApp) {
 
 NXCTRL_VOID
 NXCTRLAPP_init (LPNXCTRLAPP pApp) {
-  MENU_BUTTON_STATE = pApp->digitalRead(MENU_BUTTON_BANK, MENU_BUTTON_PIN);
+  MENU_U_BUTTON_STATE = pApp->digitalRead(MENU_U_BUTTON_BANK, MENU_U_BUTTON_PIN);
+  MENU_D_BUTTON_STATE = pApp->digitalRead(MENU_D_BUTTON_BANK, MENU_D_BUTTON_PIN);
   EXEC_BUTTON_STATE = pApp->digitalRead(EXEC_BUTTON_BANK, EXEC_BUTTON_PIN);
   DPY_IDLE_COUNT = 0;
   MENU_IDX = MENU_IDX_SYSTEM_MENU;
   IN_MENU = NXCTRL_FALSE;
   LAST_ACTION_TIME = 0;
 
-  while (MENU_BUTTON_STATE == NXCTRL_HIGH) {
+  while (MENU_U_BUTTON_STATE == NXCTRL_HIGH) {
     pApp->sleep(100, 0);
-    MENU_BUTTON_STATE = pApp->digitalRead(MENU_BUTTON_BANK, MENU_BUTTON_PIN);
+    MENU_U_BUTTON_STATE = pApp->digitalRead(MENU_U_BUTTON_BANK, MENU_U_BUTTON_PIN);
+  }
+  while (MENU_D_BUTTON_STATE == NXCTRL_HIGH) {
+    pApp->sleep(100, 0);
+    MENU_D_BUTTON_STATE = pApp->digitalRead(MENU_D_BUTTON_BANK, MENU_D_BUTTON_PIN);
   }
 
   pApp->clearDisplay();
@@ -274,7 +292,8 @@ NXCTRLAPP_run (LPNXCTRLAPP pApp) {
   if (!IN_MENU)
     displayInfo(pApp);
 
-  if (MENU_BUTTON_STATE != NXCTRL_HIGH && EXEC_BUTTON_STATE != NXCTRL_HIGH) {
+  if (MENU_U_BUTTON_STATE != NXCTRL_HIGH && MENU_D_BUTTON_STATE != NXCTRL_HIGH &&
+      EXEC_BUTTON_STATE != NXCTRL_HIGH) {
     DPY_IDLE_COUNT++;
     if (DPY_IDLE_COUNT > DPY_IDLE_COUNT_MAX) {
       pApp->nCmd = 2;
@@ -283,12 +302,16 @@ NXCTRLAPP_run (LPNXCTRLAPP pApp) {
     return;
   }
 
-  if (MENU_BUTTON_STATE == NXCTRL_ON) {
+  if (MENU_U_BUTTON_STATE == NXCTRL_ON || MENU_D_BUTTON_STATE == NXCTRL_ON) {
     if (IN_MENU) {
       if (canAction()) {
-        MENU_IDX++;
-        if (MENU_IDX >= MENU_IDX_COUNT)
-          MENU_IDX = MENU_IDX_SYSTEM_MENU;
+        if (MENU_D_BUTTON_STATE == NXCTRL_ON) {
+          if (MENU_IDX < MENU_IDX_COUNT - 1)
+            MENU_IDX++;
+        } else {
+          if (MENU_IDX > 0)
+            MENU_IDX--;
+        }
         displayMenu(pApp);
       }
     } else {

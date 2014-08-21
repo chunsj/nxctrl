@@ -29,24 +29,36 @@
 #include <time.h>
 #include <NXCTRL_appEx.h>
 
-static NXCTRL_BOOL                  MENU_BUTTON_STATE = NXCTRL_LOW;
+static NXCTRL_BOOL                  MENU_U_BUTTON_STATE = NXCTRL_LOW;
+static NXCTRL_BOOL                  MENU_D_BUTTON_STATE = NXCTRL_LOW;
 
 static NXCTRL_VOID
 updateMenuButtonState (LPNXCTRLAPP pApp) {
-  if (MENU_BUTTON_STATE == NXCTRL_LOW) {
-    if (pApp->digitalRead(MENU_BUTTON_BANK, MENU_BUTTON_PIN) == NXCTRL_HIGH) {
-      MENU_BUTTON_STATE = NXCTRL_HIGH;
+  if (MENU_U_BUTTON_STATE == NXCTRL_LOW) {
+    if (pApp->digitalRead(MENU_U_BUTTON_BANK, MENU_U_BUTTON_PIN) == NXCTRL_HIGH) {
+      MENU_U_BUTTON_STATE = NXCTRL_HIGH;
     }
   } else {
-    if (pApp->digitalRead(MENU_BUTTON_BANK, MENU_BUTTON_PIN) == NXCTRL_LOW) {
-      MENU_BUTTON_STATE = NXCTRL_LOW;
+    if (pApp->digitalRead(MENU_U_BUTTON_BANK, MENU_U_BUTTON_PIN) == NXCTRL_LOW) {
+      MENU_U_BUTTON_STATE = NXCTRL_LOW;
+    }
+  }
+
+  if (MENU_D_BUTTON_STATE == NXCTRL_LOW) {
+    if (pApp->digitalRead(MENU_D_BUTTON_BANK, MENU_D_BUTTON_PIN) == NXCTRL_HIGH) {
+      MENU_D_BUTTON_STATE = NXCTRL_HIGH;
+    }
+  } else {
+    if (pApp->digitalRead(MENU_D_BUTTON_BANK, MENU_D_BUTTON_PIN) == NXCTRL_LOW) {
+      MENU_D_BUTTON_STATE = NXCTRL_LOW;
     }
   }
 }
 
 NXCTRL_VOID
 NXCTRLAPP_init (LPNXCTRLAPP pApp) {
-  MENU_BUTTON_STATE = NXCTRL_LOW;
+  MENU_U_BUTTON_STATE = NXCTRL_LOW;
+  MENU_D_BUTTON_STATE = NXCTRL_LOW;
   
   pApp->clearDisplay();
   pApp->updateDisplay();
@@ -60,7 +72,7 @@ NXCTRL_VOID
 NXCTRLAPP_run (LPNXCTRLAPP pApp) {
   updateMenuButtonState(pApp);
 
-  if (MENU_BUTTON_STATE == NXCTRL_ON) {
+  if (MENU_U_BUTTON_STATE == NXCTRL_ON || MENU_D_BUTTON_STATE == NXCTRL_ON) {
     pApp->nCmd = 0;
     return;
   }
