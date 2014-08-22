@@ -247,9 +247,13 @@ NXCTRLAPP_run (LPNXCTRLAPP pApp) {
         if (MENU_D_BUTTON_STATE == NXCTRL_ON) {
           if (MENU_IDX < MENU_IDX_COUNT - 1)
             MENU_IDX++;
+          else
+            MENU_IDX = 0;
         } else {
           if (MENU_IDX > 0)
             MENU_IDX--;
+          else
+            MENU_IDX = MENU_IDX_COUNT - 1;
         }
         displayMenu(pApp);
       }
