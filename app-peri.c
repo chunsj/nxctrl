@@ -304,7 +304,7 @@ getFetchDistance (NXCTRL_VOID) {
 }
 
 static NXCTRL_VOID
-traceA3 (LPNXCTRLAPP pApp) {
+traceA6 (LPNXCTRLAPP pApp) {
   register int i = 0, j;
   int rnADC[CHART_WIDTH];
   
@@ -325,7 +325,7 @@ traceA3 (LPNXCTRLAPP pApp) {
   MENU_D_BUTTON_STATE = NXCTRL_LOW;
 
   while (1) {
-    int nADC = pApp->analogRead(NXCTRL_A3);
+    int nADC = pApp->analogRead(NXCTRL_A6);
     nADC = (int)((nADC / 4095.0) * 50);
     
     if (i >= CHART_WIDTH) {
@@ -939,7 +939,7 @@ displayMenu (LPNXCTRLAPP pApp) {
   if (MENU_IDX >= 6)
     pApp->writeSTR(mkMenuSTR(rch, "AK8448 TEST", MENU_IDX_AK8448_READ_MENU));
   if (MENU_IDX >= 7)
-    pApp->writeSTR(mkMenuSTR(rch, "TRACE A3", MENU_IDX_TR_A3_MENU));
+    pApp->writeSTR(mkMenuSTR(rch, "PHOTO RES.TR", MENU_IDX_TR_A3_MENU));
   if (MENU_IDX >= 8)
     pApp->writeSTR(mkMenuSTR(rch, "DC MOTOR DRV", MENU_IDX_DCMOTOR_MENU));
   if (MENU_IDX >= 9)
@@ -1093,7 +1093,7 @@ NXCTRLAPP_run (LPNXCTRLAPP pApp) {
           break;
         case MENU_IDX_TR_A3_MENU:
           IN_MENU = NXCTRL_FALSE;
-          traceA3(pApp);
+          traceA6(pApp);
           displayPeriInfo(pApp);
           break;
         case MENU_IDX_DCMOTOR_MENU:
