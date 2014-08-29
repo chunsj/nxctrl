@@ -1,0 +1,11 @@
+TODO
+==========
+
+1. SSD1351 support
+
+2. Bluetooth through /dev/ttyO5
+
+3. IR Remote
+
+4. RF (Are there enough space for my protocape?)
+

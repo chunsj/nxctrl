@@ -1055,7 +1055,7 @@
 			clock-frequency = <0x2dc6c00>;
 			reg = <0x481aa000 0x2000>;
 			interrupts = <0x2e>;
-			status = "disabled";
+			status = "okay";
 		};
 
 		i2c@44e0b000 {

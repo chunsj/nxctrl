@@ -75,6 +75,3 @@ Using PRUSS in 3.14 Kernel (ArchLinuxARM and 3.14 Kernel)
    modprobe uio_pruss
    modprobe nxpmx
 
-TODO
-==========
-SSD1351 support
