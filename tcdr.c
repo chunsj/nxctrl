@@ -38,6 +38,7 @@
 #include <time.h>
 #include <linux/types.h>
 #include <linux/spi/spidev.h>
+#include <termios.h>
 
 #include <arpa/inet.h>
 #include <sys/socket.h>
@@ -74,6 +75,9 @@
 #define OLED_CS                     SPI_CS0
 #define OLED_DATA                   SPI_D1
 #define OLED_CLK                    SPI_CLK
+
+#define GPS_TTY                     "/dev/ttyO1"
+#define GPS_BAUDRATE                B9600
 
 NXCTRLOLED OLED;
 int nSPIFD;
@@ -211,10 +215,149 @@ INTC_HANDLER (NXCTRL_VOID) {
   close(nSPIFD);
 }
 
+static NXCTRL_VOID
+setTimeInUTC (const char *pszDatePart, const char *pszTimePart) {
+  struct tm tm;
+  struct timeval tv;
+  char rch[3], rchTZ[128];
+  char *pszOLDTZ;
+  time_t tmNew;
+  extern int setenv (const char *__name, const char *__value, int __replace);
+  extern int unsetenv (const char *__name);
+
+  snprintf(rch, 3, "%s", pszDatePart);
+  tm.tm_mday = atoi(rch);
+  snprintf(rch, 3, "%s", pszDatePart + 2);
+  tm.tm_mon = atoi(rch) - 1;
+  snprintf(rch, 3, "%s", pszDatePart + 4);
+  tm.tm_year = 2000 + atoi(rch) - 1900;
+
+  snprintf(rch, 3, pszTimePart);
+  tm.tm_hour = atoi(rch);
+  snprintf(rch, 3, pszTimePart + 2);
+  tm.tm_min = atoi(rch);
+  snprintf(rch, 3, pszTimePart + 4);
+  tm.tm_sec = atoi(rch);
+
+  pszOLDTZ = getenv("TZ");
+  if (pszOLDTZ)
+    sprintf(rchTZ, "%s", pszOLDTZ);
+  
+  if (setenv("TZ", "UTC", 1) < 0)
+    return;
+
+  tmNew = mktime(&tm);
+
+  tv.tv_sec = tmNew;
+  tv.tv_usec = 0;
+
+  if (settimeofday(&tv, NULL) < 0) {
+    if (pszOLDTZ)
+      setenv("TZ", rchTZ, 1);
+    else
+      unsetenv("TZ");
+    return;
+  }
+
+  if (pszOLDTZ)
+    setenv("TZ", rchTZ, 1);
+  else
+    unsetenv("TZ");
+
+  return;
+}
+
+static NXCTRL_VOID
+updateTimeFromGPS (NXCTRL_VOID) {
+  struct termios tio;
+  int fdTTY;
+  char c;
+  char rch[1024], *psz;
+  char rchLine[26];
+  int nDone = 0;
+
+  memset(&tio, 0, sizeof(tio));
+  tio.c_iflag = 0;
+  tio.c_oflag = 0;
+  tio.c_cflag = CS8 | CREAD | CLOCAL;
+  tio.c_lflag = 0;
+  tio.c_cc[VMIN] = 1;
+  tio.c_cc[VTIME] = 5;
+  if ((fdTTY = open(GPS_TTY, O_RDWR | O_NONBLOCK)) == -1) {
+    fprintf(stderr, "cannot open GPS tty\n");
+    return;
+  }
+  cfsetospeed(&tio, GPS_BAUDRATE);
+  cfsetispeed(&tio, GPS_BAUDRATE);
+  tcsetattr(fdTTY, TCSANOW, &tio);
+
+  rch[0] = '\0';
+  psz = rch;
+
+  while (!nDone) {
+    if (read(fdTTY, &c, 1) > 0) {
+      if (c == '\r' || c == '\n') {
+        *psz = '\0';
+        snprintf(rchLine, 25, "%s", rch);
+        rchLine[25] = '\0';
+        if (!strncasecmp("$GPRMC", rchLine, 6)) {
+          char *token;
+          char *pszSep = ", \r\n";
+          char rchTime[7];
+          // $GPRMC
+          token = strtok(rch, pszSep);
+          // time
+          token = strtok(NULL, pszSep);
+          snprintf(rchTime, 7, "%s", token);
+          rchTime[6] = 0;
+          // status code 'A' for valid data
+          token = strtok(NULL, pszSep);
+          if (strlen(token) && (token[0] == 'A')) {
+            // pos
+            token = strtok(NULL, pszSep);
+            token = strtok(NULL, pszSep);
+            token = strtok(NULL, pszSep);
+            token = strtok(NULL, pszSep);
+            // ground speed & direction
+            token = strtok(NULL, pszSep);
+            token = strtok(NULL, pszSep);
+            // date
+            token = strtok(NULL, pszSep);
+            // setTimeInUTC(token, rchTime); // XXX DO NOT HAVE RTC BATTERY
+            nDone = 1;
+          } else {
+            if (strlen(rchTime)) {
+              token = strtok(NULL, pszSep);
+              token = strtok(NULL, pszSep);
+              // date
+              token = strtok(NULL, pszSep);
+              // setTimeInUTC(token, rchTime); // XXX DO NOT HAVE RTC BATTERY
+              nDone = 1;
+            } else {
+            }
+          }
+        }
+        rch[0] = '\0';
+        psz = rch;
+      } else {
+        *psz++ = c;
+        if (strlen(rch) > 256) {
+          rch[0] = '\0';
+          psz = rch;
+        }
+      }
+    }
+  }
+
+  close(fdTTY);
+}
+
 NXCTRL_VOID
 NXCTRLSetup (NXCTRL_VOID) {
   uint8_t nLSB;
   uint32_t nSpeed, nSPIMode;
+
+  //updateTimeFromGPS();
   
   NXCTRLPinMux(MENU_U_BUTTON_BANK, MENU_U_BUTTON_PIN, NXCTRL_MODE7, NXCTRL_PULLDN, NXCTRL_LOW);
   NXCTRLPinMux(MENU_D_BUTTON_BANK, MENU_D_BUTTON_PIN, NXCTRL_MODE7, NXCTRL_PULLDN, NXCTRL_LOW);

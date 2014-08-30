@@ -1315,6 +1315,17 @@
 			ti,timer-pwm;
 		};
 
+		pruss@4a300000 {
+			compatible = "ti,pruss-v2";
+			ti,hwmods = "pruss";
+			ti,deassert-hard-reset = "pruss", "pruss";
+			reg = <0x4a300000 0x80000>;
+			ti,pintc-offset = <0x20000>;
+			interrupt-parent = <0x1>;
+			status = "okay";
+			interrupts = <0x14 0x15 0x16 0x17 0x18 0x19 0x1a 0x1b>;
+		};
+
 		rtc@44e3e000 {
 			compatible = "ti,da830-rtc";
 			reg = <0x44e3e000 0x1000>;
