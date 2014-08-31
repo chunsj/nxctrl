@@ -323,7 +323,7 @@ updateTimeFromGPS (NXCTRL_VOID) {
             token = strtok(NULL, pszSep);
             // date
             token = strtok(NULL, pszSep);
-            // setTimeInUTC(token, rchTime); // XXX DO NOT HAVE RTC BATTERY
+            setTimeInUTC(token, rchTime);
             nDone = 1;
           } else {
             if (strlen(rchTime)) {
@@ -357,7 +357,7 @@ NXCTRLSetup (NXCTRL_VOID) {
   uint8_t nLSB;
   uint32_t nSpeed, nSPIMode;
 
-  //updateTimeFromGPS();
+  updateTimeFromGPS();
   
   NXCTRLPinMux(MENU_U_BUTTON_BANK, MENU_U_BUTTON_PIN, NXCTRL_MODE7, NXCTRL_PULLDN, NXCTRL_LOW);
   NXCTRLPinMux(MENU_D_BUTTON_BANK, MENU_D_BUTTON_PIN, NXCTRL_MODE7, NXCTRL_PULLDN, NXCTRL_LOW);
