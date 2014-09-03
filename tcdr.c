@@ -331,7 +331,7 @@ updateTimeFromGPS (NXCTRL_VOID) {
               token = strtok(NULL, pszSep);
               // date
               token = strtok(NULL, pszSep);
-              // setTimeInUTC(token, rchTime); // XXX DO NOT HAVE RTC BATTERY
+              setTimeInUTC(token, rchTime);
               nDone = 1;
             } else {
             }

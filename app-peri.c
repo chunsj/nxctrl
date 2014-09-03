@@ -610,7 +610,7 @@ displayGPSInfo (LPNXCTRLAPP pApp) {
               pApp->writeSTR(rchTime);
               if (nTimeUpdateCount < 0 || nTimeUpdateCount >= 100) {
                 nTimeUpdateCount = 0;
-                // setTimeInUTC(token, rchTime); // DO NOT HAVE RTC BATTERY XXX
+                setTimeInUTC(token, rchTime);
               } else
                 nTimeUpdateCount++;
             } else {
