@@ -325,8 +325,15 @@ traceA6 (LPNXCTRLAPP pApp) {
   MENU_D_BUTTON_STATE = NXCTRL_LOW;
 
   while (1) {
-    int nADC = pApp->analogRead(NXCTRL_A6);
-    nADC = (int)((nADC / 4095.0) * 50);
+    int nADCRaw = pApp->analogRead(NXCTRL_A6);
+    int nADC = (int)((nADCRaw / 4095.0) * CHART_HEIGHT);
+
+    if (nADC >= (CHART_HEIGHT*4.2/5)) nADC = CHART_HEIGHT*4.2/5;
+    if (nADC <= (CHART_HEIGHT*1.6/5)) nADC = CHART_HEIGHT*1.6/5;
+
+    nADC = (nADC - (CHART_HEIGHT*1.6/5)) / ((CHART_HEIGHT/5)*(4.2 - 1.6)) * CHART_HEIGHT;
+
+    pApp->analogWrite(PWM1_BANK, PWM1_PIN, pow(1000, nADC*1.0/CHART_HEIGHT));
     
     if (i >= CHART_WIDTH) {
       i = CHART_WIDTH;
@@ -354,8 +361,8 @@ traceA6 (LPNXCTRLAPP pApp) {
       pApp->drawPixel(8 + 1 + i, CHART_HEIGHT - rnADC[i] + 2, NXCTRL_ON);
       pApp->updateDisplay();
     }
-    
-    pApp->sleep(10, 0);
+
+    pApp->sleep(20, 0);
     i++;
   }
 
@@ -370,6 +377,9 @@ traceA6 (LPNXCTRLAPP pApp) {
     pApp->sleep(100, 0);
     EXEC_BUTTON_STATE = pApp->digitalRead(EXEC_BUTTON_BANK, EXEC_BUTTON_PIN);
   }
+
+  pApp->analogWrite(PWM1_BANK, PWM1_PIN, 0);
+  pApp->sleep(100, 0);
 }
 
 static NXCTRL_VOID
