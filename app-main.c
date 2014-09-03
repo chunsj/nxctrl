@@ -251,7 +251,7 @@ displayMenu (LPNXCTRLAPP pApp) {
   pApp->setCursor(0, 16);
 
   pApp->writeSTR(mkMenuSTR(rch, "TC>>", MENU_IDX_SYSTEM_MENU));
-  pApp->writeSTR(mkMenuSTR(rch, "UPDATE TIME", MENU_IDX_UPDATE_TIME));
+  pApp->writeSTR(mkMenuSTR(rch, "UPDATE TIME(NTP)", MENU_IDX_UPDATE_TIME));
   pApp->writeSTR(mkMenuSTR(rch, "EXIT MENU", MENU_IDX_EXIT_MENU));
 
   pApp->updateDisplay();
