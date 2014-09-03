@@ -691,9 +691,8 @@ displayPeriInfo (LPNXCTRLAPP pApp) {
 
 static NXCTRL_VOID
 runPWM1 (LPNXCTRLAPP pApp) {
-  int i, j;
+  int i;
   int PWM_RES = 1000;
-  int PULSE_CNT = 5;
   int PULSE_RES = 200;
   int PULSE_TM = 8;
   float fLogPulse = log(PULSE_RES);
@@ -703,9 +702,14 @@ runPWM1 (LPNXCTRLAPP pApp) {
   pApp->writeSTR("    PWM ON P8:13");
   pApp->setCursor(0, 4*FONT_HEIGHT + 2);
   pApp->writeSTR("    PULSING LED");
+  pApp->setCursor(0, 7*FONT_HEIGHT+1);
+  pApp->writeSTR(" PRESS MENU TO STOP");
   pApp->updateDisplay();
 
-  for (j = 0; j < PULSE_CNT; j++) {
+  MENU_U_BUTTON_STATE = NXCTRL_LOW;
+  MENU_D_BUTTON_STATE = NXCTRL_LOW;
+
+  while(1) {
     for (i = PULSE_RES; i > 1; i--) {
       float logF = log(i) / fLogPulse;
       int nDC = (int)((1 - logF) * PWM_RES);
@@ -718,9 +722,25 @@ runPWM1 (LPNXCTRLAPP pApp) {
       pApp->analogWrite(PWM1_BANK, PWM1_PIN, nDC);
       pApp->sleep(PULSE_TM, 0);
     }
+    MENU_U_BUTTON_STATE = pApp->digitalRead(MENU_U_BUTTON_BANK, MENU_U_BUTTON_PIN);
+    if (MENU_U_BUTTON_STATE == NXCTRL_HIGH) { break; }
+    MENU_D_BUTTON_STATE = pApp->digitalRead(MENU_D_BUTTON_BANK, MENU_D_BUTTON_PIN);
+    if (MENU_D_BUTTON_STATE == NXCTRL_HIGH) { break; }
   }
   pApp->analogWrite(PWM1_BANK, PWM1_PIN, 0);
   pApp->sleep(100, 0);
+
+  pApp->setCursor(0, 7*FONT_HEIGHT+1);
+  pApp->writeSTR(" PRESS EXEC TO EXIT");
+  pApp->updateDisplay();
+
+  pApp->sleep(1000, 0);
+
+  EXEC_BUTTON_STATE = NXCTRL_LOW;
+  while (EXEC_BUTTON_STATE == NXCTRL_LOW) {
+    pApp->sleep(100, 0);
+    EXEC_BUTTON_STATE = pApp->digitalRead(EXEC_BUTTON_BANK, EXEC_BUTTON_PIN);
+  }
 }
 
 static NXCTRL_VOID
