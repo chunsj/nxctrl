@@ -48,19 +48,19 @@
 #define DPY_IDLE_COUNT_MAX          300
 #define MIN_ACTION_DURATION         200
 
-#define MENU_IDX_COUNT              11
+#define MENU_IDX_COUNT              7
 
 #define MENU_IDX_SYSTEM_MENU        0
 #define MENU_IDX_UPDATE_MENU        1
 #define MENU_IDX_GPS_MENU           2
 #define MENU_IDX_P8_13_PWM_MENU     3
-#define MENU_IDX_P8_19_PWM_MENU     4
-#define MENU_IDX_AK8448_CFG_MENU    5
-#define MENU_IDX_AK8448_READ_MENU   6
-#define MENU_IDX_TR_A3_MENU         7
-#define MENU_IDX_DCMOTOR_MENU       8
-#define MENU_IDX_PININFO_MENU       9
-#define MENU_IDX_EXIT_MENU          10
+//#define MENU_IDX_P8_19_PWM_MENU     4
+//#define MENU_IDX_AK8448_CFG_MENU    5
+//#define MENU_IDX_AK8448_READ_MENU   6
+#define MENU_IDX_TR_A3_MENU         4
+//#define MENU_IDX_DCMOTOR_MENU       8
+#define MENU_IDX_PININFO_MENU       5
+#define MENU_IDX_EXIT_MENU          6
 
 #define GPS_TTY                     "/dev/ttyO1"
 #define GPS_BAUDRATE                B9600
@@ -960,21 +960,21 @@ displayMenu (LPNXCTRLAPP pApp) {
     pApp->writeSTR(mkMenuSTR(rch, "UPDATE INFO", MENU_IDX_UPDATE_MENU));
   if (MENU_IDX < 7)
     pApp->writeSTR(mkMenuSTR(rch, "GPS INFO", MENU_IDX_GPS_MENU));
-  if (MENU_IDX < 8)
-    pApp->writeSTR(mkMenuSTR(rch, "P8:13 PWM(LED)", MENU_IDX_P8_13_PWM_MENU));
-  if (MENU_IDX < 9)
-    pApp->writeSTR(mkMenuSTR(rch, "P8:19 PWM(SERVO)", MENU_IDX_P8_19_PWM_MENU));
-  if (MENU_IDX < 10)
-    pApp->writeSTR(mkMenuSTR(rch, "SPIDEV:2(AK8448)", MENU_IDX_AK8448_CFG_MENU));
-  if (MENU_IDX >= 6)
-    pApp->writeSTR(mkMenuSTR(rch, "AK8448 TEST", MENU_IDX_AK8448_READ_MENU));
-  if (MENU_IDX >= 7)
-    pApp->writeSTR(mkMenuSTR(rch, "PHOTO RES.TR", MENU_IDX_TR_A3_MENU));
-  if (MENU_IDX >= 8)
-    pApp->writeSTR(mkMenuSTR(rch, "DC MOTOR DRV", MENU_IDX_DCMOTOR_MENU));
-  if (MENU_IDX >= 9)
+  //if (MENU_IDX < 8)
+  pApp->writeSTR(mkMenuSTR(rch, "P8:13 PWM(LED)", MENU_IDX_P8_13_PWM_MENU));
+  //if (MENU_IDX < 9)
+  //  pApp->writeSTR(mkMenuSTR(rch, "P8:19 PWM(SERVO)", MENU_IDX_P8_19_PWM_MENU));
+  //if (MENU_IDX < 10)
+  //  pApp->writeSTR(mkMenuSTR(rch, "SPIDEV:2(AK8448)", MENU_IDX_AK8448_CFG_MENU));
+  //if (MENU_IDX >= 6)
+  //  pApp->writeSTR(mkMenuSTR(rch, "AK8448 TEST", MENU_IDX_AK8448_READ_MENU));
+  //if (MENU_IDX >= 7)
+  pApp->writeSTR(mkMenuSTR(rch, "PHOTO RES.TR", MENU_IDX_TR_A3_MENU));
+  //if (MENU_IDX >= 8)
+  //  pApp->writeSTR(mkMenuSTR(rch, "DC MOTOR DRV", MENU_IDX_DCMOTOR_MENU));
+  if (MENU_IDX >= 5)
     pApp->writeSTR(mkMenuSTR(rch, "PIN INFO", MENU_IDX_PININFO_MENU));
-  if (MENU_IDX >= 10)
+  if (MENU_IDX >= 6)
     pApp->writeSTR(mkMenuSTR(rch, "EXIT MENU", MENU_IDX_EXIT_MENU));
 
   pApp->updateDisplay();
@@ -1106,6 +1106,7 @@ NXCTRLAPP_run (LPNXCTRLAPP pApp) {
           runPWM1(pApp);
           displayPeriInfo(pApp);
           break;
+#if 0
         case MENU_IDX_P8_19_PWM_MENU:
           IN_MENU = NXCTRL_FALSE;
           runPWM2(pApp);
@@ -1121,16 +1122,19 @@ NXCTRLAPP_run (LPNXCTRLAPP pApp) {
           readAK8448(pApp);
           displayPeriInfo(pApp);
           break;
+#endif
         case MENU_IDX_TR_A3_MENU:
           IN_MENU = NXCTRL_FALSE;
           traceA6(pApp);
           displayPeriInfo(pApp);
           break;
+#if 0
         case MENU_IDX_DCMOTOR_MENU:
           IN_MENU = NXCTRL_FALSE;
           dcMotorTest(pApp);
           displayPeriInfo(pApp);
           break;
+#endif
         case MENU_IDX_PININFO_MENU:
           IN_MENU = NXCTRL_FALSE;
           pinInfo(pApp);
