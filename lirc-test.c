@@ -47,14 +47,14 @@ main (int argc, const char *argv[]) {
       if (strstr(code, "KEY_MENU")) {
         fprintf(stdout, "MENU\n");
         fflush(stdout);
-      } else if (strstr(code, "KEY_PLAY")) {
+      } else if (strstr(code, "KEY_PLAYPAUSE")) {
         fprintf(stdout, "PLAY\n");
         fflush(stdout);
-      } else if (strstr(code, "KEY_FASTFORWARD")) {
-        fprintf(stdout, "FFWD\n");
+      } else if (strstr(code, "KEY_FORWARD")) {
+        fprintf(stdout, "FWRD\n");
         fflush(stdout);
-      } else if (strstr(code, "KEY_BACK")) {
-        fprintf(stdout, "BWRD\n");
+      } else if (strstr(code, "KEY_REWIND")) {
+        fprintf(stdout, "RWND\n");
         fflush(stdout);
       } else if (strstr(code, "KEY_VOLUMEUP")) {
         fprintf(stdout, "VLUP\n");
