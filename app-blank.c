@@ -29,37 +29,29 @@
 #include <time.h>
 #include <NXCTRL_appEx.h>
 
-static NXCTRL_BOOL                  MENU_U_BUTTON_STATE = NXCTRL_LOW;
-static NXCTRL_BOOL                  MENU_D_BUTTON_STATE = NXCTRL_LOW;
+static NXCTRL_BOOL                  EXEC_BUTTON_STATE = NXCTRL_LOW;
 
 static NXCTRL_VOID
-updateMenuButtonState (LPNXCTRLAPP pApp) {
-  if (MENU_U_BUTTON_STATE == NXCTRL_LOW) {
-    if (pApp->digitalRead(MENU_U_BUTTON_BANK, MENU_U_BUTTON_PIN) == NXCTRL_HIGH) {
-      MENU_U_BUTTON_STATE = NXCTRL_HIGH;
+updateExecButtonState (LPNXCTRLAPP pApp) {
+  if (EXEC_BUTTON_STATE == NXCTRL_LOW) {
+    if (pApp->digitalRead(EXEC_BUTTON_BANK, EXEC_BUTTON_PIN) == NXCTRL_HIGH) {
+      EXEC_BUTTON_STATE = NXCTRL_HIGH;
     }
   } else {
-    if (pApp->digitalRead(MENU_U_BUTTON_BANK, MENU_U_BUTTON_PIN) == NXCTRL_LOW) {
-      MENU_U_BUTTON_STATE = NXCTRL_LOW;
-    }
-  }
-
-  if (MENU_D_BUTTON_STATE == NXCTRL_LOW) {
-    if (pApp->digitalRead(MENU_D_BUTTON_BANK, MENU_D_BUTTON_PIN) == NXCTRL_HIGH) {
-      MENU_D_BUTTON_STATE = NXCTRL_HIGH;
-    }
-  } else {
-    if (pApp->digitalRead(MENU_D_BUTTON_BANK, MENU_D_BUTTON_PIN) == NXCTRL_LOW) {
-      MENU_D_BUTTON_STATE = NXCTRL_LOW;
+    if (pApp->digitalRead(EXEC_BUTTON_BANK, EXEC_BUTTON_PIN) == NXCTRL_LOW) {
+      EXEC_BUTTON_STATE = NXCTRL_LOW;
     }
   }
 }
 
 NXCTRL_VOID
 NXCTRLAPP_init (LPNXCTRLAPP pApp) {
-  MENU_U_BUTTON_STATE = NXCTRL_LOW;
-  MENU_D_BUTTON_STATE = NXCTRL_LOW;
-  
+  EXEC_BUTTON_STATE = pApp->digitalRead(EXEC_BUTTON_BANK, EXEC_BUTTON_PIN);
+
+  while (EXEC_BUTTON_STATE == NXCTRL_HIGH) {
+    pApp->sleep(100, 0);
+    EXEC_BUTTON_STATE = pApp->digitalRead(EXEC_BUTTON_BANK, EXEC_BUTTON_PIN);
+  }
   pApp->clearDisplay();
   pApp->updateDisplay();
 }
@@ -70,9 +62,9 @@ NXCTRLAPP_clean (LPNXCTRLAPP pApp) {
 
 NXCTRL_VOID
 NXCTRLAPP_run (LPNXCTRLAPP pApp) {
-  updateMenuButtonState(pApp);
+  updateExecButtonState(pApp);
 
-  if (MENU_U_BUTTON_STATE == NXCTRL_ON || MENU_D_BUTTON_STATE == NXCTRL_ON) {
+  if (EXEC_BUTTON_STATE == NXCTRL_ON) {
     pApp->nCmd = 0;
     return;
   }
