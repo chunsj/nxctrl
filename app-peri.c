@@ -138,6 +138,15 @@ showIR (LPNXCTRLAPP pApp) {
     pApp->sleep(1000, 0);
     return;
   }
+  
+  if (fcntl(fd, F_SETFL, fcntl(fd, F_GETFL, 0) | O_NONBLOCK) == -1) {
+    pApp->clearDisplay();
+    pApp->setCursor(5*FONT_WIDTH, 3*FONT_HEIGHT);
+    pApp->writeSTR("IRFD ERROR");
+    pApp->updateDisplay();
+    pApp->sleep(1000, 0);
+    return;
+  }
 
   pApp->clearDisplay();
   pApp->setCursor(7*FONT_WIDTH, 0);
@@ -145,10 +154,33 @@ showIR (LPNXCTRLAPP pApp) {
   pApp->setCursor(4*FONT_WIDTH, 3*FONT_HEIGHT);
   pApp->writeSTR("PRESS REMOTE");
   pApp->updateDisplay();
-  
+
+  MENU_U_BUTTON_STATE = NXCTRL_LOW;
+  MENU_D_BUTTON_STATE = NXCTRL_LOW;
+
   if (lirc_readconfig(NULL, &config, NULL) == 0) {
     while (lirc_nextcode(&code) == 0) {
-      if (!code) continue;
+      MENU_U_BUTTON_STATE = pApp->digitalRead(MENU_U_BUTTON_BANK, MENU_U_BUTTON_PIN);
+      if (MENU_U_BUTTON_STATE == NXCTRL_HIGH) {
+        pApp->setCursor(6*FONT_WIDTH, 3*FONT_HEIGHT);
+        pApp->writeSTR("TEST END");
+        pApp->updateDisplay();
+        free(code);
+        break;
+      }
+      MENU_D_BUTTON_STATE = pApp->digitalRead(MENU_D_BUTTON_BANK, MENU_D_BUTTON_PIN);
+      if (MENU_D_BUTTON_STATE == NXCTRL_HIGH) {
+        pApp->setCursor(6*FONT_WIDTH, 3*FONT_HEIGHT);
+        pApp->writeSTR("TEST END");
+        pApp->updateDisplay();
+        free(code);
+        break;
+      }
+
+      if (!code) {
+        pApp->sleep(100, 0);
+        continue; 
+      }
 
       pApp->clearDisplay();
       pApp->setCursor(7*FONT_WIDTH, 0);
@@ -201,6 +233,8 @@ showIR (LPNXCTRLAPP pApp) {
       }
 
       free(code);
+
+      pApp->sleep(100, 0);
     }
 
     lirc_freeconfig(config);
