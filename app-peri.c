@@ -1091,7 +1091,7 @@ displayMenu (LPNXCTRLAPP pApp) {
   if (MENU_IDX < 7)
     pApp->writeSTR(mkMenuSTR(rch, "GPS INFO", MENU_IDX_GPS_MENU));
   if (MENU_IDX < 8)
-    pApp->writeSTR(mkMenuSTR(rch, "P8:13 PWM(LED)", MENU_IDX_P8_13_PWM_MENU));
+    pApp->writeSTR(mkMenuSTR(rch, "LED PULSE", MENU_IDX_P8_13_PWM_MENU));
   //if (MENU_IDX < 9)
   //  pApp->writeSTR(mkMenuSTR(rch, "P8:19 PWM(SERVO)", MENU_IDX_P8_19_PWM_MENU));
   //if (MENU_IDX < 10)
@@ -1099,7 +1099,7 @@ displayMenu (LPNXCTRLAPP pApp) {
   //if (MENU_IDX >= 6)
   //  pApp->writeSTR(mkMenuSTR(rch, "AK8448 TEST", MENU_IDX_AK8448_READ_MENU));
   //if (MENU_IDX >= 7)
-  pApp->writeSTR(mkMenuSTR(rch, "PHOTO RES.TR", MENU_IDX_TR_A3_MENU));
+  pApp->writeSTR(mkMenuSTR(rch, "LIGHT TRACE", MENU_IDX_TR_A3_MENU));
   //if (MENU_IDX >= 8)
   //  pApp->writeSTR(mkMenuSTR(rch, "DC MOTOR DRV", MENU_IDX_DCMOTOR_MENU));
   if (MENU_IDX >= 5)
