@@ -21,6 +21,7 @@
  */
 
 #include <unistd.h>
+#include <fcntl.h>
 #include <errno.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -31,13 +32,24 @@
 
 int
 main (int argc, const char *argv[]) {
+  int fd;
   struct lirc_config *config;
   char *code;
 
-  if (lirc_init("lirc", 1) == -1) {
+  if ((fd = lirc_init("lirc", 1)) == -1) {
     fprintf(stderr, "cannot init lirc\n");
     exit(EXIT_FAILURE);
   }
+
+  fprintf(stdout, "LIRC FD = %d\n", fd);
+  fflush(stdout);
+
+#if 0 // XXX test non-block socket (for integration with tcdr)
+  if (fcntl(fd, F_SETFL, fcntl(fd, F_GETFL, 0) | O_NONBLOCK) == -1) {
+    fprintf(stderr, "cannot make socket as non block\n");
+    exit(EXIT_FAILURE);
+  }
+#endif
 
   if (lirc_readconfig(NULL, &config, NULL) == 0) {
     while (lirc_nextcode(&code) == 0) {
