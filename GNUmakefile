@@ -76,11 +76,13 @@ APP26=app-peri.app
 SRC26-APP=app-peri.c NXCTRL.c
 APP27=app-spark.app
 SRC27-APP=app-spark.c NXCTRL.c
+EXE21=lirc-test
+SRC21=lirc-test.c
 
 ARTIFACTS=$(EXE01) $(EXE02) $(EXE03) $(EXE04) $(EXE04-BIN) $(EXE05) $(EXE06) $(EXE06-BIN) \
 	$(EXE07) $(EXE07-BIN) $(EXE08) $(EXE08-BIN) $(EXE09) $(EXE10) $(EXE10-BIN) \
 	$(EXE11) $(EXE11-BIN) $(EXE12) $(EXE13) $(EXE14) $(EXE15) $(EXE16) $(EXE19) \
-	$(APP18)
+	$(APP18) $(EXE21)
 
 AUX_ARTIFACTS=$(EXE17) $(EXE18) $(EXE18-BIN) $(EXE20) $(APP21) $(APP22) $(APP23) $(APP24) \
 	$(APP25) $(APP26) $(APP27)
@@ -191,6 +193,9 @@ $(APP26): $(SRC26-APP)
 
 $(APP27): $(SRC27-APP)
 	$(CC) $(CFLAGS) -fPIC -DPIC -shared -o $@ $^
+
+$(EXE21): $(SRC21)
+	$(CC) $(CFLAGS) -o $@ $^ $(LDFLAGS) $(LIBS) -llirc_client
 
 clean:
 	rm -rf $(ARTIFACTS) $(AUX_ARTIFACTS)
