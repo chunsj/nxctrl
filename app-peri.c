@@ -40,6 +40,7 @@
 #include <linux/spi/spidev.h>
 #include <math.h>
 #include <termios.h>
+#include <lirc/lirc_client.h>
 
 #define FONT_WIDTH                  6
 #define FONT_HEIGHT                 8
@@ -48,7 +49,7 @@
 #define DPY_IDLE_COUNT_MAX          300
 #define MIN_ACTION_DURATION         200
 
-#define MENU_IDX_COUNT              7
+#define MENU_IDX_COUNT              8
 
 #define MENU_IDX_SYSTEM_MENU        0
 #define MENU_IDX_UPDATE_MENU        1
@@ -59,8 +60,9 @@
 //#define MENU_IDX_AK8448_READ_MENU   6
 #define MENU_IDX_TR_A3_MENU         4
 //#define MENU_IDX_DCMOTOR_MENU       8
-#define MENU_IDX_PININFO_MENU       5
-#define MENU_IDX_EXIT_MENU          6
+#define MENU_IDX_IR_MENU            5
+#define MENU_IDX_PININFO_MENU       6
+#define MENU_IDX_EXIT_MENU          7
 
 #define GPS_TTY                     "/dev/ttyO1"
 #define GPS_BAUDRATE                B9600
@@ -117,6 +119,119 @@ static unsigned char                MENU_IDX = MENU_IDX_SYSTEM_MENU;
 static NXCTRL_BOOL                  IN_MENU = NXCTRL_FALSE;
 static unsigned long long           LAST_ACTION_TIME = 0;
 
+static NXCTRL_VOID
+showIR (LPNXCTRLAPP pApp) {
+  int fd;
+  struct lirc_config *config;
+  char *code;
+  float fValue = 0.00;
+  char rch[21];
+
+  pApp->analogWrite(PWM1_BANK, PWM1_PIN, 0);
+  pApp->sleep(100, 0);
+
+  if ((fd = lirc_init("lirc", 1)) == -1) {
+    pApp->clearDisplay();
+    pApp->setCursor(6*FONT_WIDTH, 3*FONT_HEIGHT);
+    pApp->writeSTR("IR ERROR");
+    pApp->updateDisplay();
+    pApp->sleep(1000, 0);
+    return;
+  }
+
+  pApp->clearDisplay();
+  pApp->setCursor(7*FONT_WIDTH, 0);
+  pApp->writeSTR("IR TEST");
+  pApp->setCursor(4*FONT_WIDTH, 3*FONT_HEIGHT);
+  pApp->writeSTR("PRESS REMOTE");
+  pApp->updateDisplay();
+  
+  if (lirc_readconfig(NULL, &config, NULL) == 0) {
+    while (lirc_nextcode(&code) == 0) {
+      if (!code) continue;
+
+      pApp->clearDisplay();
+      pApp->setCursor(7*FONT_WIDTH, 0);
+      pApp->writeSTR("IR TEST");
+      
+      if (strstr(code, "KEY_MENU")) {
+        pApp->setCursor(6*FONT_WIDTH, 3*FONT_HEIGHT);
+        pApp->writeSTR("TEST END");
+        pApp->updateDisplay();
+        free(code);
+        break;
+      } else if (strstr(code, "KEY_VOLUMEUP")) {
+        fValue += 1.0;
+        if (fValue > 10.0) fValue = 10.0;
+        pApp->analogWrite(PWM1_BANK, PWM1_PIN, pow(1000, fValue/10.0));
+        sprintf(rch, "LIGHT(+): %d/10", (int)fValue);
+        pApp->setCursor(3*FONT_WIDTH, 3*FONT_HEIGHT);
+        pApp->writeSTR(rch);
+        pApp->updateDisplay();
+      } else if (strstr(code, "KEY_VOLUMEDOWN")) {
+        fValue -= 1.0;
+        if (fValue < 0.0) fValue = 0.0;
+        pApp->analogWrite(PWM1_BANK, PWM1_PIN, pow(1000, fValue/10.0));
+        sprintf(rch, "LIGHT(-): %d/10", (int)fValue);
+        pApp->setCursor(3*FONT_WIDTH, 3*FONT_HEIGHT);
+        pApp->writeSTR(rch);
+        pApp->updateDisplay();
+      } else if (strstr(code, "KEY_FORWARD")) {
+        fValue = 10.0;
+        pApp->analogWrite(PWM1_BANK, PWM1_PIN, pow(1000, fValue/10.0));
+        sprintf(rch, "LIGHT(F): %d/10", (int)fValue);
+        pApp->setCursor(3*FONT_WIDTH, 3*FONT_HEIGHT);
+        pApp->writeSTR(rch);
+        pApp->updateDisplay();
+      } else if (strstr(code, "KEY_REWIND")) {
+        fValue = 0.0;
+        pApp->analogWrite(PWM1_BANK, PWM1_PIN, pow(1000, fValue/10.0));
+        sprintf(rch, "LIGHT(R): %d/10", (int)fValue);
+        pApp->setCursor(3*FONT_WIDTH, 3*FONT_HEIGHT);
+        pApp->writeSTR(rch);
+        pApp->updateDisplay();
+      } else if (strstr(code, "KEY_PLAYPAUSE")) {
+        if (fValue >= 10.0) fValue = 0;
+        else fValue = 10.0;
+        pApp->analogWrite(PWM1_BANK, PWM1_PIN, pow(1000, fValue/10.0));
+        sprintf(rch, "LIGHT(P): %d/10", (int)fValue);
+        pApp->setCursor(3*FONT_WIDTH, 3*FONT_HEIGHT);
+        pApp->writeSTR(rch);
+        pApp->updateDisplay();
+      }
+
+      free(code);
+    }
+
+    lirc_freeconfig(config);
+  } else {
+    pApp->clearDisplay();
+    pApp->setCursor(4*FONT_WIDTH, 3*FONT_HEIGHT);
+    pApp->writeSTR("IRCFG ERROR");
+    pApp->updateDisplay();
+    pApp->sleep(1000, 0);
+    return;
+  }
+
+  lirc_deinit();
+  
+  pApp->setCursor(0, 7*FONT_HEIGHT+1);
+  pApp->writeSTR(" PRESS EXEC TO EXIT");
+  pApp->updateDisplay();
+
+  pApp->sleep(1000, 0);
+
+  EXEC_BUTTON_STATE = NXCTRL_LOW;
+  while (EXEC_BUTTON_STATE == NXCTRL_LOW) {
+    pApp->sleep(100, 0);
+    EXEC_BUTTON_STATE = pApp->digitalRead(EXEC_BUTTON_BANK, EXEC_BUTTON_PIN);
+  }
+
+  pApp->analogWrite(PWM1_BANK, PWM1_PIN, 0);
+  pApp->sleep(100, 0);
+}
+
+#if 0
 inline static void
 sprintINT16 (char *rch, unsigned short v16) {
   INT16 v = { .v16 = v16 };
@@ -125,7 +240,9 @@ sprintINT16 (char *rch, unsigned short v16) {
           v.bit.b6, v.bit.b7, v.bit.b8, v.bit.b9, v.bit.b10, v.bit.b11,
           v.bit.b12, v.bit.b13, v.bit.b14, v.bit.b15);
 }
+#endif
 
+#if 0
 static int
 __SPI_read (LPNXCTRLAPP pApp, int nFD) {
   int nStatus;
@@ -187,7 +304,9 @@ __SPI_read (LPNXCTRLAPP pApp, int nFD) {
 
   return 0;
 }
+#endif
 
+#if 0
 static int
 __SPI_write (LPNXCTRLAPP pApp, int nFD) {
   int nStatus;
@@ -251,6 +370,7 @@ __SPI_write (LPNXCTRLAPP pApp, int nFD) {
 
   return 0;
 }
+#endif
 
 static float
 getFetchDistance (NXCTRL_VOID) {
@@ -382,6 +502,7 @@ traceA6 (LPNXCTRLAPP pApp) {
   pApp->sleep(100, 0);
 }
 
+#if 0
 static NXCTRL_VOID
 dcMotorTest (LPNXCTRLAPP pApp) {
   pApp->clearDisplay();
@@ -411,6 +532,7 @@ dcMotorTest (LPNXCTRLAPP pApp) {
   pApp->analogWrite(DCBANK, DCENABLE, 0);
   pApp->sleep(1000, 0);
 }
+#endif
 
 static NXCTRL_VOID
 pinInfo (LPNXCTRLAPP pApp) {
@@ -743,6 +865,7 @@ runPWM1 (LPNXCTRLAPP pApp) {
   }
 }
 
+#if 0
 static NXCTRL_VOID
 runPWM2 (LPNXCTRLAPP pApp) {
   int i;
@@ -781,7 +904,9 @@ runPWM2 (LPNXCTRLAPP pApp) {
   pApp->sleep(500, 0);
 #endif
 }
+#endif
 
+#if 0
 static NXCTRL_VOID
 readAK8448Pins (LPNXCTRLAPP pApp, NXCTRL_BOOL rbRes[10]) {
   rbRes[0] = pApp->digitalRead(AKBANK, AKPIN0);
@@ -795,7 +920,9 @@ readAK8448Pins (LPNXCTRLAPP pApp, NXCTRL_BOOL rbRes[10]) {
   rbRes[8] = pApp->digitalRead(AKBANK, AKPIN8);
   rbRes[9] = pApp->digitalRead(AKBANK, AKPIN9);
 }
+#endif
 
+#if 0
 static NXCTRL_VOID
 readAK8448 (LPNXCTRLAPP pApp) {
   register int i, j;
@@ -840,7 +967,9 @@ readAK8448 (LPNXCTRLAPP pApp) {
     EXEC_BUTTON_STATE = pApp->digitalRead(EXEC_BUTTON_BANK, EXEC_BUTTON_PIN);
   }
 }
+#endif
 
+#if 0
 static NXCTRL_VOID
 runAK8448 (LPNXCTRLAPP pApp) {
   uint8_t nLSB;
@@ -878,6 +1007,7 @@ runAK8448 (LPNXCTRLAPP pApp) {
     EXEC_BUTTON_STATE = pApp->digitalRead(EXEC_BUTTON_BANK, EXEC_BUTTON_PIN);
   }
 }
+#endif
 
 static NXCTRL_BOOL
 canAction (NXCTRL_VOID) {
@@ -960,8 +1090,8 @@ displayMenu (LPNXCTRLAPP pApp) {
     pApp->writeSTR(mkMenuSTR(rch, "UPDATE INFO", MENU_IDX_UPDATE_MENU));
   if (MENU_IDX < 7)
     pApp->writeSTR(mkMenuSTR(rch, "GPS INFO", MENU_IDX_GPS_MENU));
-  //if (MENU_IDX < 8)
-  pApp->writeSTR(mkMenuSTR(rch, "P8:13 PWM(LED)", MENU_IDX_P8_13_PWM_MENU));
+  if (MENU_IDX < 8)
+    pApp->writeSTR(mkMenuSTR(rch, "P8:13 PWM(LED)", MENU_IDX_P8_13_PWM_MENU));
   //if (MENU_IDX < 9)
   //  pApp->writeSTR(mkMenuSTR(rch, "P8:19 PWM(SERVO)", MENU_IDX_P8_19_PWM_MENU));
   //if (MENU_IDX < 10)
@@ -973,8 +1103,10 @@ displayMenu (LPNXCTRLAPP pApp) {
   //if (MENU_IDX >= 8)
   //  pApp->writeSTR(mkMenuSTR(rch, "DC MOTOR DRV", MENU_IDX_DCMOTOR_MENU));
   if (MENU_IDX >= 5)
-    pApp->writeSTR(mkMenuSTR(rch, "PIN INFO", MENU_IDX_PININFO_MENU));
+    pApp->writeSTR(mkMenuSTR(rch, "IR TEST", MENU_IDX_IR_MENU));
   if (MENU_IDX >= 6)
+    pApp->writeSTR(mkMenuSTR(rch, "PIN INFO", MENU_IDX_PININFO_MENU));
+  if (MENU_IDX >= 7)
     pApp->writeSTR(mkMenuSTR(rch, "EXIT MENU", MENU_IDX_EXIT_MENU));
 
   pApp->updateDisplay();
@@ -1144,6 +1276,12 @@ NXCTRLAPP_run (LPNXCTRLAPP pApp) {
           IN_MENU = NXCTRL_FALSE;
           displayGPSInfo(pApp);
           displayPeriInfo(pApp);
+          break;
+        case MENU_IDX_IR_MENU:
+          IN_MENU = NXCTRL_FALSE;
+          showIR(pApp);
+          displayPeriInfo(pApp);
+          break;
         default:
           break;
         }

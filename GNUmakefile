@@ -189,7 +189,7 @@ $(APP25): $(SRC25-APP)
 	$(CC) $(CFLAGS) -fPIC -DPIC -shared -o $@ $^
 
 $(APP26): $(SRC26-APP)
-	$(CC) $(CFLAGS) -fPIC -DPIC -shared -o $@ $^
+	$(CC) $(CFLAGS) -fPIC -DPIC -shared -o $@ $^ -llirc_client
 
 $(APP27): $(SRC27-APP)
 	$(CC) $(CFLAGS) -fPIC -DPIC -shared -o $@ $^
