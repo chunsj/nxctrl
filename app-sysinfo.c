@@ -82,11 +82,33 @@ getCPUTemp (NXCTRL_VOID) {
   return 0;
 }
 
+static int
+cachedRAM (NXCTRL_VOID) {
+  FILE *pFile = fopen("/proc/meminfo", "r");
+  char rch[1024];
+  char rchLabel[8];
+  int nSZ = 0;
+  
+  if (!pFile)
+    return NXCTRL_FALSE;
+
+  while (fgets(rch, 1023, pFile)) {
+    sscanf(rch, "%s", rchLabel);
+    if (!strcmp(rchLabel, "Cached:")) {
+      //fprintf(stderr, "%s", rch);
+      sscanf(rch, "%s %d", rchLabel, &nSZ);
+    }
+  }
+  fclose(pFile);
+  
+  return nSZ;
+}
+
 static NXCTRL_VOID
 displaySysInfo (LPNXCTRLAPP pApp) {
   struct sysinfo si;
   struct statvfs stvfs;
-  int d, h, m;
+  int d, h, m, freemem, usedmem, totalmem;
   int t;
   char rch[22];
   
@@ -108,11 +130,15 @@ displaySysInfo (LPNXCTRLAPP pApp) {
           si.loads[2]/65536.0);
   pApp->writeSTR(rch);
 
+  freemem = cachedRAM() + (si.freeram/1024) + (si.bufferram/1024);
+  totalmem = si.totalram/1024;
+  usedmem = totalmem - freemem;
+
   sprintf(rch, " RAM:  %03d %03d %03d\n",
-          (int)(si.totalram/1024/1024),
-          (int)(si.freeram/1024/1024),
-          (int)(si.bufferram/1024/1024));
+          totalmem/1024, usedmem/1024, freemem/1024);
   pApp->writeSTR(rch);
+
+  fprintf(stderr, "%d\n", cachedRAM());
 
   sprintf(rch, " DSK:  %1.1f %1.1f %1.1f\n",
           stvfs.f_blocks*stvfs.f_frsize/1024/1024/1024.0,
