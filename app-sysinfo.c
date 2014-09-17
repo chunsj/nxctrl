@@ -110,8 +110,8 @@ displaySysInfo (LPNXCTRLAPP pApp) {
 
   sprintf(rch, " RAM:  %03d %03d %03d\n",
           (int)(si.totalram/1024/1024),
-          (int)(si.bufferram/1024/1024),
-          (int)(si.freeram/1024/1024));
+          (int)(si.freeram/1024/1024)
+          (int)(si.bufferram/1024/1024));
   pApp->writeSTR(rch);
 
   sprintf(rch, " DSK:  %1.1f %1.1f %1.1f\n",

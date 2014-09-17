@@ -1781,6 +1781,6 @@
 		pinctrl-names = "default", "off";
 		pinctrl-0 = <0x3d>;
 		pinctrl-1 = <0x3e>;
-		status = "okay";
+		status = "disabled";
 	};
 };
