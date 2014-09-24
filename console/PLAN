@@ -1,0 +1,6 @@
+* Use Color OLED from Adafruit
+* Use horizonal scroll using 2 buttons
+* Use 2 more buttons for menu activation/scrolling and for menu selection
+* Should have power down menu for safety
+* Should have pinmux menu for peripheral activation/deactivation
+* Implementation in PRU, no more kernel module hack <= could this be possible?
