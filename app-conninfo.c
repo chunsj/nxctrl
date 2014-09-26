@@ -80,6 +80,11 @@ getMacAddress (char *pszIFName, char *pszMacIP) {
   FILE *pFile;
   int i;
 
+  if (!pszIFName || !pszMacIP || strlen(pszIFName) == 0)
+    return NXCTRL_FALSE;
+
+  memset(pszMacIP, 0, 17);
+
   sprintf(rchIFName, "/sys/class/net/%s/address", pszIFName);
   pFile = fopen(rchIFName, "r");
   if (!pFile)
@@ -87,7 +92,7 @@ getMacAddress (char *pszIFName, char *pszMacIP) {
 
   fscanf(pFile, "%s", pszMacIP);
   fclose(pFile);
-  for (i = 0; i < strlen(pszMacIP); i++)
+  for (i = 0; i < 17 /* strlen(pszMacIP) */; i++)
     pszMacIP[i] = toupper(pszMacIP[i]);
   return NXCTRL_TRUE;
 }
@@ -97,6 +102,8 @@ getWIFIInfo (int *pnLink, int *pnLevel, int *pnNoise) {
   FILE *pFile = fopen("/proc/net/wireless", "r");
   char rch[1024];
   char rchLabel[8];
+
+  *pnLink = *pnLevel = *pnNoise = 0;
   
   if (!pFile)
     return NXCTRL_FALSE;
@@ -104,7 +111,6 @@ getWIFIInfo (int *pnLink, int *pnLevel, int *pnNoise) {
   while (fgets(rch, 1023, pFile)) {
     sscanf(rch, "%s", rchLabel);
     if (!strcmp(rchLabel, "wlan0:")) {
-      //fprintf(stderr, "%s", rch);
       sscanf(rch, "%s %s %d. %d. %d.", rchLabel, rchLabel, pnLink, pnLevel, pnNoise);
     }
   }
@@ -120,6 +126,9 @@ getDefaultGW (char *pszGW) {
   char rchIFace[32], rchDest[32], rchGW[32];
   NXCTRL_BOOL bFound = NXCTRL_OFF;
   int i0, i1, i2, i3;
+
+  if (!pszGW)
+    return NXCTRL_FALSE;
   
   if (!pFile)
     return NXCTRL_FALSE;
@@ -137,7 +146,7 @@ getDefaultGW (char *pszGW) {
     return NXCTRL_FALSE;
 
   sscanf(rchGW, "%2x%2x%2x%2x", &i0, &i1, &i2, &i3);
-  sprintf(pszGW, "%d.%d.%d.%d", i3, i2, i1, i0);
+  snprintf(pszGW, 15, "%d.%d.%d.%d", i3, i2, i1, i0);
 
   return NXCTRL_TRUE;
 }
@@ -145,6 +154,7 @@ getDefaultGW (char *pszGW) {
 static NXCTRL_VOID
 pingToDefaultGW (NXCTRL_VOID) {
   char rch[1024], rchGW[32];
+  memset(rchGW, 0, 32);
   if (getDefaultGW(rchGW)) {
     sprintf(rch, "ping -c 1 -W 1 %s >& /dev/null", rchGW);
     system(rch);
