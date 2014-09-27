@@ -654,9 +654,11 @@ displayGPSInfo (LPNXCTRLAPP pApp) {
   struct termios tio;
   int fdTTY;
   char c;
-  char rch[1024], *psz;
+  char rch[1024], *psz, rchLogLine[1024];
   char rchLine[26];
   int nTimeUpdateCount = -1;
+  FILE *pfLog = NULL;
+  int nPFLog = 0;
   
   pApp->clearDisplay();
   pApp->setCursor(0, 0);
@@ -690,12 +692,17 @@ displayGPSInfo (LPNXCTRLAPP pApp) {
   rch[0] = '\0';
   psz = rch;
 
+  pfLog = fopen("/home/chunsj/tmp/gpslog.log", "a");
+  if (!pfLog)
+    return;
+
   EXEC_BUTTON_STATE = NXCTRL_LOW;
   while (EXEC_BUTTON_STATE == NXCTRL_LOW) {
     if (read(fdTTY, &c, 1) > 0) {
       if (c == '\r' || c == '\n') {
         *psz = '\0';
         snprintf(rchLine, 25, "%s", rch);
+        snprintf(rchLogLine, 1023, "%s", rch);
         rchLine[25] = '\0';
         if (!strncasecmp("$GPGGA", rchLine, 6)) {
 #if 0
@@ -731,6 +738,13 @@ displayGPSInfo (LPNXCTRLAPP pApp) {
             pApp->writeSTR("                    ");
             pApp->setCursor(7*FONT_WIDTH, 34);
             pApp->writeSTR("                    ");
+
+            if (nPFLog % 500) {
+              fprintf(pfLog, "%s\n", rchLogLine);
+              nPFLog = 0;
+            } else
+              nPFLog++;
+            
             // pos
             token = strtok(NULL, pszSep);
             pApp->setCursor(0, 24);
@@ -770,6 +784,14 @@ displayGPSInfo (LPNXCTRLAPP pApp) {
               token = strtok(NULL, pszSep);
               // date
               token = strtok(NULL, pszSep);
+
+              pApp->clearDisplay();
+              pApp->setCursor(0, 0);
+              pApp->writeSTR("   GPS INFORMATION");
+              
+              pApp->setCursor(2*FONT_WIDTH, 7*FONT_HEIGHT+1);
+              pApp->writeSTR("HOLD EXEC TO EXIT");
+              
               pApp->setCursor(0, 24);
               pApp->writeSTR("  SEARCHING SATS...");
               pApp->setCursor(7*FONT_WIDTH, 34);
@@ -807,6 +829,7 @@ displayGPSInfo (LPNXCTRLAPP pApp) {
     EXEC_BUTTON_STATE = pApp->digitalRead(EXEC_BUTTON_BANK, EXEC_BUTTON_PIN);
   }
 
+  fclose(pfLog);
   close(fdTTY);
 }
 
