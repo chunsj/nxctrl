@@ -293,9 +293,9 @@ NXCTRLAPP_run (LPNXCTRLAPP pApp) {
           pApp->clearDisplay();
           pApp->setCursor(0, 3*FONT_HEIGHT);
           if (TOGGLE)
-            pApp->writeSTR("  TOGGLE D7...");
+            pApp->writeSTR("    TOGGLE D7...");
           else
-            pApp->writeSTR("  TOGGLE D7...");
+            pApp->writeSTR("    TOGGLE D7...");
           pApp->updateDisplay();
           if (TOGGLE)
             system("/usr/bin/spark-off-d7");
