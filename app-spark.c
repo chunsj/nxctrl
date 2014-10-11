@@ -63,7 +63,7 @@ updateCoreStatus () {
   char rchName[22], rchStatus[16], rchLine[1024], rchDummy[80];
   FILE *pFile;
 
-  system("sudo /usr/bin/spark-list");
+  system("/usr/bin/spark-list");
 
   rchLine[0] = 0;
   pFile = fopen("/tmp/sparkcoreinfo.txt", "r");
@@ -285,7 +285,7 @@ NXCTRLAPP_run (LPNXCTRLAPP pApp) {
           pApp->setCursor(0, 3*FONT_HEIGHT);
           pApp->writeSTR("     FLASHING...");
           pApp->updateDisplay();
-          system("sudo /usr/bin/spark-flash-tinker");
+          system("/usr/bin/spark-flash-tinker");
           IN_MENU = NXCTRL_FALSE;
           displayCoreInfo(pApp);
           break;
@@ -298,9 +298,9 @@ NXCTRLAPP_run (LPNXCTRLAPP pApp) {
             pApp->writeSTR("      ON D7...");
           pApp->updateDisplay();
           if (TOGGLE)
-            system("sudo /usr/bin/spark-off-d7");
+            system("/usr/bin/spark-off-d7");
           else
-            system("sudo /usr/bin/spark-on-d7");
+            system("/usr/bin/spark-on-d7");
           TOGGLE = TOGGLE ? NXCTRL_OFF : NXCTRL_ON;
           IN_MENU = NXCTRL_FALSE;
           displayCoreInfo(pApp);
