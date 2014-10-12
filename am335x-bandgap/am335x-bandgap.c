@@ -85,6 +85,20 @@ static const struct attribute_group am335x_bandgap_group = {
 	.attrs = am335x_bandgap_attributes,
 };
 
+#if 0
+static void __iomem *devm_request_and_ioremap(struct device *dev,
+                                      struct resource *res)
+{
+        void __iomem *dest_ptr;
+
+        dest_ptr = devm_ioremap_resource(dev, res);
+        if (IS_ERR(dest_ptr))
+                return NULL;
+  
+        return dest_ptr;
+}
+#endif
+
 static int am335x_bandgap_probe(struct platform_device *pdev)
 {
 	struct am335x_bandgap *data;

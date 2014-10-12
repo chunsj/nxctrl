@@ -76,6 +76,10 @@
 #define OLED_DATA                   SPI_D1
 #define OLED_CLK                    SPI_CLK
 
+#define GPS_TTY_BANK                NXCTRL_P9
+#define GPS_TTY_RX                  NXCTRL_PIN26
+#define GPS_TTY_TX                  NXCTRL_PIN24
+
 #define GPS_TTY                     "/dev/ttyO1"
 #define GPS_BAUDRATE                B9600
 
@@ -279,20 +283,22 @@ updateTimeFromGPS (NXCTRL_VOID) {
   char rch[1024], *psz;
   char rchLine[26];
   int nDone = 0;
+  int nFCount = 0;
 
   memset(&tio, 0, sizeof(tio));
   tio.c_iflag = 0;
   tio.c_oflag = 0;
-  tio.c_cflag = CS8 | CREAD | CLOCAL;
+  tio.c_cflag = CS8 | CREAD | CLOCAL | GPS_BAUDRATE | CRTSCTS;
   tio.c_lflag = 0;
-  tio.c_cc[VMIN] = 1;
-  tio.c_cc[VTIME] = 5;
+  tio.c_cc[VMIN] = 0;
+  tio.c_cc[VTIME] = 2;
   if ((fdTTY = open(GPS_TTY, O_RDWR | O_NONBLOCK)) == -1) {
     fprintf(stderr, "cannot open GPS tty\n");
     return;
   }
   cfsetospeed(&tio, GPS_BAUDRATE);
   cfsetispeed(&tio, GPS_BAUDRATE);
+  tcflush(fdTTY, TCIFLUSH);
   tcsetattr(fdTTY, TCSANOW, &tio);
 
   rch[0] = '\0';
@@ -350,6 +356,10 @@ updateTimeFromGPS (NXCTRL_VOID) {
           psz = rch;
         }
       }
+    } else {
+      nFCount++;
+      if (nFCount > 500000)
+        break;
     }
   }
 
@@ -360,6 +370,9 @@ NXCTRL_VOID
 NXCTRLSetup (NXCTRL_VOID) {
   uint8_t nLSB;
   uint32_t nSpeed, nSPIMode;
+
+  NXCTRLPinMux(GPS_TTY_BANK, GPS_TTY_TX, NXCTRL_MODE0, NXCTRL_PULLUP, NXCTRL_HIGH);
+  NXCTRLPinMux(GPS_TTY_BANK, GPS_TTY_RX, NXCTRL_MODE0, NXCTRL_PULLUP, NXCTRL_HIGH);
 
   updateTimeFromGPS();
   
